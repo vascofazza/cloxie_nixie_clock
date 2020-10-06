@@ -1,5 +1,5 @@
 (sym_lib_table
   (lib (name nixies-us)(type Legacy)(uri ${KIPRJMOD}/Nixie-Libs/nixies-us.lib)(options "")(descr ""))
-  (lib (name ESP32-DEVKITC-32D)(type Legacy)(uri ${KIPRJMOD}/ESP32-DEVKITC-32D/ESP32-DEVKITC-32D.lib)(options "")(descr ""))
   (lib (name CustomComponents)(type Legacy)(uri ${KIPRJMOD}/CustomComponents.lib)(options "")(descr ""))
+  (lib (name nixie_board-rescue)(type Legacy)(uri ${KIPRJMOD}/nixie_board-rescue.lib)(options "")(descr ""))
 )

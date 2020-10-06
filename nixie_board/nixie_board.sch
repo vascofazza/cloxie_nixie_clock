@@ -80,18 +80,6 @@ F 3 "" H 10250 1500 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L ESP32-DEVKITC-32D:ESP32-DEVKITC-32D U3
-U 1 1 5F79EF1C
-P 1900 7400
-F 0 "U3" H 1900 8567 50  0000 C CNN
-F 1 "ESP32" H 1900 8476 50  0000 C CNN
-F 2 "ESP32-DEVKITC-32D:MODULE_ESP32-DEVKITC-32D" H 1900 7400 50  0001 L BNN
-F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 1900 7400 50  0001 L BNN
-F 4 "Espressif Systems" H 1900 7400 50  0001 L BNN "Field4"
-	1    1900 7400
-	1    0    0    -1  
-$EndComp
-$Comp
 L CustomComponents:K155NA1 U2
 U 1 1 5F7A2F99
 P 1350 2900
@@ -298,23 +286,6 @@ Wire Wire Line
 	3000 5250 3900 5250
 Wire Wire Line
 	6600 5250 7550 5250
-Wire Wire Line
-	600  8300 1100 8300
-Wire Wire Line
-	2700 6500 3900 6500
-Wire Wire Line
-	3900 6500 3900 6150
-Wire Wire Line
-	2700 7100 3900 7100
-Wire Wire Line
-	3900 7100 3900 6850
-Connection ~ 3900 6500
-Wire Wire Line
-	1100 7800 700  7800
-Wire Wire Line
-	700  7800 700  6150
-Wire Wire Line
-	700  6150 3900 6150
 Text Label 5900 600  0    50   ~ 0
 170V
 Wire Wire Line
@@ -1299,12 +1270,6 @@ Wire Wire Line
 	9650 5850 9650 5650
 Connection ~ 6000 5850
 Wire Wire Line
-	3900 6150 3900 5700
-Connection ~ 3900 6150
-Wire Wire Line
-	600  5750 600  8300
-Connection ~ 600  5750
-Wire Wire Line
 	3800 3150 4050 3150
 Wire Wire Line
 	4050 3150 4050 3700
@@ -1334,12 +1299,12 @@ Connection ~ 4050 3150
 $Comp
 L Regulator_Linear:L7805 U12
 U 1 1 60A30EEF
-P 9650 6550
-F 0 "U12" H 9650 6792 50  0000 C CNN
-F 1 "L7805" H 9650 6701 50  0000 C CNN
-F 2 "Package_TO_SOT_THT:TO-220-3_Horizontal_TabDown" H 9675 6400 50  0001 L CIN
-F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 9650 6500 50  0001 C CNN
-	1    9650 6550
+P 9100 6550
+F 0 "U12" H 9100 6792 50  0000 C CNN
+F 1 "L7805" H 9100 6701 50  0000 C CNN
+F 2 "Package_TO_SOT_THT:TO-220-3_Horizontal_TabDown" H 9125 6400 50  0001 L CIN
+F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 9100 6500 50  0001 C CNN
+	1    9100 6550
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -1497,7 +1462,7 @@ Wire Wire Line
 Wire Wire Line
 	10800 6150 10800 6300
 Wire Wire Line
-	10400 6150 7700 6150
+	10400 6150 10000 6150
 Wire Wire Line
 	7700 6150 7700 5250
 Connection ~ 10400 6150
@@ -1517,87 +1482,87 @@ Connection ~ 10800 6700
 $Comp
 L Connector_Generic:Conn_01x01 J1
 U 1 1 5F7DCC26
-P 8950 6550
-F 0 "J1" H 8868 6325 50  0000 C CNN
-F 1 "12V" H 8868 6416 50  0000 C CNN
-F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 8950 6550 50  0001 C CNN
-F 3 "~" H 8950 6550 50  0001 C CNN
-	1    8950 6550
+P 8400 6550
+F 0 "J1" H 8318 6325 50  0000 C CNN
+F 1 "12V" H 8318 6416 50  0000 C CNN
+F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 8400 6550 50  0001 C CNN
+F 3 "~" H 8400 6550 50  0001 C CNN
+	1    8400 6550
 	-1   0    0    1   
 $EndComp
 $Comp
 L Connector_Generic:Conn_01x01 J3
 U 1 1 5F7DDFC8
-P 9650 7200
-F 0 "J3" V 9522 7280 50  0000 L CNN
-F 1 "GND" V 9613 7280 50  0000 L CNN
-F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 9650 7200 50  0001 C CNN
-F 3 "~" H 9650 7200 50  0001 C CNN
-	1    9650 7200
+P 9100 7200
+F 0 "J3" V 8972 7280 50  0000 L CNN
+F 1 "GND" V 9063 7280 50  0000 L CNN
+F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 9100 7200 50  0001 C CNN
+F 3 "~" H 9100 7200 50  0001 C CNN
+	1    9100 7200
 	0    1    1    0   
 $EndComp
 Wire Wire Line
-	9150 6550 9350 6550
+	8600 6550 8800 6550
 Wire Wire Line
-	9650 7000 9650 6950
-Text Label 10150 6550 0    50   ~ 0
+	9100 7000 9100 6950
+Text Label 9600 6550 0    50   ~ 0
 5V
 Wire Wire Line
-	10150 6550 9950 6550
+	9600 6550 9400 6550
 $Comp
 L Connector_Generic:Conn_01x01 J2
 U 1 1 5F893BFD
-P 8950 6850
-F 0 "J2" H 8868 6625 50  0000 C CNN
-F 1 "170V" H 8868 6716 50  0000 C CNN
-F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 8950 6850 50  0001 C CNN
-F 3 "~" H 8950 6850 50  0001 C CNN
-	1    8950 6850
+P 8400 6850
+F 0 "J2" H 8318 6625 50  0000 C CNN
+F 1 "170V" H 8318 6716 50  0000 C CNN
+F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 8400 6850 50  0001 C CNN
+F 3 "~" H 8400 6850 50  0001 C CNN
+	1    8400 6850
 	-1   0    0    1   
 $EndComp
-Text Label 9350 6850 0    50   ~ 0
+Text Label 8800 6850 0    50   ~ 0
 170V
 Wire Wire Line
-	9350 6850 9150 6850
+	8800 6850 8600 6850
 $Comp
 L power:GND #PWR01
 U 1 1 5F90D3EF
-P 10050 7050
-F 0 "#PWR01" H 10050 6800 50  0001 C CNN
-F 1 "GND" H 10055 6877 50  0000 C CNN
-F 2 "" H 10050 7050 50  0001 C CNN
-F 3 "" H 10050 7050 50  0001 C CNN
-	1    10050 7050
+P 9500 7050
+F 0 "#PWR01" H 9500 6800 50  0001 C CNN
+F 1 "GND" H 9505 6877 50  0000 C CNN
+F 2 "" H 9500 7050 50  0001 C CNN
+F 3 "" H 9500 7050 50  0001 C CNN
+	1    9500 7050
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	10050 7050 10050 6950
+	9500 7050 9500 6950
 Wire Wire Line
-	10050 6950 9650 6950
-Connection ~ 9650 6950
+	9500 6950 9100 6950
+Connection ~ 9100 6950
 Wire Wire Line
-	9650 6950 9650 6850
-Text Label 3000 7800 0    50   ~ 0
+	9100 6950 9100 6850
+Text Label 2800 7100 0    50   ~ 0
 SER
 Wire Wire Line
-	2700 7800 3000 7800
-Text Label 3000 7900 0    50   ~ 0
+	2500 7100 2800 7100
+Text Label 2800 7300 0    50   ~ 0
 SRCLK
 Wire Wire Line
-	2700 7900 3000 7900
-Text Label 3000 7700 0    50   ~ 0
+	2500 7300 2800 7300
+Text Label 2800 7200 0    50   ~ 0
 RCLK
 Wire Wire Line
-	3000 7700 2700 7700
-Text Label 3000 7400 0    50   ~ 0
+	2800 7200 2500 7200
+Text Label 2800 7600 0    50   ~ 0
 STROBE
 Wire Wire Line
-	3000 7400 2700 7400
+	2800 7600 2500 7600
 Wire Wire Line
 	10800 6700 10800 6950
 Wire Wire Line
-	10800 6950 10050 6950
-Connection ~ 10050 6950
+	10800 6950 9500 6950
+Connection ~ 9500 6950
 $Comp
 L Sensor_Temperature:DS18B20 U15
 U 1 1 5FD6C950
@@ -1702,10 +1667,6 @@ F 3 "~" H 7150 6200 50  0001 C CNN
 	1    7150 6200
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	7150 6350 7150 6850
-Wire Wire Line
-	7150 6850 6700 6850
 Wire Wire Line
 	6700 6250 6700 6050
 Wire Wire Line
@@ -1832,10 +1793,6 @@ Wire Wire Line
 Connection ~ 5000 6850
 Connection ~ 5550 6850
 Wire Wire Line
-	6000 6850 6700 6850
-Connection ~ 6000 6850
-Connection ~ 6700 6850
-Wire Wire Line
 	5000 6050 5550 6050
 Connection ~ 5000 6050
 Connection ~ 5550 6050
@@ -1864,8 +1821,6 @@ Connection ~ 7150 7050
 Wire Wire Line
 	3900 6850 4150 6850
 Connection ~ 3900 6850
-Wire Wire Line
-	3900 6850 3900 6500
 Connection ~ 4550 6850
 Wire Wire Line
 	4150 6850 4150 7850
@@ -1882,18 +1837,12 @@ Wire Wire Line
 Connection ~ 7600 6650
 Wire Wire Line
 	7600 6650 7600 7050
-Text Label 900  6500 2    50   ~ 0
+Text Label 2200 6300 2    50   ~ 0
+3.3V
+Text Label 5650 8100 2    50   ~ 0
 3.3V
 Wire Wire Line
-	900  6500 1100 6500
-Text Label 4750 8300 2    50   ~ 0
-3.3V
-Wire Wire Line
-	4750 8300 4750 8350
-Text Label 5650 8450 2    50   ~ 0
-3.3V
-Wire Wire Line
-	5650 8450 5650 8500
+	5650 8100 5650 8200
 $Comp
 L Device:R R8
 U 1 1 60A6DE70
@@ -1912,18 +1861,18 @@ Wire Wire Line
 $Comp
 L Connector_Generic:Conn_01x01 J4
 U 1 1 60B714B6
-P 9650 7700
-F 0 "J4" V 9522 7780 50  0000 L CNN
-F 1 "SHTDWN" V 9613 7780 50  0000 L CNN
-F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 9650 7700 50  0001 C CNN
-F 3 "~" H 9650 7700 50  0001 C CNN
-	1    9650 7700
+P 9100 7700
+F 0 "J4" V 8972 7780 50  0000 L CNN
+F 1 "SHDN" V 9063 7780 50  0000 L CNN
+F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 9100 7700 50  0001 C CNN
+F 3 "~" H 9100 7700 50  0001 C CNN
+	1    9100 7700
 	0    1    1    0   
 $EndComp
-Text Label 9650 7450 2    50   ~ 0
+Text Label 9100 7450 2    50   ~ 0
 SHUTDOWN
 Wire Wire Line
-	9650 7500 9650 7450
+	9100 7500 9100 7450
 Wire Wire Line
 	4750 8950 5350 8950
 Wire Wire Line
@@ -1931,26 +1880,121 @@ Wire Wire Line
 Connection ~ 5350 7850
 Wire Wire Line
 	5350 7850 5550 7850
-Text Label 3000 8000 0    50   ~ 0
+Text Label 2800 7400 0    50   ~ 0
 SHUTDOWN
 Wire Wire Line
-	3000 8000 2700 8000
-Text Label 3000 8100 0    50   ~ 0
+	2800 7400 2500 7400
+Text Label 2800 7500 0    50   ~ 0
 RGB
 Wire Wire Line
-	3000 8100 2700 8100
+	2800 7500 2500 7500
 Wire Wire Line
-	4450 8650 4050 8650
+	4450 8650 4250 8650
 Wire Wire Line
 	4050 8650 4050 8200
-Wire Wire Line
-	4050 8200 2700 8200
-Wire Wire Line
-	2700 8300 3950 8300
 Wire Wire Line
 	3950 8300 3950 9050
 Wire Wire Line
 	3950 9050 5650 9050
 Wire Wire Line
 	5650 9050 5650 8800
+Wire Wire Line
+	3900 5700 3900 6850
+$Comp
+L MCU_Module:WeMos_D1_mini U3
+U 1 1 5FAA6F69
+P 2100 7200
+F 0 "U3" H 2100 6311 50  0000 C CNN
+F 1 "WeMos_D1_mini" H 2100 6220 50  0000 C CNN
+F 2 "Module:WEMOS_D1_mini_light" H 2100 6050 50  0001 C CNN
+F 3 "https://wiki.wemos.cc/products:d1:d1_mini#documentation" H 250 6050 50  0001 C CNN
+	1    2100 7200
+	1    0    0    -1  
+$EndComp
+Text Label 2000 6300 2    50   ~ 0
+5V
+Wire Wire Line
+	2000 6300 2000 6400
+Wire Wire Line
+	2200 6300 2200 6400
+Wire Wire Line
+	3900 8100 2100 8100
+Wire Wire Line
+	2100 8100 2100 8000
+Wire Wire Line
+	3900 6850 3900 8100
+NoConn ~ 1700 6800
+NoConn ~ 1700 7100
+NoConn ~ 1700 7200
+Wire Wire Line
+	3950 8300 3300 8300
+Wire Wire Line
+	3300 8300 3300 6700
+Wire Wire Line
+	3300 6700 2500 6700
+Wire Wire Line
+	4050 8200 3400 8200
+Wire Wire Line
+	3400 8200 3400 7000
+Wire Wire Line
+	3400 7000 2500 7000
+$Comp
+L Device:R R9
+U 1 1 601D7177
+P 4250 8400
+F 0 "R9" H 4320 8446 50  0000 L CNN
+F 1 "4.7K" H 4320 8355 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" V 4180 8400 50  0001 C CNN
+F 3 "~" H 4250 8400 50  0001 C CNN
+	1    4250 8400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4250 8550 4250 8650
+Connection ~ 4250 8650
+Wire Wire Line
+	4250 8650 4050 8650
+Wire Wire Line
+	4250 8250 4250 8200
+Wire Wire Line
+	4250 8200 4750 8200
+Connection ~ 5650 8200
+Wire Wire Line
+	5650 8200 5650 8500
+Wire Wire Line
+	4750 8200 4750 8350
+Connection ~ 4750 8200
+Wire Wire Line
+	4750 8200 5650 8200
+NoConn ~ 2500 6800
+NoConn ~ 2500 6900
+Wire Wire Line
+	7150 6350 7150 6850
+Wire Wire Line
+	6000 6850 6700 6850
+Connection ~ 6000 6850
+Wire Wire Line
+	6700 6850 7150 6850
+Connection ~ 6700 6850
+$Comp
+L Device:CP C15
+U 1 1 607DF39D
+P 10000 6450
+F 0 "C15" H 10118 6496 50  0000 L CNN
+F 1 "10uF" H 10118 6405 50  0000 L CNN
+F 2 "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm" H 10038 6300 50  0001 C CNN
+F 3 "~" H 10000 6450 50  0001 C CNN
+	1    10000 6450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	10000 6300 10000 6150
+Connection ~ 10000 6150
+Wire Wire Line
+	10000 6150 7700 6150
+Wire Wire Line
+	10000 6600 10000 6700
+Wire Wire Line
+	10000 6700 10400 6700
+Connection ~ 10400 6700
 $EndSCHEMATC
