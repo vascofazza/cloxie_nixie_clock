@@ -1125,8 +1125,6 @@ Wire Wire Line
 	2300 3150 2300 3550
 Connection ~ 2300 3550
 Wire Wire Line
-	2300 3550 3900 3550
-Wire Wire Line
 	3900 3550 3900 5250
 Wire Wire Line
 	7550 3550 7550 5250
@@ -1456,14 +1454,11 @@ Wire Wire Line
 	9600 2300 9600 1950
 Connection ~ 9600 2300
 Wire Wire Line
-	10400 6300 10400 6150
-Wire Wire Line
-	10400 6150 10800 6150
+	10500 6300 10500 6150
 Wire Wire Line
 	10800 6150 10800 6300
 Wire Wire Line
 	7700 6150 7700 5250
-Connection ~ 10400 6150
 Connection ~ 7700 5250
 Wire Wire Line
 	10800 6600 10800 6700
@@ -1473,9 +1468,7 @@ Wire Wire Line
 	10950 6700 10950 5250
 Connection ~ 10950 5250
 Wire Wire Line
-	10400 6600 10400 6700
-Wire Wire Line
-	10400 6700 10800 6700
+	10500 6600 10500 6700
 Connection ~ 10800 6700
 $Comp
 L Connector_Generic:Conn_01x01 J1
@@ -1552,10 +1545,10 @@ Text Label 2800 7200 0    50   ~ 0
 RCLK
 Wire Wire Line
 	2800 7200 2500 7200
-Text Label 2800 7600 0    50   ~ 0
+Text Label 2800 6900 0    50   ~ 0
 STROBE
 Wire Wire Line
-	2800 7600 2500 7600
+	2800 6900 2500 6900
 Wire Wire Line
 	10800 6700 10800 6950
 Wire Wire Line
@@ -1859,18 +1852,18 @@ Wire Wire Line
 $Comp
 L Connector_Generic:Conn_01x01 J4
 U 1 1 60B714B6
-P 9100 7700
-F 0 "J4" V 8972 7780 50  0000 L CNN
-F 1 "SHDN" V 9063 7780 50  0000 L CNN
-F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 9100 7700 50  0001 C CNN
-F 3 "~" H 9100 7700 50  0001 C CNN
-	1    9100 7700
+P 9300 7750
+F 0 "J4" V 9172 7830 50  0000 L CNN
+F 1 "SHDN" V 9263 7830 50  0000 L CNN
+F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 9300 7750 50  0001 C CNN
+F 3 "~" H 9300 7750 50  0001 C CNN
+	1    9300 7750
 	0    1    1    0   
 $EndComp
-Text Label 9100 7450 2    50   ~ 0
+Text Label 9300 7500 2    50   ~ 0
 SHUTDOWN
 Wire Wire Line
-	9100 7500 9100 7450
+	9300 7550 9300 7500
 Wire Wire Line
 	4750 8950 5350 8950
 Wire Wire Line
@@ -1882,10 +1875,6 @@ Text Label 2800 7400 0    50   ~ 0
 SHUTDOWN
 Wire Wire Line
 	2800 7400 2500 7400
-Text Label 2800 7500 0    50   ~ 0
-RGB
-Wire Wire Line
-	2800 7500 2500 7500
 Wire Wire Line
 	4450 8650 4250 8650
 Wire Wire Line
@@ -1964,8 +1953,6 @@ Wire Wire Line
 Connection ~ 4750 8200
 Wire Wire Line
 	4750 8200 5650 8200
-NoConn ~ 2500 6800
-NoConn ~ 2500 6900
 Wire Wire Line
 	7150 6350 7150 6850
 Wire Wire Line
@@ -1977,16 +1964,14 @@ Connection ~ 6700 6850
 $Comp
 L Device:CP C15
 U 1 1 607DF39D
-P 10400 6450
-F 0 "C15" H 10518 6496 50  0000 L CNN
-F 1 "10uF" H 10518 6405 50  0000 L CNN
-F 2 "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm" H 10438 6300 50  0001 C CNN
-F 3 "~" H 10400 6450 50  0001 C CNN
-	1    10400 6450
+P 10500 6450
+F 0 "C15" H 10618 6496 50  0000 L CNN
+F 1 "10uF" H 10618 6405 50  0000 L CNN
+F 2 "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm" H 10538 6300 50  0001 C CNN
+F 3 "~" H 10500 6450 50  0001 C CNN
+	1    10500 6450
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	7700 6150 10400 6150
 Wire Wire Line
 	8050 6500 8050 6250
 Wire Wire Line
@@ -1999,5 +1984,144 @@ Wire Wire Line
 Wire Wire Line
 	8050 6800 8050 6950
 Wire Wire Line
-	8050 6950 9100 6950
+	2300 3550 3900 3550
+$Comp
+L 74xx:74LS32 U10
+U 5 1 5FA247C3
+P 9850 7550
+F 0 "U10" H 9850 7875 50  0000 C CNN
+F 1 "74LS32" H 9850 7784 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 9850 7550 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 9850 7550 50  0001 C CNN
+	5    9850 7550
+	1    0    0    -1  
+$EndComp
+Text Label 11100 7050 0    50   ~ 0
+5V
+$Comp
+L 74xx:74LS32 U1
+U 5 1 5F87299E
+P 10950 7550
+F 0 "U1" H 10950 7875 50  0000 C CNN
+F 1 "74LS32" H 10950 7784 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 10950 7550 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 10950 7550 50  0001 C CNN
+	5    10950 7550
+	1    0    0    -1  
+$EndComp
+NoConn ~ 2500 7600
+NoConn ~ 2500 6800
+Wire Wire Line
+	2800 7500 2500 7500
+Text Label 2800 7500 0    50   ~ 0
+RGB
+Connection ~ 10400 7050
+Wire Wire Line
+	9850 7050 10400 7050
+Connection ~ 10400 8050
+Wire Wire Line
+	9850 8050 10400 8050
+$Comp
+L 74xx:74LS32 U6
+U 5 1 5F9CEB0F
+P 10400 7550
+F 0 "U6" H 10400 7875 50  0000 C CNN
+F 1 "74LS32" H 10400 7784 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 10400 7550 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 10400 7550 50  0001 C CNN
+	5    10400 7550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	10400 7050 10950 7050
+Connection ~ 10950 7050
+Wire Wire Line
+	10950 7050 11100 7050
+Wire Wire Line
+	10400 8050 10950 8050
+$Comp
+L Connector:Barrel_Jack_Switch J5
+U 1 1 6010211B
+P 8200 7550
+F 0 "J5" H 7970 7592 50  0000 R CNN
+F 1 "Barrel_Jack_Switch" H 7970 7501 50  0000 R CNN
+F 2 "Connector_BarrelJack:BarrelJack_Horizontal" H 8250 7510 50  0001 C CNN
+F 3 "~" H 8250 7510 50  0001 C CNN
+	1    8200 7550
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	7900 7450 7900 6250
+Wire Wire Line
+	7900 6250 8050 6250
+Connection ~ 8050 6250
+Wire Wire Line
+	7750 7250 7750 7650
+Wire Wire Line
+	7750 7650 7900 7650
+NoConn ~ 7900 7550
+$Comp
+L Device:CP C17
+U 1 1 6032307C
+P 10200 6450
+F 0 "C17" H 10318 6496 50  0000 L CNN
+F 1 "10uF" H 10318 6405 50  0000 L CNN
+F 2 "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm" H 10238 6300 50  0001 C CNN
+F 3 "~" H 10200 6450 50  0001 C CNN
+	1    10200 6450
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:CP C16
+U 1 1 6037AE21
+P 9900 6450
+F 0 "C16" H 10018 6496 50  0000 L CNN
+F 1 "10uF" H 10018 6405 50  0000 L CNN
+F 2 "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm" H 9938 6300 50  0001 C CNN
+F 3 "~" H 9900 6450 50  0001 C CNN
+	1    9900 6450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	10200 6300 10200 6150
+Wire Wire Line
+	9900 6300 9900 6150
+Wire Wire Line
+	9900 6600 9900 6700
+Wire Wire Line
+	10200 6600 10200 6700
+Connection ~ 9900 6150
+Connection ~ 10200 6150
+Connection ~ 10200 6700
+Connection ~ 10500 6150
+Wire Wire Line
+	10500 6150 10800 6150
+Connection ~ 10500 6700
+Wire Wire Line
+	10500 6700 10800 6700
+Wire Wire Line
+	10200 6150 10500 6150
+Wire Wire Line
+	10200 6700 10500 6700
+Wire Wire Line
+	7700 6150 9900 6150
+Wire Wire Line
+	9900 6150 10200 6150
+Wire Wire Line
+	9900 6700 10200 6700
+Wire Wire Line
+	8050 7250 8050 6950
+Wire Wire Line
+	8050 7250 7750 7250
+Connection ~ 8050 6950
+Wire Wire Line
+	8050 6950 8750 6950
+Wire Wire Line
+	9850 8050 8750 8050
+Wire Wire Line
+	8750 8050 8750 6950
+Connection ~ 9850 8050
+Connection ~ 8750 6950
+Wire Wire Line
+	8750 6950 9100 6950
 $EndSCHEMATC

@@ -1,4 +1,4 @@
-update=Wednesday, 07 October 2020 at 01:26:11
+update=Saturday, 10 October 2020 at 23:03:14
 version=1
 last_client=kicad
 [general]
@@ -238,8 +238,8 @@ dPairGap=0.25
 dPairViaGap=0.25
 [pcbnew/Netclasses/1]
 Name=5v rail
-Clearance=0.35
-TrackWidth=0.4
+Clearance=0.254
+TrackWidth=0.3
 ViaDiameter=0.8
 ViaDrill=0.4
 uViaDiameter=0.3
@@ -260,7 +260,7 @@ dPairGap=0.25
 dPairViaGap=0.25
 [pcbnew/Netclasses/3]
 Name=HighVoltageOut
-Clearance=0.35
+Clearance=0.3
 TrackWidth=0.4
 ViaDiameter=0.8
 ViaDrill=0.4
