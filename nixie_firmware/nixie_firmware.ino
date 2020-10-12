@@ -2,6 +2,8 @@
 #include "wifi.h"
 #include "ntp.h"
 
+#define LEFT_DOT D0
+#define RIGHT_DOT D8
 #define STROBE D1
 #define LATCH D4
 #define CLOCK D5
@@ -28,6 +30,8 @@ void setup() {
 
   pinMode(A0, INPUT);
   pinMode(STROBE, OUTPUT);
+  pinMode(LEFT_DOT, OUTPUT);
+  pinMode(RIGHT_DOT, OUTPUT);
   pinMode(LATCH, OUTPUT);
   pinMode(CLOCK, OUTPUT);
   pinMode(DATA, OUTPUT);
@@ -57,6 +61,8 @@ void loop() {
     }
   }
   analogWrite(STROBE, i);
+  analogWrite(LEFT_DOT, i);
+  analogWrite(RIGHT_DOT, i);
   delay(50);
 
 
