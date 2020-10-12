@@ -260,16 +260,12 @@ Wire Wire Line
 Wire Wire Line
 	1400 700  3100 700 
 Wire Wire Line
-	5000 700  3100 700 
+	5000 700  4000 700 
 Connection ~ 3100 700 
-Wire Wire Line
-	5000 700  5900 700 
 Connection ~ 5000 700 
 Wire Wire Line
-	6700 700  8650 700 
+	6700 700  7650 700 
 Connection ~ 6700 700 
-Wire Wire Line
-	8650 700  10350 700 
 Connection ~ 8650 700 
 $Comp
 L 74xx:74HC595 U4
@@ -286,13 +282,8 @@ Wire Wire Line
 	3000 5250 3900 5250
 Wire Wire Line
 	6600 5250 7550 5250
-Text Label 5900 600  0    50   ~ 0
+Text Label 11000 600  0    50   ~ 0
 170V
-Wire Wire Line
-	5900 600  5900 700 
-Connection ~ 5900 700 
-Wire Wire Line
-	5900 700  6700 700 
 Wire Wire Line
 	2800 4850 2800 4800
 Wire Wire Line
@@ -1560,7 +1551,7 @@ U 1 1 5FD6C950
 P 4750 8650
 F 0 "U15" H 4520 8696 50  0000 R CNN
 F 1 "DS18B20" H 4520 8605 50  0000 R CNN
-F 2 "Package_TO_SOT_THT:TO-92_Inline" H 3750 8400 50  0001 C CNN
+F 2 "Package_TO_SOT_THT:TO-92_Inline_Wide" H 3750 8400 50  0001 C CNN
 F 3 "http://datasheets.maximintegrated.com/en/ds/DS18B20.pdf" H 4600 8900 50  0001 C CNN
 	1    4750 8650
 	-1   0    0    -1  
@@ -2009,8 +2000,6 @@ F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 10950 7550 50  0001 C CNN
 	5    10950 7550
 	1    0    0    -1  
 $EndComp
-NoConn ~ 2500 7600
-NoConn ~ 2500 6800
 Wire Wire Line
 	2800 7500 2500 7500
 Text Label 2800 7500 0    50   ~ 0
@@ -2124,4 +2113,240 @@ Connection ~ 9850 8050
 Connection ~ 8750 6950
 Wire Wire Line
 	8750 6950 9100 6950
+$Comp
+L nixies-us:IN-3 NL1
+U 1 1 5F8B273F
+P 4100 1500
+F 0 "NL1" V 4300 1628 45  0000 L CNN
+F 1 "IN-3" H 4100 1500 45  0001 L BNN
+F 2 "nixies-us:nixies-us-IN-3" H 4130 1650 20  0001 C CNN
+F 3 "" H 4100 1500 50  0001 C CNN
+	1    4100 1500
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R12
+U 1 1 5F9CF718
+P 4000 1050
+F 0 "R12" H 4070 1096 50  0000 L CNN
+F 1 "10K" H 4070 1005 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" V 3930 1050 50  0001 C CNN
+F 3 "~" H 4000 1050 50  0001 C CNN
+	1    4000 1050
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R14
+U 1 1 5FA29DD7
+P 7650 1050
+F 0 "R14" H 7720 1096 50  0000 L CNN
+F 1 "10K" H 7720 1005 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" V 7580 1050 50  0001 C CNN
+F 3 "~" H 7650 1050 50  0001 C CNN
+	1    7650 1050
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7650 900  7650 700 
+Connection ~ 7650 700 
+Wire Wire Line
+	7650 700  8650 700 
+Wire Wire Line
+	4000 900  4000 700 
+Connection ~ 4000 700 
+Wire Wire Line
+	4000 700  3100 700 
+$Comp
+L Transistor_BJT:MPSA42 Q2
+U 1 1 5FBF457F
+P 3900 2400
+F 0 "Q2" H 4091 2446 50  0000 L CNN
+F 1 "MPSA42" H 4091 2355 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-92_Wide" H 4100 2325 50  0001 L CIN
+F 3 "http://www.onsemi.com/pub_link/Collateral/MPSA42-D.PDF" H 3900 2400 50  0001 L CNN
+	1    3900 2400
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R11
+U 1 1 5FBF5BDE
+P 3700 2650
+F 0 "R11" H 3770 2696 50  0000 L CNN
+F 1 "10K" H 3770 2605 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" V 3630 2650 50  0001 C CNN
+F 3 "~" H 3700 2650 50  0001 C CNN
+	1    3700 2650
+	1    0    0    -1  
+$EndComp
+$Comp
+L Transistor_BJT:MPSA42 Q3
+U 1 1 5FC55057
+P 7550 2400
+F 0 "Q3" H 7741 2446 50  0000 L CNN
+F 1 "MPSA42" H 7741 2355 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-92_Wide" H 7750 2325 50  0001 L CIN
+F 3 "http://www.onsemi.com/pub_link/Collateral/MPSA42-D.PDF" H 7550 2400 50  0001 L CNN
+	1    7550 2400
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R13
+U 1 1 5FCB15D5
+P 7350 2650
+F 0 "R13" H 7420 2696 50  0000 L CNN
+F 1 "10K" H 7420 2605 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" V 7280 2650 50  0001 C CNN
+F 3 "~" H 7350 2650 50  0001 C CNN
+	1    7350 2650
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4000 2600 4000 2800
+Wire Wire Line
+	4000 2800 4200 2800
+Wire Wire Line
+	4200 2800 4200 3150
+Connection ~ 4200 3150
+Wire Wire Line
+	7650 2600 7650 2800
+Wire Wire Line
+	7650 2800 7850 2800
+Wire Wire Line
+	7850 2800 7850 3150
+Connection ~ 7850 3150
+Wire Wire Line
+	3700 2400 3700 2500
+Wire Wire Line
+	7350 2400 7350 2500
+Wire Wire Line
+	4000 2000 4000 2200
+Wire Wire Line
+	7650 2000 7650 2200
+Text Label 2800 6800 0    50   ~ 0
+LEFT_DOT
+Wire Wire Line
+	2500 6800 2800 6800
+Text Label 2800 7600 0    50   ~ 0
+RIGHT_DOT
+Wire Wire Line
+	2500 7600 2800 7600
+Text Label 3700 3050 0    50   ~ 0
+LEFT_DOT
+Wire Wire Line
+	3700 3050 3700 2800
+Text Label 7350 3050 0    50   ~ 0
+RIGHT_DOT
+Wire Wire Line
+	7350 3050 7350 2800
+$Comp
+L nixies-us:IN-3 NR1
+U 1 1 5F8B685B
+P 7750 1500
+F 0 "NR1" V 7950 1628 45  0000 L CNN
+F 1 "IN-3" H 7750 1500 45  0001 L BNN
+F 2 "nixies-us:nixies-us-IN-3" H 7780 1650 20  0001 C CNN
+F 3 "" H 7750 1500 50  0001 C CNN
+	1    7750 1500
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	4000 1400 4000 1200
+Wire Wire Line
+	7650 1400 7650 1200
+$Comp
+L Transistor_BJT:MPSA42 Q4
+U 1 1 602B517F
+P 10700 700
+F 0 "Q4" V 11028 700 50  0000 C CNN
+F 1 "MPSA42" V 10937 700 50  0000 C CNN
+F 2 "Package_TO_SOT_THT:TO-92_Wide" H 10900 625 50  0001 L CIN
+F 3 "http://www.onsemi.com/pub_link/Collateral/MPSA42-D.PDF" H 10700 700 50  0001 L CNN
+	1    10700 700 
+	0    1    -1   0   
+$EndComp
+$Comp
+L Device:R R10
+U 1 1 603DD2E0
+P 750 950
+F 0 "R10" H 820 996 50  0000 L CNN
+F 1 "10K" H 820 905 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" V 680 950 50  0001 C CNN
+F 3 "~" H 750 950 50  0001 C CNN
+	1    750  950 
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	11700 1050 11700 1000
+$Comp
+L Jumper:Jumper_3_Bridged12 JP1
+U 1 1 6056515F
+P 9600 850
+F 0 "JP1" H 9600 1054 50  0000 C CNN
+F 1 "Jumper_3_Bridged12" H 9600 963 50  0000 C CNN
+F 2 "Connector_Wire:SolderWirePad_1x03_P3.175mm_Drill1mm" H 9600 850 50  0001 C CNN
+F 3 "~" H 9600 850 50  0001 C CNN
+	1    9600 850 
+	1    0    0    1   
+$EndComp
+Wire Wire Line
+	5000 700  6700 700 
+Connection ~ 9600 700 
+Wire Wire Line
+	9600 700  10350 700 
+$Comp
+L Device:R R15
+U 1 1 6094D4E1
+P 11000 800
+F 0 "R15" H 11070 846 50  0000 L CNN
+F 1 "100K" H 11070 755 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" V 10930 800 50  0001 C CNN
+F 3 "~" H 11000 800 50  0001 C CNN
+	1    11000 800 
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	11000 950  10700 950 
+Wire Wire Line
+	10700 950  10700 900 
+Wire Wire Line
+	11000 650  11000 600 
+Wire Wire Line
+	11000 600  10900 600 
+Text Label 9350 850  2    50   ~ 0
+170V
+Wire Wire Line
+	9850 850  9850 600 
+Wire Wire Line
+	9850 600  10500 600 
+$Comp
+L Transistor_BJT:MPSA42 Q1
+U 1 1 60D259C5
+P 900 750
+F 0 "Q1" V 1228 750 50  0000 C CNN
+F 1 "MPSA42" V 1137 750 50  0000 C CNN
+F 2 "Package_TO_SOT_THT:TO-92_Wide" H 1100 675 50  0001 L CIN
+F 3 "http://www.onsemi.com/pub_link/Collateral/MPSA42-D.PDF" H 900 750 50  0001 L CNN
+	1    900  750 
+	0    1    -1   0   
+$EndComp
+Wire Wire Line
+	1100 650  10550 650 
+Wire Wire Line
+	10550 650  10550 950 
+Wire Wire Line
+	10550 950  10700 950 
+Connection ~ 10700 950 
+Wire Wire Line
+	700  650  500  650 
+Wire Wire Line
+	500  650  500  3150
+Wire Wire Line
+	500  3150 600  3150
+Connection ~ 600  3150
+Text Label 600  1100 0    50   ~ 0
+STROBE
+Wire Wire Line
+	600  1100 600  950 
+Wire Wire Line
+	8650 700  9600 700 
 $EndSCHEMATC
