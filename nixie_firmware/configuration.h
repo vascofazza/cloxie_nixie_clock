@@ -30,22 +30,22 @@ static Config config;
 
 void printParams()
 {
-  Serial.println("Configuration:");
-  Serial.print("\tTimeZone: ");
+  Serial.println(F("Configuration:"));
+  Serial.print(F("\tTimeZone: "));
   Serial.println(config.timezone);
-  Serial.print("\tH24/12: ");
+  Serial.print(F("\tH24/12: "));
   Serial.println(config.h24);
-  Serial.print("\tC°/F°: ");
+  Serial.print(F("\tC°/F°: "));
   Serial.println(config.celsius);
-  Serial.print("\tGoogle Token: ");
+  Serial.print(F("\tGoogle Token: "));
   Serial.println(config.google_token);
-  Serial.print("\tAdaptive Brightness: ");
+  Serial.print(F("\tAdaptive Brightness: "));
   Serial.println(config.adaptive_brightness);
-  Serial.print("\tBrightness Offset: ");
+  Serial.print(F("\tBrightness Offset: "));
   Serial.println(config.brightness_offset);
-  Serial.print("\tShutdown Threshold: ");
+  Serial.print(F("\tShutdown Threshold: "));
   Serial.println(config.shutdown_threshold);
-  Serial.print("\Shutdown Delay: ");
+  Serial.print(F("\tShutdown Delay: "));
   Serial.println(config.shutdown_delay);
 }
 
@@ -67,8 +67,8 @@ void save_configuration()
 {
   EEPROM.put(0, config);
   if (EEPROM.commit()) {
-    Serial.println("EEPROM successfully committed");
+    Serial.println(F("EEPROM successfully committed"));
   } else {
-    Serial.println("ERROR! EEPROM commit failed");
+    Serial.println(F("ERROR! EEPROM commit failed"));
   }
 }

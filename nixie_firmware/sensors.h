@@ -40,26 +40,26 @@ float get_light_sensor_reading()
 
 void sensors_loop(bool display)
 {
-  Serial.print("Requesting temperatures...");
+  Serial.print(F("Requesting temperatures..."));
   sensors.requestTemperatures();
-  Serial.println("DONE");
+  Serial.println(F("DONE"));
   auto light_sensor_reading = get_light_sensor_reading();
   float temperatureC = sensors.getTempCByIndex(0);
   if (temperatureC != DEVICE_DISCONNECTED_C)
   {
-    Serial.print("Temperature for the device 1 (index 0) is: ");
+    Serial.print(F("Temperature for the device 1 (index 0) is: "));
     Serial.println(temperatureC);
     last_temp_reading = temperatureC;
   }
   else
   {
-    Serial.print("Cached data for Temperature is: ");
+    Serial.print(F("Cached data for Temperature is: "));
     Serial.println(last_temp_reading);
   }
   if (display)
   {
     display_temperature(last_temp_reading);
-    Serial.print("Light sensor reading: ");
+    Serial.print(F("Light sensor reading: "));
     Serial.println(light_sensor_reading);
   }
 }

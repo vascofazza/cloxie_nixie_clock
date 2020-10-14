@@ -9,7 +9,7 @@ ESP8266HTTPUpdateServer httpUpdater;
  */
 void setup_webserver(void) {
   if (WiFi.waitForConnectResult() != WL_CONNECTED) {
-    Serial.println("WiFi failed, aborting.");
+    Serial.println(F("WiFi failed, aborting."));
     return;
   }
 

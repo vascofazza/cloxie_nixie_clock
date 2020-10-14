@@ -24,11 +24,11 @@ String getParam(String name) {
 }
 
 void saveParamsCallback () {
-  Serial.println("Get Params:");
+  Serial.println(F("Get Params:"));
   Serial.print(google_token.getID());
   Serial.print(" : ");
   Serial.println(google_token.getValue());
-  Serial.println("PARAM timezone_field = " + getParam("timezone_field"));
+  Serial.println("PARAM timezone_field = " + getParam(F("timezone_field")));
   strcpy(config.google_token, google_token.getValue());
   config.timezone = getParam("timezone_field").toInt();
   //TODO handle other parameters
@@ -62,7 +62,7 @@ void setup_wifi()
   //if it does not connect it starts an access point and goes into a blocking loop awaiting configuration
   Serial.println("Connecting to AP");
   if (!wifiManager.autoConnect(WIFI_SSID, WIFI_PASSWORD)) {
-    Serial.println("AP Error Resetting ESP8266");
+    Serial.println(F("AP Error Resetting ESP8266"));
     delay(3000);
     ESP.reset();
     delay(5000);
@@ -77,20 +77,20 @@ void wifi_loop()
     if (reconnectionDelay > WIFI_RECONNECT_DELAY)
     {
       if (WiFi.waitForConnectResult() == WL_CONNECTED) {
-        Serial.println("WiFi connection restored.");
+        Serial.println(F("WiFi connection restored."));
         reconnection_attempt = WIFI_RECONNECT_ATTEMPTS;
         return;
       }
       else if (reconnection_attempt-- == 0)
       {
-        Serial.println("AP Error Resetting ESP8266");
+        Serial.println(F("AP Error Resetting ESP8266"));
         delay(3000);
         ESP.reset();
         delay(5000);
       }
       reconnectionDelay = 0;
     }
-    Serial.println("WiFi is not connected, aborting.");
+    Serial.println(F("WiFi is not connected, aborting."));
     return;
   }
 
@@ -100,7 +100,7 @@ void wifi_loop()
   }
   else
   {
-    Serial.println("Button Pressed, Starting Portal");
+    Serial.println(F("Button Pressed, Starting Portal"));
     wifiManager.startWebPortal();
     portalRunning = true;
 
