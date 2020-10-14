@@ -1,52 +1,34 @@
+#include "configuration.h"
+#include "tube_driver.h"
+#include "clock.h"
 #include "leds.h"
 #include "wifi.h"
-#include "ntp.h"
-
-#define LEFT_DOT D0
-#define RIGHT_DOT D8
-#define STROBE D1
-#define LATCH D4
-#define CLOCK D5
-#define DATA D3
-
-
-#include <OneWire.h>
-#include <DallasTemperature.h>
-
-// GPIO where the DS18B20 is connected to
-const int oneWireBus = D2;
-
-// Setup a oneWire instance to communicate with any OneWire devices
-OneWire oneWire(oneWireBus);
-
-// Pass our oneWire reference to Dallas Temperature sensor
-DallasTemperature sensors(&oneWire);
+#include "webserver.h"
+#include "sensors.h"
+#include "serial_parser.h"
 
 void setup() {
   Serial.begin(9600);
+  setup_configuration();
   setup_wifi();
-  setup_ntp();
+  setup_webserver();
+  setup_clock();
   setup_leds();
-
-  pinMode(A0, INPUT);
-  pinMode(STROBE, OUTPUT);
-  pinMode(LEFT_DOT, OUTPUT);
-  pinMode(RIGHT_DOT, OUTPUT);
-  pinMode(LATCH, OUTPUT);
-  pinMode(CLOCK, OUTPUT);
-  pinMode(DATA, OUTPUT);
-
-  sensors.begin();
-
+  setup_tube();
+  setup_sensors();
+  setup_serial_parser();
 }
 
 int i = 0;
 bool flag = true;
-byte num = 0;
 
 void loop() {
   leds_loop();
-  ntp_loop();
+  clock_loop(flag);
+  sensors_loop(!flag);
+  wifi_loop();
+  webserver_loop();
+  serial_parser_loop();
   if (i < 1024 and flag)
   {
     i += 100;
@@ -60,29 +42,6 @@ void loop() {
       flag = true;
     }
   }
-  analogWrite(STROBE, i);
-  analogWrite(LEFT_DOT, i);
-  analogWrite(RIGHT_DOT, i);
+  set_brightness(i);
   delay(50);
-
-
-
-  // the LEDs don't change while you're sending in bits:
-  digitalWrite(LATCH, LOW);
-  // shift out the bits:
-  shiftOut(DATA, CLOCK, LSBFIRST, (byte)(num << 4));
-  //take the latch pin high so the LEDs will light up:
-  digitalWrite(LATCH, HIGH);
-  num ++;
-  num %= 10;
-  Serial.println(analogRead(A0));
-  float temperatureC = sensors.getTempCByIndex(0);
-  if (temperatureC != DEVICE_DISCONNECTED_C)
-  {
-    sensors.requestTemperatures();
-    
-    //float temperatureF = sensors.getTempFByIndex(0);
-    Serial.print(temperatureC);
-    Serial.println("ºC");
-  }
 }

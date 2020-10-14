@@ -1,4 +1,4 @@
-#include <FastLED.h>
+#include <FastLED.h> //fastled
 
 #define NUM_LEDS 1
 
