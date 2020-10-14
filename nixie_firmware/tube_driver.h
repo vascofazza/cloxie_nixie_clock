@@ -16,12 +16,12 @@ void setup_tube()
 }
 
 /*
- * -1 or digits > 9 turns off the nixie tube
- */
-void set_tubes(byte h, byte hh, byte m, byte mm, byte s, byte ss) 
+   -1 or digits > 9 turns off the nixie tube
+*/
+void set_tubes(byte h, byte hh, byte m, byte mm, byte s, byte ss)
 {
   //prepare the data payload
-  unsigned int payload = ss + (s << 4) + (mm << 8) + (m << 12) + (hh << 16) + (h << 20);
+  unsigned int payload = (ss & 0xF) | ((s & 0xF) << 4) | ((mm & 0xF) << 8) | ((m & 0xF) << 12) | ((hh & 0xF) << 16) | ((h & 0xF) << 20);
   // the LEDs don't change while you're sending in bits:
   digitalWrite(LATCH, LOW);
   // shift out the bits:
@@ -58,9 +58,9 @@ void display_temperature(float temp)
   //handle dots TODO
 }
 
-void set_brightness(unsigned int brightness)
+void set_tube_brightness(unsigned int brightness)
 {
-  //TODO
+  //TODO invert signal for tubes
   analogWrite(STROBE, brightness);
   analogWrite(LEFT_DOT, brightness);
   analogWrite(RIGHT_DOT, brightness);

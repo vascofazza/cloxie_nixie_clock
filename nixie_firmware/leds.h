@@ -1,7 +1,5 @@
 #include <FastLED.h> //fastled
 
-#define NUM_LEDS 1
-
 #define DATA_PIN D7
 
 // Define the array of leds
@@ -10,7 +8,11 @@ CRGB leds[NUM_LEDS];
 void setup_leds()
 {
   LEDS.addLeds<WS2812B, DATA_PIN>(leds, NUM_LEDS);
-  LEDS.setBrightness(50);
+}
+
+void set_led_brightness(int brightness)
+{
+  LEDS.setBrightness(brightness);
 }
 
 void fadeall() {

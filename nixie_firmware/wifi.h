@@ -1,6 +1,10 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 #include <WiFiManager.h> //https://github.com/tzapu/WiFiManager
+#include <elapsedMillis.h> //https://github.com/pfeerick/elapsedMillis
+
+elapsedMillis reconnectionDelay; //declare global if you don't want it reset every time loop runs
+int reconnection_attempt = WIFI_RECONNECT_ATTEMPTS;
 
 WiFiManager wifiManager;
 bool portalRunning = false;
@@ -27,6 +31,7 @@ void saveParamsCallback () {
   Serial.println("PARAM timezone_field = " + getParam("timezone_field"));
   strcpy(config.google_token, google_token.getValue());
   config.timezone = getParam("timezone_field").toInt();
+  //TODO handle other parameters
   save_configuration();
 }
 
@@ -34,7 +39,7 @@ void setup_wifi()
 {
   new (&google_token) WiFiManagerParameter("google_token", "google_token", config.google_token, 40);
   wifiManager.addParameter(&google_token);
- 
+
   new (&timezone_field) WiFiManagerParameter(timezone_str); // custom html input
 
   wifiManager.addParameter(&timezone_field);
@@ -68,6 +73,27 @@ void setup_wifi()
 
 void wifi_loop()
 {
+  if (WiFi.status() != WL_CONNECTED) {
+    if (reconnectionDelay > WIFI_RECONNECT_DELAY)
+    {
+      if (WiFi.waitForConnectResult() == WL_CONNECTED) {
+        Serial.println("WiFi connection restored.");
+        reconnection_attempt = WIFI_RECONNECT_ATTEMPTS;
+        return;
+      }
+      else if (reconnection_attempt-- == 0)
+      {
+        Serial.println("AP Error Resetting ESP8266");
+        delay(3000);
+        ESP.reset();
+        delay(5000);
+      }
+      reconnectionDelay = 0;
+    }
+    Serial.println("WiFi is not connected, aborting.");
+    return;
+  }
+
   //handle disconnection - reboot and AP setup
   if (portalRunning) {
     wifiManager.process();

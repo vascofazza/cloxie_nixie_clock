@@ -42,6 +42,7 @@ void loop() {
       flag = true;
     }
   }
-  set_brightness(i);
+  set_led_brightness(i);
+  set_tube_brightness(i);
   delay(50);
 }
