@@ -44,12 +44,12 @@ void sensors_loop(bool display)
   sensors.requestTemperatures();
   Serial.println(F("DONE"));
   auto light_sensor_reading = get_light_sensor_reading();
-  float temperatureC = sensors.getTempCByIndex(0);
-  if (temperatureC != DEVICE_DISCONNECTED_C)
+  float temperature_reading = config.celsius? sensors.getTempCByIndex(0): sensors.getTempFByIndex(0);
+  if (temperature_reading != DEVICE_DISCONNECTED_C)
   {
     Serial.print(F("Temperature for the device 1 (index 0) is: "));
-    Serial.println(temperatureC);
-    last_temp_reading = temperatureC;
+    Serial.println(temperature_reading);
+    last_temp_reading = temperature_reading;
   }
   else
   {

@@ -16,7 +16,7 @@ void setup_webserver(void) {
   httpUpdater.setup(&httpServer);
   httpServer.begin();
 
-  Serial.printf("UpdateServer ready! Open http://%s.local:8080/update in your browser\n", HOST_NAME);
+  Serial.printf_P(PSTR("UpdateServer ready! Open http://%s.local:8080/update in your browser\n"), HOST_NAME);
 }
 
 void webserver_loop(void) {

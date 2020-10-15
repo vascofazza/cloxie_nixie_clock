@@ -26,7 +26,12 @@ void printCurrentTime() {
   current_time.printTo(Serial);
   Serial.println();
 
-  display_time_and_date(current_time.hour(), current_time.minute(), current_time.second());
+  auto hour = current_time.hour();
+  if (!config.h24)
+  {
+    hour %= 12;
+  }
+  display_time_and_date(hour, current_time.minute(), current_time.second());
 }
 
 void clock_loop(bool display) {

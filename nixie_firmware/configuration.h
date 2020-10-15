@@ -52,6 +52,9 @@ void printParams()
 void check_params()
 {
   config.timezone = config.timezone > 267 || config.timezone < 0 ? 0 : config.timezone;
+  config.brightness_offset = config.brightness_offset > 1023 || config.brightness_offset < 0 ? 0 : config.brightness_offset;
+  config.shutdown_threshold = config.shutdown_threshold > 1023 || config.shutdown_threshold < 0 ? 0 : config.shutdown_threshold;
+  config.shutdown_delay = config.shutdown_delay > 10000 || config.shutdown_delay < -1 ? 3600 : config.shutdown_delay;
   //TODO add default values
 }
 
