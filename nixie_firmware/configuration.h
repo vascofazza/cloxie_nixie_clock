@@ -1,9 +1,9 @@
 #include <EEPROM.h>
 
 //WIFI
-#define HOST_NAME "clonixie"
-#define WIFI_SSID  "CloNixie"
-#define WIFI_PASSWORD  "clonixie"
+#define HOST_NAME "cloxie"
+#define WIFI_SSID  "Cloxie"
+#define WIFI_PASSWORD  "cloxie"
 #define PORTAL_TIMEOUT  600 //in seconds
 #define WIFI_RECONNECT_DELAY 600 * 1000 //in millis
 #define WIFI_RECONNECT_ATTEMPTS 6 //before a full reset
