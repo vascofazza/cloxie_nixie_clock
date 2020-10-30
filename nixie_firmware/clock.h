@@ -32,6 +32,7 @@ void printCurrentTime() {
     hour %= 12;
   }
   display_time_and_date(hour, current_time.minute(), current_time.second());
+  blink_dots();
 }
 
 void clock_loop(bool display) {
@@ -39,7 +40,7 @@ void clock_loop(bool display) {
   systemClock.loop();
   acetime_t now = systemClock.getNow();
 
-  if (display && now - prevNow >= 2) {
+  if (display && now - prevNow >= 1) {
     printCurrentTime();
     prevNow = now;
   }

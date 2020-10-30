@@ -1,5 +1,8 @@
 #include <OneWire.h>
 #include <DallasTemperature.h> // dallas DS18B20
+#include <elapsedMillis.h> //https://github.com/pfeerick/elapsedMillis
+
+elapsedMillis displayDelay; //declare global if you don't want it reset every time loop runs
 
 // GPIO where the DS18B20 is connected to
 #define ONE_WIRE_BUS D2
@@ -21,8 +24,8 @@ void setup_sensors()
 }
 
 /*
- * Smoothing the analogue sensor reading
- */
+   Smoothing the analogue sensor reading
+*/
 float get_light_sensor_reading()
 {
   static int idx = 0;
@@ -33,33 +36,34 @@ float get_light_sensor_reading()
   total += last_reading;
   light_sensor_readings[idx] = last_reading;
   idx = (idx + 1) % NUM_OF_READINGS;
-  
+
   float average_reading = (float)total / NUM_OF_READINGS;
   return average_reading;
 }
 
-void sensors_loop(bool display)
+float get_temperature_sensor_reading()
 {
   Serial.print(F("Requesting temperatures..."));
   sensors.requestTemperatures();
   Serial.println(F("DONE"));
-  auto light_sensor_reading = get_light_sensor_reading();
-  float temperature_reading = config.celsius? sensors.getTempCByIndex(0): sensors.getTempFByIndex(0);
+  float temperature_reading = config.celsius ? sensors.getTempCByIndex(0) : sensors.getTempFByIndex(0);
   if (temperature_reading != DEVICE_DISCONNECTED_C)
   {
-    Serial.print(F("Temperature for the device 1 (index 0) is: "));
-    Serial.println(temperature_reading);
     last_temp_reading = temperature_reading;
   }
-  else
+  return last_temp_reading;
+}
+void sensors_loop(bool display)
+{
+  auto light_sensor_reading = get_light_sensor_reading();
+  if (displayDelay > 10000)
   {
-    Serial.print(F("Cached data for Temperature is: "));
-    Serial.println(last_temp_reading);
-  }
-  if (display)
-  {
-    display_temperature(last_temp_reading);
+    auto temperature_reading = get_temperature_sensor_reading();
+    display_temperature(temperature_reading);
+    Serial.print(F("Temperature for the device 1 (index 0) is: "));
+    Serial.println(temperature_reading);
     Serial.print(F("Light sensor reading: "));
     Serial.println(light_sensor_reading);
+    displayDelay = 0;
   }
 }

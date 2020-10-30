@@ -3,16 +3,23 @@
 //WIFI
 #define HOST_NAME "cloxie"
 #define WIFI_SSID  "Cloxie"
-#define WIFI_PASSWORD  "cloxie"
+#define WIFI_PASSWORD  "cloxie1234"
 #define PORTAL_TIMEOUT  600 //in seconds
 #define WIFI_RECONNECT_DELAY 600 * 1000 //in millis
 #define WIFI_RECONNECT_ATTEMPTS 6 //before a full reset
 
 //LEDS
+#define DATA_PIN D7
 #define NUM_LEDS 6
+#define FRAMES_PER_SECOND 30
+#define PATTERN_DELAY 60000
+#define HUE_DELAY 100
 
 //SENSORS
 #define NUM_OF_READINGS 100
+
+//MISC
+#define TEST_TIME 10000
 
 struct Config {
   int timezone = 0;

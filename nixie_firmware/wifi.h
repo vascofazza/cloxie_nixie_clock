@@ -82,7 +82,6 @@ void setup_wifi()
   new (&shutdown_delay) WiFiManagerParameter("shutdown_delay", "shutdown_delay", String(config.shutdown_delay).c_str(), 10);
   wifiManager.addParameter(&shutdown_delay);
 
-  wifiManager.setConfigPortalBlocking(false);
   wifiManager.setSaveParamsCallback(saveParamsCallback);
 
   new (&google_token) WiFiManagerParameter("google_token", "google_token", config.google_token, 40);
@@ -101,6 +100,11 @@ void setup_wifi()
 
   //tries to connect to last known settings
   //if it does not connect it starts an access point and goes into a blocking loop awaiting configuration
+ // WiFi.disconnect() ;
+  //WiFi.persistent(false);
+  //WiFi.mode(WIFI_STA);            // Client mode
+  //WiFi.setSleepMode(WIFI_NONE_SLEEP);
+  //WIFI_MODEM_SLEEP
   Serial.println("Connecting to AP");
   if (!wifiManager.autoConnect(WIFI_SSID, WIFI_PASSWORD)) {
     Serial.println(F("AP Error Resetting ESP8266"));
@@ -110,6 +114,7 @@ void setup_wifi()
   }
   MDNS.begin(HOST_NAME);
   MDNS.addService("http", "tcp", 80);
+  wifiManager.setConfigPortalBlocking(false);
 }
 
 void wifi_loop()
@@ -131,6 +136,7 @@ void wifi_loop()
       }
       reconnectionDelay = 0;
     }
+    Serial.print(WiFi.status());
     Serial.println(F("WiFi is not connected, aborting."));
     return;
   }
@@ -141,7 +147,7 @@ void wifi_loop()
   }
   else
   {
-    Serial.println(F("Button Pressed, Starting Portal"));
+    Serial.println(F("Starting Portal"));
     wifiManager.startWebPortal();
     portalRunning = true;
 
