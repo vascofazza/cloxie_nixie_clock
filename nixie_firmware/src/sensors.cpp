@@ -1,0 +1,62 @@
+#include "sensors.hpp"
+
+SensorDriver::SensorDriver(TubeDriver* tube_driver)
+{
+  this->tube_driver = tube_driver;
+  pinMode(LIGHT_SENSOR_PIN, INPUT);
+  // Setup a oneWire instance to communicate with any OneWire devices
+  onewire_instance = new OneWire(ONE_WIRE_BUS);
+  // Pass our oneWire reference to Dallas Temperature sensor
+  sensors = new DallasTemperature(onewire_instance);
+  sensors->begin();
+}
+
+void SensorDriver::loop()
+{
+  get_light_sensor_reading();
+}
+
+/*
+   Smoothing the analogue sensor reading
+*/
+float SensorDriver::get_light_sensor_reading()
+{
+  static int light_sensor_readings[NUM_OF_READINGS];
+  static int idx = 0;
+  static long total = 0;
+  static elapsedMillis reading_interval;
+
+  if (reading_interval > ANALOG_READ_INTERVAL)
+  {
+    auto last_reading = analogRead(LIGHT_SENSOR_PIN);
+    // Serial.print("Light sensor read: ");
+    // Serial.println(last_reading);
+    total -= light_sensor_readings[idx];
+    total += last_reading;
+    light_sensor_readings[idx] = last_reading;
+    idx = (idx + 1) % NUM_OF_READINGS;
+    reading_interval = 0;
+  }
+
+  float average_reading = (float)total / NUM_OF_READINGS;
+
+  average_reading += config.brightness_offset;
+
+  return min((float)PWMRANGE, max(0.f, average_reading));
+}
+
+float SensorDriver::get_temperature_sensor_reading()
+{
+  static float last_temp_reading = 0;
+  Serial.print(F("Requesting temperatures..."));
+  sensors->requestTemperatures();
+  Serial.println(F("DONE"));
+  float temperature_reading = config.celsius ? sensors->getTempCByIndex(0) : sensors->getTempFByIndex(0);
+  if (temperature_reading != DEVICE_DISCONNECTED_C)
+  {
+    last_temp_reading = temperature_reading;
+  }
+  Serial.print(F("Temperature for the device 1 (index 0) is: "));
+  Serial.println(last_temp_reading);
+  return last_temp_reading;
+}

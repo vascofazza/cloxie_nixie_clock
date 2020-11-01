@@ -1,0 +1,20 @@
+###########################################
+# Syntax Coloring Map For EveryTimer library
+###########################################
+
+###########################################
+# Datatypes (KEYWORD1)
+###########################################
+
+EveryTimer	KEYWORD1
+OneShotTimer	KEYWORD1
+
+###########################################
+# Methods and Functions (KEYWORD2)
+###########################################
+
+Update	KEYWORD2
+Every	KEYWORD2
+Stop	KEYWORD2
+Start	KEYWORD2
+OneShot	KEYWORD2
