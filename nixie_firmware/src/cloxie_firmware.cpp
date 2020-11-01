@@ -7,23 +7,25 @@
 #include "wifi.hpp"
 #include "webserver.h"
 #include "sensors.hpp"
-#include "serial_parser.hpp"
 
 ClockDriver *clock_driver;
 TubeDriver *tube_driver;
 LedDriver *led_driver;
 SensorDriver *sensor_driver;
 
+#include "serial_parser.h"
+
 OneShotTimer cycle_handler;
 
-#define NUM_CYCLES 3
+#define NUM_CYCLES 4
 
 enum CYCLE
 {
+  NONE = -1,
   CLOCK = 0,
   DATE = 1,
-  TEMPERATURE = 2,
-  NONE = -1
+  TIMER = 2,
+  TEMPERATURE = 3
 };
 
 int cycle = CYCLE::NONE;
@@ -50,7 +52,6 @@ void setup()
 
 void next_cycle()
 {
-  Serial.println("CYCLE");
   tube_driver->cathode_poisoning_prevention(TRANSITION_TIME);
   cycle = (cycle + 1) % NUM_CYCLES;
 
@@ -62,14 +63,21 @@ void next_cycle()
   case CYCLE::DATE:
     cycle_handler.OneShot(DATE_CYCLE, next_cycle);
     break;
+  case CYCLE::TIMER:
+    if (!clock_driver->is_timer_set())
+      next_cycle();
+    cycle_handler.OneShot(TIMER_CYCLE, next_cycle);
+    break;
   case CYCLE::TEMPERATURE:
     cycle_handler.OneShot(TEMP_CYCLE, next_cycle);
     break;
   }
+   Serial.println("CYCLE");
 }
 
 void handle_loop()
 {
+  static bool timer_running = false;
 
   if (!config.adaptive_brightness)
   {
@@ -83,7 +91,22 @@ void handle_loop()
     tube_driver->set_brightness(light_reading);
   }
 
-  cycle_handler.Update();
+  if (clock_driver->is_timer_running())
+  {
+    cycle_handler.Stop();
+    cycle = CYCLE::TIMER;
+    timer_running = true;
+  }
+  else if (timer_running)
+  {
+    timer_running = false;
+    cycle = CYCLE::TIMER - 1;
+    next_cycle();
+  }
+  else
+  {
+    cycle_handler.Update();
+  }
 
   switch (cycle)
   {
@@ -92,6 +115,9 @@ void handle_loop()
     break;
   case CYCLE::DATE:
     clock_driver->show_date(true);
+    break;
+  case CYCLE::TIMER:
+    clock_driver->show_timer(true);
     break;
   case CYCLE::TEMPERATURE:
     clock_driver->show_date(false);

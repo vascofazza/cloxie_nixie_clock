@@ -1,14 +1,10 @@
 #include "tube_driver.hpp"
-#include "tube_patterns.hpp"
-
-BlinkPatternList blink_patterns = {no_blink, static_blink, double_static_blink, fade_out_blink};
 
 TubeDriver::TubeDriver()
 {
   brightness = 0;
   l_dot_brightness = 0;
   r_dot_brightness = 0;
-  blinking = false;
 
   pinMode(STROBE, OUTPUT);
   pinMode(LEFT_DOT, OUTPUT);
@@ -37,7 +33,7 @@ void TubeDriver::run_test()
     turn_off();
     delay(1000);
 
-    for (int b = 0; b < 1024; b += 100)
+    for (int b = 0; b < 1024; b += 200)
     {
       set_tube_brightness(b, b, b);
       for (int i = 0; i < 10; i++)
@@ -53,12 +49,12 @@ void TubeDriver::run_test()
     for (int i = 0; i < 10; i++)
     {
       set_tubes(i, i, i, i, i, i);
-      for (int b = 0; b < 1024; b += 50)
+      for (int b = 0; b < 1024; b += 100)
       {
         set_tube_brightness(b, b, b);
         delay(25);
       }
-      for (int b = 1024; b >= 0; b -= 50)
+      for (int b = 1024; b >= 0; b -= 100)
       {
         set_tube_brightness(b, b, b);
         delay(25);
@@ -77,6 +73,23 @@ void TubeDriver::run_test()
 */
 void TubeDriver::set_tubes(int h, int hh, int m, int mm, int s, int ss)
 {
+  static int prev_h = -1;
+  static int prev_hh = -1;
+  static int prev_m = -1;
+  static int prev_mm = -1;
+  static int prev_s = -1;
+  static int prev_ss = -1;
+
+  if (h == prev_h && hh == prev_hh && m == prev_m && mm == prev_mm && s == prev_s && ss == prev_ss)
+    return;
+
+  prev_h = h;
+  prev_hh = hh;
+  prev_m = m;
+  prev_mm = mm;
+  prev_s = s;
+  prev_ss = ss;
+
   if (h >= 0)
   {
     if (h == 0)
@@ -153,22 +166,21 @@ void TubeDriver::loop()
     cathode_poisoning_prevention(CATHODE_POISONING_PREVENTION_TIME);
     running_time = 0;
   }
-  blink_dots();
 }
 
-void TubeDriver::display_time_and_date(int h, int m, int s)
+void TubeDriver::display_time_and_date(int h, int m, int s, bool show_zeros)
 {
   int hour1 = h / 10; //handle 10/24h and tube off on 0
-  if (hour1 == 0)
-    hour1 = -1;
   int hour2 = h % 10;
+  if (hour1 == 0 && hour2 != 0 && !show_zeros)
+    hour1 = -1;
+    
   int min1 = m / 10;
   int min2 = m % 10;
   int sec1 = s / 10;
   int sec2 = s % 10;
 
   set_tubes(hour1, hour2, min1, min2, sec1, sec2);
-  blinking = true;
 }
 
 void TubeDriver::display_temperature(float temp)
@@ -182,15 +194,6 @@ void TubeDriver::display_temperature(float temp)
 
   set_tubes(-1, -1, i1, i2, d1, d2);
   set_dots_brightness(0, PWMRANGE);
-}
-
-void TubeDriver::blink_dots()
-{
-  static elapsedMillis elapsed;
-
-  int mode = config.blink_mode;
-  blink_patterns[mode](this, blinking, &elapsed);
-  blinking = false;
 }
 
 void TubeDriver::set_tube_brightness(int brightness, int l_dot_brightness, int r_dot_brightness)
@@ -250,10 +253,11 @@ void TubeDriver::cathode_poisoning_prevention(unsigned long time)
   //set_tube_brightness(PWMRANGE, PWMRANGE, PWMRANGE);
   while (timeout < time)
   {
+    auto delay_val = map(timeout, 0, time, 10, 1000);
     for (int i = 0; i < 10; i++)
     {
       set_tubes(i % 10, i % 10, i % 10, i % 10, i % 10, i % 10);
-      delay(map(timeout, 0, time, 10, 1000));
+      delay(delay_val);
       if (timeout >= time)
         break;
     }

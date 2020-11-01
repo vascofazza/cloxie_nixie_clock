@@ -19,7 +19,6 @@ private:
     int brightness;
     int l_dot_brightness;
     int r_dot_brightness;
-    bool blinking;
     EveryTimer cathode_poisoning_cycle;
 
     void set_tube_brightness(int, int, int);
@@ -36,11 +35,9 @@ public:
 
     void set_dots_brightness(int, int);
 
-    void display_time_and_date(int h, int m, int s);
+    void display_time_and_date(int, int, int, bool);
 
-    void display_temperature(float temp);
-
-    void blink_dots();
+    void display_temperature(float);
 
     void shutdown();
 
@@ -50,7 +47,5 @@ public:
 
     void cathode_poisoning_prevention(unsigned long);
 };
-
-typedef void (*BlinkPatternList[])(TubeDriver *, bool, elapsedMillis *);
 
 #endif

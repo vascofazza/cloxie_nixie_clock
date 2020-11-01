@@ -60,15 +60,10 @@ void setup_wifi()
   //exit after config instead of connecting
   wifiManager.setBreakAfterConfig(false);
 
-  wifiManager.setConfigPortalBlocking(false);
+  wifiManager.setConfigPortalBlocking(true);
 
   //tries to connect to last known settings
   //if it does not connect it starts an access point and goes into a blocking loop awaiting configuration
-  // WiFi.disconnect() ;
-  //WiFi.persistent(false);
-  //WiFi.mode(WIFI_STA);            // Client mode
-  WiFi.setSleepMode(WIFI_NONE_SLEEP);
-  //WIFI_MODEM_SLEEP
   Serial.println("Connecting to AP");
   if (!wifiManager.autoConnect(WIFI_SSID, WIFI_PASSWORD))
   {
@@ -79,6 +74,7 @@ void setup_wifi()
   }
   MDNS.begin(HOST_NAME);
   MDNS.addService("http", "tcp", 80);
+  wifiManager.setConfigPortalBlocking(false);
 }
 
 void wifi_loop()

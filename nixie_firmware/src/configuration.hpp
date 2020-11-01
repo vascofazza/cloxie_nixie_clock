@@ -5,25 +5,26 @@
 #include <EEPROM.h>
 
 //CLOCK
-#define CLOCK_CYCLE 40 * 1000//3600 //1h
-#define DATE_CYCLE  10 * 1000//60
-#define TEMP_CYCLE  10 * 1000//60
+#define CLOCK_CYCLE 3600 * 1000 //1h
+#define DATE_CYCLE 60 * 1000    //60s
+#define TEMP_CYCLE 60 * 1000    //60s
+#define TIMER_CYCLE 60 * 1000   // 60s
 
 //WIFI
 #define HOST_NAME "cloxie"
-#define WIFI_SSID  "Cloxie"
-#define WIFI_PASSWORD  "cloxieclock"
-#define PORTAL_TIMEOUT  600 //in seconds
+#define WIFI_SSID "Cloxie"
+#define WIFI_PASSWORD "cloxieclock"
+#define PORTAL_TIMEOUT 600              //in seconds
 #define WIFI_RECONNECT_DELAY 600 * 1000 //in millis
-#define WIFI_RECONNECT_ATTEMPTS 6 //before a full reset
+#define WIFI_RECONNECT_ATTEMPTS 6       //before a full reset
 
 //TUBES
 #define MIN_TUBE_BRIGHTNESS 80
 #define MAX_TUBE_BRIGHNTESS 700
 #define MIN_DOT_BRIGHTNESS 100
 #define MAX_DOT_BRIGHNTESS 1000
-#define CATHODE_POISONING_PREVENTION_TIME 10 * 1000 //60 sec
-#define CATHODE_POISONING_TRIGGER_TIME 60 //37200 //1h2m0s
+#define CATHODE_POISONING_PREVENTION_TIME 60 * 1000   //60 sec
+#define CATHODE_POISONING_TRIGGER_TIME 3600 + 15 * 60 //1h15m0s
 
 //LEDS
 #define NUM_LEDS 6
@@ -39,19 +40,20 @@
 
 //MISC
 #define TEST_TIME 10
-#define DEFAULT_BRIGHTNESS PWMRANGE/2
-#define TRANSITION_TIME 3 * 1000 //s
+#define DEFAULT_BRIGHTNESS PWMRANGE / 2
+#define TRANSITION_TIME 5 * 1000 //s
 
-struct Config {
+struct Config
+{
   int timezone = 0;
   bool h24 = true;
   bool celsius = true;
   char google_token[30] = "";
   int led_configuration = 0;
   bool adaptive_brightness = true;
-  int brightness_offset = 0; // light sensor offset
+  int brightness_offset = 0;  // light sensor offset
   int shutdown_threshold = 0; // light sensor threshold for turning off the tubes
-  int shutdown_delay = 0; // seconds before shutdown
+  int shutdown_delay = 0;     // seconds before shutdown
   int blink_mode = 0;
 };
 

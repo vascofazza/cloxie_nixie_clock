@@ -8,6 +8,11 @@ void no_blink(TubeDriver *driver, bool sync_pulse, elapsedMillis *elapsed)
 {
 }
 
+void static_on(TubeDriver *driver, bool sync_pulse, elapsedMillis *elapsed)
+{
+    driver->set_dots_brightness(PWMRANGE, PWMRANGE);
+}
+
 void static_blink(TubeDriver *driver, bool sync_pulse, elapsedMillis *elapsed)
 {
     static bool state = false;
