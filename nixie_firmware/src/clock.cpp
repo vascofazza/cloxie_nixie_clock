@@ -95,21 +95,21 @@ void ClockDriver::print_timer()
 {
   long val = timer_running ? timer_duration - (long)current_timer_value : timer_duration;
   if (val <= 0)
-    stop_timer();
+    reset_timer();
 
   unsigned long durCS = (val % 1000) / 10;   //Cent-seconds
   unsigned long durSS = (val / 1000) % 60;    //Seconds
   unsigned long durMM = (val / (60000)) % 60; //Minutes
-  unsigned long durHH = (val / (3600000));    //HoursÒ
+  unsigned long durHH = (val / (3600000));    //Hours
   durHH = durHH % 24;
 
   if (durHH > 0)
   {
-    tube_driver->display_time_and_date(-durHH, durMM, durSS, true);
+    tube_driver->display_time_and_date(durHH, durMM, durSS, true);
   }
   else
   {
-    tube_driver->display_time_and_date(-durMM, durSS, durCS, true);
+    tube_driver->display_time_and_date(durMM, durSS, durCS, true);
   }
 }
 

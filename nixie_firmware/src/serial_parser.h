@@ -23,8 +23,8 @@ void cmd_reset_wifi(SerialCommands* sender)
 
 void cmd_start_timer(SerialCommands* sender)
 {
-  sender->GetSerial()->println(F("Starting timer for 1 minute"));
-  clock_driver->start_timer(60*1*1000);
+  sender->GetSerial()->println(F("Starting timer for 61 minute"));
+  clock_driver->start_timer(60*61*1000);
 }
 
 void cmd_stop_timer(SerialCommands* sender)

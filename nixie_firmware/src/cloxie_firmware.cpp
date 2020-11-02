@@ -24,8 +24,8 @@ enum CYCLE
   NONE = -1,
   CLOCK = 0,
   DATE = 1,
-  TIMER = 2,
-  TEMPERATURE = 3
+  TEMPERATURE = 2,
+  TIMER = 3,
 };
 
 int cycle = CYCLE::NONE;
@@ -63,16 +63,16 @@ void next_cycle()
   case CYCLE::DATE:
     cycle_handler.OneShot(DATE_CYCLE, next_cycle);
     break;
+  case CYCLE::TEMPERATURE:
+    cycle_handler.OneShot(TEMP_CYCLE, next_cycle);
+    break;
   case CYCLE::TIMER:
     if (!clock_driver->is_timer_set())
       next_cycle();
     cycle_handler.OneShot(TIMER_CYCLE, next_cycle);
     break;
-  case CYCLE::TEMPERATURE:
-    cycle_handler.OneShot(TEMP_CYCLE, next_cycle);
-    break;
   }
-   Serial.println("CYCLE");
+  Serial.println("CYCLE");
 }
 
 void handle_loop()
@@ -100,8 +100,7 @@ void handle_loop()
   else if (timer_running)
   {
     timer_running = false;
-    cycle = CYCLE::TIMER - 1;
-    next_cycle();
+    cycle_handler.OneShot(TIMER_CYCLE, next_cycle);
   }
   else
   {
@@ -116,14 +115,17 @@ void handle_loop()
   case CYCLE::DATE:
     clock_driver->show_date(true);
     break;
-  case CYCLE::TIMER:
-    clock_driver->show_timer(true);
-    break;
   case CYCLE::TEMPERATURE:
-    clock_driver->show_date(false);
+  {
     clock_driver->show_time(false);
+    clock_driver->show_date(false);
+    clock_driver->show_timer(false);
     auto temp = sensor_driver->get_temperature_sensor_reading();
     tube_driver->display_temperature(temp);
+    break;
+  }
+  case CYCLE::TIMER:
+    clock_driver->show_timer(true);
     break;
   }
 }

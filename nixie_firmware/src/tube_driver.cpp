@@ -174,7 +174,7 @@ void TubeDriver::display_time_and_date(int h, int m, int s, bool show_zeros)
   int hour2 = h % 10;
   if (hour1 == 0 && hour2 != 0 && !show_zeros)
     hour1 = -1;
-    
+
   int min1 = m / 10;
   int min2 = m % 10;
   int sec1 = s / 10;
@@ -248,19 +248,25 @@ void TubeDriver::turn_on()
 
 void TubeDriver::cathode_poisoning_prevention(unsigned long time)
 {
+  unsigned long tot = 0;
+  int iterations = 0;
+  while (tot < time)
+  {
+    tot += map(tot, 0, time, 10, 1000);
+    iterations++;
+  }
+
   elapsedMillis timeout = 0;
 
   //set_tube_brightness(PWMRANGE, PWMRANGE, PWMRANGE);
+  int i = 10 - iterations % 10;
   while (timeout < time)
   {
     auto delay_val = map(timeout, 0, time, 10, 1000);
-    for (int i = 0; i < 10; i++)
-    {
-      set_tubes(i % 10, i % 10, i % 10, i % 10, i % 10, i % 10);
-      delay(delay_val);
-      if (timeout >= time)
-        break;
-    }
+    i = i % 10;
+    set_tubes(i, i, i, i, i, i);
+    delay(delay_val);
+    i++;
 
     // for (int i = 0; i < 10; i++)
     // {

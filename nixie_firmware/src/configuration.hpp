@@ -41,7 +41,7 @@
 //MISC
 #define TEST_TIME 10
 #define DEFAULT_BRIGHTNESS PWMRANGE / 2
-#define TRANSITION_TIME 5 * 1000 //s
+#define TRANSITION_TIME 10 * 1000 //5s
 
 struct Config
 {
