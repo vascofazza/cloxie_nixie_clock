@@ -5,7 +5,7 @@
 #include <EEPROM.h>
 
 //CLOCK
-#define CLOCK_CYCLE 1800 * 1000 //30m
+#define CLOCK_CYCLE 60 * 1000 //30m
 #define DATE_CYCLE 60 * 1000    //60s
 #define TEMP_CYCLE 60 * 1000    //60s
 #define TIMER_CYCLE 60 * 1000   // 60s

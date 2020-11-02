@@ -67,10 +67,14 @@ void next_cycle()
     cycle_handler.OneShot(TEMP_CYCLE, next_cycle);
     break;
   case CYCLE::TIMER:
-    if (!clock_driver->is_timer_set())
-      next_cycle();
+    if (clock_driver->is_timer_set())
+    {
     cycle_handler.OneShot(TIMER_CYCLE, next_cycle);
     break;
+    }
+  default:
+    cycle = CYCLE::CLOCK;
+    cycle_handler.OneShot(CLOCK_CYCLE, next_cycle);
   }
   Serial.println("CYCLE");
 }
