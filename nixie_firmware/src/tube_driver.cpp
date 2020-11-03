@@ -19,7 +19,7 @@ TubeDriver::TubeDriver()
 
 void TubeDriver::run_test()
 {
-  Serial.print("Running tube tests...");
+  Serial.print(F("Running tube tests..."));
   elapsedSeconds test_time;
   while (test_time < TEST_TIME)
   {
@@ -65,7 +65,7 @@ void TubeDriver::run_test()
     delay(1000);
   }
   turn_off();
-  Serial.println("Done!");
+  Serial.println(F("Done!"));
 }
 
 /*

@@ -1,7 +1,7 @@
 #ifndef LEDS_PATTERNS_HPP
 #define LEDS_PATTERNS_HPP
 
-#include <FastLED.h>       //fastled
+#include <FastLED.h>
 
 void rainbow(CRGB* leds, int num_leds, int gHue) 
 {

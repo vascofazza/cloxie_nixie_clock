@@ -2,8 +2,8 @@
 #define SENSORS_HPP
 
 #include <OneWire.h>
-#include <DallasTemperature.h> // dallas DS18B20
-#include <elapsedMillis.h>     //https://github.com/pfeerick/elapsedMillis
+#include <DallasTemperature.h>
+#include <elapsedMillis.h>
 #include "configuration.hpp"
 #include "tube_driver.hpp"
 

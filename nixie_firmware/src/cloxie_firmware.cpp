@@ -5,7 +5,7 @@
 #include "clock.hpp"
 #include "leds.hpp"
 #include "wifi.hpp"
-//#include "webserver.h"
+#include "webserver.h"
 #include "sensors.hpp"
 #include "ota.h"
 
@@ -40,20 +40,20 @@ void setup()
   setup_serial_parser();
   setup_configuration();
   setup_wifi();
-  //setup_webserver();
-  setup_ota();
+  setup_cert_store();
+  setup_webserver();
   tube_driver = new TubeDriver();
   clock_driver = new ClockDriver(tube_driver);
   led_driver = new LedDriver(tube_driver, NUM_LEDS);
   sensor_driver = new SensorDriver(tube_driver);
 
   check_for_updates();
-  ota_handler.Every(GHOTA_INTERVAL, check_for_updates);
+  ota_handler.Every(60000, check_for_updates);
 
   cycle_handler.OneShot(0, next_cycle);
 
   // test the tubes
-  tube_driver->run_test();
+  //tube_driver->run_test();
 }
 
 void next_cycle()
@@ -82,7 +82,7 @@ void next_cycle()
     cycle = CYCLE::CLOCK;
     cycle_handler.OneShot(CLOCK_CYCLE, next_cycle);
   }
-  Serial.println("CYCLE");
+  Serial.println(F("CYCLE"));
 }
 
 void handle_loop()
@@ -147,7 +147,7 @@ void loop()
   clock_driver->loop();
 
   wifi_loop();
-  //webserver_loop();
+  webserver_loop();
   serial_parser_loop();
 
   handle_loop();

@@ -29,7 +29,7 @@ float SensorDriver::get_light_sensor_reading()
   if (reading_interval > ANALOG_READ_INTERVAL)
   {
     auto last_reading = analogRead(LIGHT_SENSOR_PIN);
-    // Serial.print("Light sensor read: ");
+    // Serial.print(F("Light sensor read: "));
     // Serial.println(last_reading);
     total -= light_sensor_readings[idx];
     total += last_reading;

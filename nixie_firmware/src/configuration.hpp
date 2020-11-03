@@ -11,9 +11,9 @@
 #define TIMER_CYCLE 60 * 1000   //60s
 
 //WIFI
-#define HOST_NAME "cloxie"
-#define WIFI_SSID "Cloxie"
-#define WIFI_PASSWORD "cloxieclock"
+#define HOST_NAME PSTR("cloxie")
+#define WIFI_SSID PSTR("Cloxie")
+#define WIFI_PASSWORD PSTR("cloxieclock")
 #define PORTAL_TIMEOUT 600              //in seconds
 #define WIFI_RECONNECT_DELAY 600 * 1000 //in millis
 #define WIFI_RECONNECT_ATTEMPTS 6       //before a full reset
@@ -44,10 +44,10 @@
 #define TRANSITION_TIME 10 * 1000 //5s
 
 //GITHUB
-#define GHOTA_USER "vascofazza"
-#define GHOTA_REPO "smart_nixie_clock"
-#define GHOTA_CURRENT_TAG "0.0.1"
-#define GHOTA_BIN_FILE "firmware.bin"
+#define GHOTA_USER PSTR("vascofazza")
+#define GHOTA_REPO PSTR("smart_nixie_clock")
+#define GHOTA_CURRENT_TAG PSTR("0.0.1")
+#define GHOTA_BIN_FILE PSTR("firmware.bin")
 #define GHOTA_ACCEPT_PRERELEASE 0
 #define GHOTA_INTERVAL 3600 * 6 * 1000 //6h
 

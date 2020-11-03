@@ -111,34 +111,35 @@ class WiFiManagerParameter {
         @id is used for HTTP queries and must not contain spaces nor other special characters
     */
     WiFiManagerParameter();
-    WiFiManagerParameter(const char *custom);
-    WiFiManagerParameter(const char *id, const char *label);
-    WiFiManagerParameter(const char *id, const char *label, const char *defaultValue, int length);
-    WiFiManagerParameter(const char *id, const char *label, const char *defaultValue, int length, const char *custom);
-    WiFiManagerParameter(const char *id, const char *label, const char *defaultValue, int length, const char *custom, int labelPlacement);
+    WiFiManagerParameter(const __FlashStringHelper *custom);
+    WiFiManagerParameter(const __FlashStringHelper *id, const __FlashStringHelper *label);
+    WiFiManagerParameter(const __FlashStringHelper *id, const __FlashStringHelper *label, const char *defaultValue, int length);
+    WiFiManagerParameter(const __FlashStringHelper *id, const __FlashStringHelper *label, const char *defaultValue, int length, const __FlashStringHelper *custom);
+    WiFiManagerParameter(const __FlashStringHelper *id, const __FlashStringHelper *label, const char *defaultValue, int length, const __FlashStringHelper *custom, int labelPlacement);
     ~WiFiManagerParameter();
     // WiFiManagerParameter& operator=(const WiFiManagerParameter& rhs);
 
-    const char *getID();
+    const __FlashStringHelper *getID();
     const char *getValue();
-    const char *getLabel();
-    const char *getPlaceholder(); // @deprecated, use getLabel
+    const __FlashStringHelper *getLabel();
+    const __FlashStringHelper *getPlaceholder(); // @deprecated, use getLabel
     int         getValueLength();
     int         getLabelPlacement();
-    const char *getCustomHTML();
+    const __FlashStringHelper *getCustomHTML();
     void        setValue(const char *defaultValue, int length);
+    void        setValue(const __FlashStringHelper *defalultValue, int length);
 
   protected:
-    void init(const char *id, const char *label, const char *defaultValue, int length, const char *custom, int labelPlacement);
+    void init(const __FlashStringHelper *id, const __FlashStringHelper *label, const char *defaultValue, int length, const __FlashStringHelper *custom, int labelPlacement);
 
   private:
     WiFiManagerParameter& operator=(const WiFiManagerParameter&);
-    const char *_id;
-    const char *_label;
+    const __FlashStringHelper *_id;
+    const __FlashStringHelper *_label;
     char       *_value;
     int         _length;
     int         _labelPlacement;
-    const char *_customHTML;
+    const __FlashStringHelper *_customHTML;
     friend class WiFiManager;
 };
 

@@ -3,8 +3,8 @@
 
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
-#include <WiFiManager.h> //https://github.com/tzapu/WiFiManager
-#include <elapsedMillis.h> //https://github.com/pfeerick/elapsedMillis
+#include <WiFiManager.h>
+#include <elapsedMillis.h>
 #include "configuration.hpp"
 
 static WiFiManager wifiManager;

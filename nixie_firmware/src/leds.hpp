@@ -2,8 +2,8 @@
 #define LEDS_HPP
 
 #define FASTLED_ALLOW_INTERRUPTS 0
-#include <FastLED.h>       //fastled
-#include <elapsedMillis.h> //https://github.com/pfeerick/elapsedMillis
+#include <FastLED.h>
+#include <elapsedMillis.h>
 #include "configuration.hpp"
 #include "tube_driver.hpp"
 
