@@ -23,6 +23,7 @@ private:
     CRGB *leds;
     int pattern;
     int brightness;
+
 public:
     LedDriver(TubeDriver *, int);
 

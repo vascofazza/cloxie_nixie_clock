@@ -42,7 +42,7 @@ void ClockDriver::loop()
     {
       blink_dots(static_on);
     }
-    
+
     print_timer();
   }
   else if (display_time)
@@ -97,7 +97,7 @@ void ClockDriver::print_timer()
   if (val <= 0)
     reset_timer();
 
-  unsigned long durCS = (val % 1000) / 10;   //Cent-seconds
+  unsigned long durCS = (val % 1000) / 10;    //Cent-seconds
   unsigned long durSS = (val / 1000) % 60;    //Seconds
   unsigned long durMM = (val / (60000)) % 60; //Minutes
   unsigned long durHH = (val / (3600000));    //Hours

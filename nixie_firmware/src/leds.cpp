@@ -3,7 +3,7 @@
 
 LedPatternList gPatterns = {rainbow, rainbowWithGlitter, confetti, sinelon, juggle, bpm};
 
-LedDriver::LedDriver(TubeDriver* tube_driver, int num_leds)
+LedDriver::LedDriver(TubeDriver *tube_driver, int num_leds)
 {
   this->tube_driver = tube_driver;
   leds = new CRGB[num_leds];

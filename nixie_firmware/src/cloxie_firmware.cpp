@@ -47,13 +47,12 @@ void setup()
   led_driver = new LedDriver(tube_driver, NUM_LEDS);
   sensor_driver = new SensorDriver(tube_driver);
 
-  check_for_updates();
-  ota_handler.Every(60000, check_for_updates);
+  ota_handler.Every(GHOTA_INTERVAL, check_for_updates);
 
   cycle_handler.OneShot(0, next_cycle);
 
   // test the tubes
-  //tube_driver->run_test();
+  tube_driver->run_test();
 }
 
 void next_cycle()
@@ -75,8 +74,8 @@ void next_cycle()
   case CYCLE::TIMER:
     if (clock_driver->is_timer_set())
     {
-    cycle_handler.OneShot(TIMER_CYCLE, next_cycle);
-    break;
+      cycle_handler.OneShot(TIMER_CYCLE, next_cycle);
+      break;
     }
   default:
     cycle = CYCLE::CLOCK;

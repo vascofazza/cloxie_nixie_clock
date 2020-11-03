@@ -8,38 +8,38 @@ static char serial_command_buffer_[32];
 static SerialCommands serial_commands_(&Serial, serial_command_buffer_, sizeof(serial_command_buffer_), "\r\n", " ");
 
 //This is the default handler, and gets called when no other command matches.
-void cmd_unrecognized(SerialCommands* sender, const char* cmd)
+void cmd_unrecognized(SerialCommands *sender, const char *cmd)
 {
   sender->GetSerial()->print(F("Unrecognized command ["));
   sender->GetSerial()->print(cmd);
   sender->GetSerial()->println(F("]"));
 }
 
-void cmd_reset_wifi(SerialCommands* sender)
+void cmd_reset_wifi(SerialCommands *sender)
 {
   sender->GetSerial()->println(F("Resetting Wifi settings."));
   reset_wifi_settings();
 }
 
-void cmd_start_timer(SerialCommands* sender)
+void cmd_start_timer(SerialCommands *sender)
 {
   sender->GetSerial()->println(F("Starting timer for 61 minute"));
-  clock_driver->start_timer(60*61*1000);
+  clock_driver->start_timer(60 * 61 * 1000);
 }
 
-void cmd_stop_timer(SerialCommands* sender)
+void cmd_stop_timer(SerialCommands *sender)
 {
   sender->GetSerial()->println(F("Stopping timer."));
   clock_driver->stop_timer();
 }
 
-void cmd_reset_timer(SerialCommands* sender)
+void cmd_reset_timer(SerialCommands *sender)
 {
   sender->GetSerial()->println(F("Resetting timer."));
   clock_driver->reset_timer();
 }
 
-void cmd_resume_timer(SerialCommands* sender)
+void cmd_resume_timer(SerialCommands *sender)
 {
   sender->GetSerial()->println(F("Resuming timer."));
   clock_driver->start_timer(-1);

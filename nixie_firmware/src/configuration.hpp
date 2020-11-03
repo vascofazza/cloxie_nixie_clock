@@ -41,7 +41,7 @@
 //MISC
 #define TEST_TIME 10
 #define DEFAULT_BRIGHTNESS PWMRANGE / 2
-#define TRANSITION_TIME 10 * 1000 //5s
+#define TRANSITION_TIME 10 * 1000 //10s
 
 //GITHUB
 #define GHOTA_USER PSTR("vascofazza")
@@ -50,7 +50,6 @@
 #define GHOTA_BIN_FILE PSTR("firmware.bin")
 #define GHOTA_ACCEPT_PRERELEASE 0
 #define GHOTA_INTERVAL 3600 * 6 * 1000 //6h
-
 
 struct Config
 {

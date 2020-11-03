@@ -11,7 +11,7 @@ static WiFiManager wifiManager;
 
 String getParam(String);
 
-void saveParamsCallback ();
+void saveParamsCallback();
 
 void setup_wifi();
 

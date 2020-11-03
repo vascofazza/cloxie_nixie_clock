@@ -22,6 +22,7 @@ private:
     EveryTimer cathode_poisoning_cycle;
 
     void set_tube_brightness(int, int, int);
+
 public:
     TubeDriver();
 

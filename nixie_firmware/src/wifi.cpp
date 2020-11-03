@@ -121,7 +121,7 @@ void saveParamsCallback()
   Serial.println(google_token->getValue());
   Serial.print(F("PARAM timezone_field = "));
   Serial.println(getParam(F("timezone_field")));
-  Serial.print(F("PARAM h24_field = ")); 
+  Serial.print(F("PARAM h24_field = "));
   Serial.println(getParam(F("h24_field")));
   Serial.print(F("PARAM blink_field = "));
   Serial.println(getParam(F("blink_field")));

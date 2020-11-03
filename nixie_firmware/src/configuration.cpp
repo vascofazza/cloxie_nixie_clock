@@ -35,7 +35,6 @@ void check_params()
   config.shutdown_delay = config.shutdown_delay > 10000 || config.shutdown_delay < -1 ? 3600 : config.shutdown_delay;
   config.led_configuration = config.led_configuration > 3 || config.led_configuration < 0 ? 0 : config.led_configuration;
   config.blink_mode = config.blink_mode > 3 || config.blink_mode < 0 ? 0 : config.blink_mode;
-  //TODO add default values
 }
 
 void setup_configuration()

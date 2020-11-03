@@ -11,7 +11,7 @@ using namespace ace_time::clock;
 class ClockDriver
 {
 private:
-    TubeDriver* tube_driver;
+    TubeDriver *tube_driver;
     BasicZoneProcessor zoneProcessor;
     NtpClock ntpClock;
     SystemClockLoop *systemClock;
@@ -28,28 +28,27 @@ private:
     void blink_dots(void (*)(TubeDriver *, bool, elapsedMillis *));
 
 public:
+    ClockDriver(TubeDriver *);
 
-ClockDriver(TubeDriver*);
+    void loop();
 
-void loop();
+    void show_time(bool);
 
-void show_time(bool);
+    void show_date(bool);
 
-void show_date(bool);
+    void show_timer(bool);
 
-void show_timer(bool);
+    void start_timer(long duration);
 
-void start_timer(long duration);
+    void stop_timer();
 
-void stop_timer();
+    void reset_timer();
 
-void reset_timer();
+    bool is_timer_set();
 
-bool is_timer_set();
+    bool is_timer_running();
 
-bool is_timer_running();
-
-void set_alarm(long offset);
+    void set_alarm(long offset);
 };
 
 typedef void (*BlinkPatternList[])(TubeDriver *, bool, elapsedMillis *);
