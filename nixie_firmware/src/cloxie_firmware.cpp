@@ -5,8 +5,9 @@
 #include "clock.hpp"
 #include "leds.hpp"
 #include "wifi.hpp"
-#include "webserver.h"
+//#include "webserver.h"
 #include "sensors.hpp"
+#include "ota.h"
 
 ClockDriver *clock_driver;
 TubeDriver *tube_driver;
@@ -16,6 +17,7 @@ SensorDriver *sensor_driver;
 #include "serial_parser.h"
 
 OneShotTimer cycle_handler;
+EveryTimer ota_handler;
 
 #define NUM_CYCLES 4
 
@@ -38,11 +40,15 @@ void setup()
   setup_serial_parser();
   setup_configuration();
   setup_wifi();
-  setup_webserver();
+  //setup_webserver();
+  setup_ota();
   tube_driver = new TubeDriver();
   clock_driver = new ClockDriver(tube_driver);
   led_driver = new LedDriver(tube_driver, NUM_LEDS);
   sensor_driver = new SensorDriver(tube_driver);
+
+  check_for_updates();
+  ota_handler.Every(GHOTA_INTERVAL, check_for_updates);
 
   cycle_handler.OneShot(0, next_cycle);
 
@@ -141,8 +147,9 @@ void loop()
   clock_driver->loop();
 
   wifi_loop();
-  webserver_loop();
+  //webserver_loop();
   serial_parser_loop();
 
   handle_loop();
+  ota_handler.Update();
 }

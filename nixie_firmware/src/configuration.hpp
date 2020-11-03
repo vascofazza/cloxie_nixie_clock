@@ -4,8 +4,6 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 
-const int FW_VERSION = 1000;
-
 //CLOCK
 #define CLOCK_CYCLE 1800 * 1000 //30m
 #define DATE_CYCLE 60 * 1000    //60s
@@ -44,6 +42,15 @@ const int FW_VERSION = 1000;
 #define TEST_TIME 10
 #define DEFAULT_BRIGHTNESS PWMRANGE / 2
 #define TRANSITION_TIME 10 * 1000 //5s
+
+//GITHUB
+#define GHOTA_USER "vascofazza"
+#define GHOTA_REPO "smart_nixie_clock"
+#define GHOTA_CURRENT_TAG "0.0.1"
+#define GHOTA_BIN_FILE "firmware.bin"
+#define GHOTA_ACCEPT_PRERELEASE 0
+#define GHOTA_INTERVAL 3600 * 6 * 1000 //6h
+
 
 struct Config
 {
