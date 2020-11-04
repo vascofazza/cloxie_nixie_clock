@@ -51,7 +51,7 @@ void setup_wifi()
   wifiManager.setMenu(menu);
 
   //wifiManager.setHostname(HOST_NAME);
-  wifiManager.setDebugOutput(true);
+  wifiManager.setDebugOutput(false);
   // Configuration portal stays up for this amount of time on powerup
   wifiManager.setConfigPortalTimeout(PORTAL_TIMEOUT);
 

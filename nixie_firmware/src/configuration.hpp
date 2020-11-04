@@ -45,9 +45,9 @@
 
 //GITHUB
 #define GHOTA_USER PSTR("vascofazza")
-#define GHOTA_REPO PSTR("smart_nixie_clock")
-#define GHOTA_CURRENT_TAG PSTR("0.0.1")
-#define GHOTA_BIN_FILE PSTR("firmware.bin")
+#define GHOTA_REPO PSTR("cloxie_nixie_clock")
+#define GHOTA_CURRENT_TAG PSTR("0.0.2")
+#define GHOTA_BIN_FILE PSTR("cloxie_d1_mini.bin")
 #define GHOTA_ACCEPT_PRERELEASE 0
 #define GHOTA_INTERVAL 3600 * 6 * 1000 //6h
 

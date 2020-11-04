@@ -18,7 +18,7 @@
 #define GHOTA_HOST "api.github.com"
 #define GHOTA_PORT 443
 #define GHOTA_TIMEOUT 1500
-#define GHOTA_CONTENT_TYPE "application/octet-stream"
+#define GHOTA_CONTENT_TYPE "binary/octet-stream"
 
 #define GHOTA_NTP1 "pool.ntp.org"
 #define GHOTA_NTP2 "time.nist.gov"

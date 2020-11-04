@@ -30,6 +30,7 @@ jobs:
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: nixie_firmware/.pio/build/d1_mini/firmware.bin
+	asset_name: cloxie_d1_mini.bin
         tag: ${{ github.ref }}
         overwrite: true
         file_glob: true

@@ -37,6 +37,11 @@ void next_cycle();
 void setup()
 {
   Serial.begin(9600);
+
+  Serial.println("Cloxie Nixie Clock");
+  Serial.print("FW version: ");
+  Serial.println(GHOTA_CURRENT_TAG);
+
   setup_serial_parser();
   setup_configuration();
   setup_wifi();

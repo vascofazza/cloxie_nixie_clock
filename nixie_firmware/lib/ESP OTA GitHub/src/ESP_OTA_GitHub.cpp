@@ -144,8 +144,8 @@ void ESPOTAGitHub::set_buffer_size(BearSSL::WiFiClientSecure *client, const char
         if (client->probeMaxFragmentLength(host, port, size))
         {
             client->setBufferSizes(size, size);
-            Serial.print("[BearSSL::WifiClientSecure] Setting buffer size to ");
-            Serial.println(size);
+            //Serial.print(F("[BearSSL::WifiClientSecure] Setting buffer size to "));
+            //Serial.println(size);
             return;
         }
     }
@@ -190,30 +190,109 @@ bool ESPOTAGitHub::checkUpgrade()
     url += _repo;
     url += "/releases/latest";
 
-    client.print(String("GET ") + url + " HTTP/1.1\r\n" +
+    client.print(String("GET ") + url + " HTTP/1.0\r\n" +
                  "Host: " + GHOTA_HOST + "\r\n" +
                  "User-Agent: ESP_OTA_GitHubArduinoLibrary\r\n" +
                  "Connection: close\r\n\r\n");
 
     while (client.connected())
     {
-        String response = client.readStringUntil('\n');
-        if (response == "\r")
+        if (client.find('{'))
         {
             break;
         }
     }
 
-    String response = client.readStringUntil('\n');
-    //client->stop();
+    String response = "{" + client.readStringUntil('\n');
+    //Serial.println(response);
+
+    /*
+    if (!client.find("\"tag_name\":\""))
+    {
+        _lastError = "tag_name not found.";
+        return false;
+    }
+    String release_tag = client.readStringUntil('"');
+    Serial.print("[ESP_OTA_GitHub] latest release_tag: ");
+    Serial.println(release_tag);
+
+    if (!client.find("\"prerelease\":"))
+    {
+        _lastError = "prerelease flag not found.";
+        return false;
+    }
+    bool release_prerelease = client.readStringUntil(',') == "true";
+    Serial.print("[ESP_OTA_GitHub] prerelease: ");
+    Serial.println(release_prerelease);
+
+    if (strcmp(release_tag.c_str(), "_currentTag") != 0)
+    {
+        if (!_preRelease)
+        {
+            if (release_prerelease)
+            {
+                _lastError = "Latest release is a pre-release and GHOTA_ACCEPT_PRERELEASE is set to false.";
+                return false;
+            }
+        }
+        bool valid_asset = false;
+        while (1)
+        {
+            if (!client.find("\"name\":\""))
+            {
+                _lastError = "asset not found.";
+                return false;
+            }
+            String asset_name = client.readStringUntil('"');
+            Serial.print("[ESP_OTA_GitHub] asset_name: ");
+            Serial.println(asset_name);
+
+            if (strcmp(asset_name.c_str(), _binFile) == 0)
+            {
+                if (!client.find("\"browser_download_url\":\""))
+                {
+                    _lastError = "browser_download_url not found.";
+                    return false;
+                }
+                String asset_url = client.readStringUntil('"');
+                Serial.print("[ESP_OTA_GitHub] asset_url:\"");
+                Serial.println(asset_url);
+                _upgradeURL = asset_url.c_str();
+                valid_asset = true;
+            }
+            else
+            {
+                valid_asset = false;
+            }
+
+            if (valid_asset)
+            {
+                return true;
+            }
+            else
+            {
+                _lastError = "No valid binary found for latest release.";
+                return false;
+            }
+        }
+    }
+    else
+    {
+        _lastError = "Already running latest release.";
+        return false;
+    }
+    */
+
+    client.stop();
 
     // --- ArduinoJSON v6 --- //
 
     // Get from https://arduinojson.org/v6/assistant/
-    const size_t capacity = JSON_ARRAY_SIZE(3) + 3 * JSON_OBJECT_SIZE(13) + 5 * JSON_OBJECT_SIZE(18) + 5560;
+    const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_OBJECT_SIZE(13) + 3 * JSON_OBJECT_SIZE(18) + 5560;
 
     DynamicJsonDocument doc(capacity);
 
+    deserializeJson(doc, response);
     DeserializationError error = deserializeJson(doc, response);
 
     if (!error)
@@ -221,9 +300,9 @@ bool ESPOTAGitHub::checkUpgrade()
         if (doc.containsKey("tag_name"))
         {
             const char *release_tag = doc["tag_name"];
-            const char *release_name = doc["name"];
+            //const char *release_name = doc["name"];
             bool release_prerelease = doc["prerelease"];
-            if (strcmp(release_tag, _currentTag) != 0)
+            if (strcmp_P(release_tag, _currentTag) != 0)
             {
                 if (!_preRelease)
                 {
@@ -241,7 +320,7 @@ bool ESPOTAGitHub::checkUpgrade()
                     const char *asset_name = asset["name"];
                     const char *asset_url = asset["browser_download_url"];
 
-                    if (strcmp(asset_type, GHOTA_CONTENT_TYPE) == 0 && strcmp(asset_name, _binFile) == 0)
+                    if (strcmp_P(asset_type, GHOTA_CONTENT_TYPE) == 0 && strcmp_P(asset_name, _binFile) == 0)
                     {
                         _upgradeURL = asset_url;
                         valid_asset = true;
@@ -275,7 +354,7 @@ bool ESPOTAGitHub::checkUpgrade()
     }
     else
     {
-        _lastError = "Failed to parse JSON."; // Error was: " + error.c_str();
+        _lastError = error.c_str();
         return false;
     }
     // --- END ArduinoJSON v6 --- //
@@ -305,11 +384,6 @@ bool ESPOTAGitHub::doUpgrade()
 
     BearSSL::WiFiClientSecure client;
     set_buffer_size(&client, splitURL.host.c_str(), splitURL.port);
-    /* bool mfln = client.probeMaxFragmentLength(splitURL.host, splitURL.port, 1024);
-    if (mfln)
-    {
-        client.setBufferSizes(1024, 1024);
-    } */
     client.setCertStore(_certStore);
 
     ESPhttpUpdate.setLedPin(LED_BUILTIN, LOW);
