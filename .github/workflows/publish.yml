@@ -33,4 +33,3 @@ jobs:
         asset_name: cloxie_d1_mini.bin
         tag: ${{ github.ref }}
         overwrite: true
-        file_glob: true

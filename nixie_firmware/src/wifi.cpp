@@ -164,3 +164,17 @@ void reset_wifi_settings()
   wifiManager.resetSettings();
   ESP.reset();
 }
+
+void wifi_free_resources()
+{
+  wifiManager.stopWebPortal();
+  free(google_token);
+  free(timezone_field);
+  free(h24_field);
+  free(blink_field);
+  free(temp_field);
+  free(adaptive_field);
+  free(brightness_offset);
+  free(shutdown_threshold);
+  free(shutdown_delay);
+}

@@ -72,7 +72,7 @@ bool ESPOTAGitHub::_resolveRedirects()
             return false;
         }
 
-        client.print(String("GET ") + path + " HTTP/1.1\r\n" +
+        client.print(String("GET ") + path + " HTTP/1.0\r\n" +
                      "Host: " + host + "\r\n" +
                      "User-Agent: ESP_OTA_GitHubArduinoLibrary\r\n" +
                      "Connection: close\r\n\r\n");
@@ -192,7 +192,7 @@ bool ESPOTAGitHub::checkUpgrade()
 
     client.print(String("GET ") + url + " HTTP/1.0\r\n" +
                  "Host: " + GHOTA_HOST + "\r\n" +
-                 "User-Agent: ESP_OTA_GitHubArduinoLibrary\r\n" +
+                 "User-Agent: ESP_OTA_GitHub\r\n" +
                  "Connection: close\r\n\r\n");
 
     while (client.connected())
@@ -202,18 +202,14 @@ bool ESPOTAGitHub::checkUpgrade()
             break;
         }
     }
-
-    String response = "{" + client.readStringUntil('\n');
-    //Serial.println(response);
-
-    /*
+#ifdef GHOTA_DO_NOT_USE_ARDUINO_JSON
     if (!client.find("\"tag_name\":\""))
     {
         _lastError = "tag_name not found.";
         return false;
     }
     String release_tag = client.readStringUntil('"');
-    Serial.print("[ESP_OTA_GitHub] latest release_tag: ");
+    Serial.print(F("[ESP_OTA_GitHub] latest release_tag: "));
     Serial.println(release_tag);
 
     if (!client.find("\"prerelease\":"))
@@ -222,10 +218,10 @@ bool ESPOTAGitHub::checkUpgrade()
         return false;
     }
     bool release_prerelease = client.readStringUntil(',') == "true";
-    Serial.print("[ESP_OTA_GitHub] prerelease: ");
+    Serial.print(F("[ESP_OTA_GitHub] prerelease: "));
     Serial.println(release_prerelease);
 
-    if (strcmp(release_tag.c_str(), "_currentTag") != 0)
+    if (strcmp_P(release_tag.c_str(), _currentTag) != 0)
     {
         if (!_preRelease)
         {
@@ -244,10 +240,10 @@ bool ESPOTAGitHub::checkUpgrade()
                 return false;
             }
             String asset_name = client.readStringUntil('"');
-            Serial.print("[ESP_OTA_GitHub] asset_name: ");
+            Serial.print(F("[ESP_OTA_GitHub] asset_name: "));
             Serial.println(asset_name);
 
-            if (strcmp(asset_name.c_str(), _binFile) == 0)
+            if (strcmp_P(asset_name.c_str(), _binFile) == 0)
             {
                 if (!client.find("\"browser_download_url\":\""))
                 {
@@ -255,7 +251,7 @@ bool ESPOTAGitHub::checkUpgrade()
                     return false;
                 }
                 String asset_url = client.readStringUntil('"');
-                Serial.print("[ESP_OTA_GitHub] asset_url:\"");
+                Serial.print(F("[ESP_OTA_GitHub] asset_url:\""));
                 Serial.println(asset_url);
                 _upgradeURL = asset_url.c_str();
                 valid_asset = true;
@@ -281,9 +277,10 @@ bool ESPOTAGitHub::checkUpgrade()
         _lastError = "Already running latest release.";
         return false;
     }
-    */
+#else
+    //client.stop();
 
-    client.stop();
+    String response = "{" + client.readStringUntil('\n');
 
     // --- ArduinoJSON v6 --- //
 
@@ -357,7 +354,8 @@ bool ESPOTAGitHub::checkUpgrade()
         _lastError = error.c_str();
         return false;
     }
-    // --- END ArduinoJSON v6 --- //
+// --- END ArduinoJSON v6 --- //
+#endif
 }
 
 bool ESPOTAGitHub::doUpgrade()

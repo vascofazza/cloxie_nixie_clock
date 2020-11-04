@@ -2,6 +2,7 @@
 #include <CertStoreBearSSL.h>
 #include "configuration.hpp"
 #include "wifi.hpp"
+#include "webserver.h"
 
 BearSSL::CertStore certStore;
 
@@ -31,6 +32,8 @@ void check_for_updates()
   Serial.println(F("Checking for update..."));
   if (API.checkUpgrade())
   {
+    wifi_free_resources();
+    stop_webserver();
     Serial.print(F("Upgrade found at: "));
     Serial.println(API.getUpgradeURL());
     if (API.doUpgrade())
@@ -41,6 +44,8 @@ void check_for_updates()
     {
       Serial.print(F("Unable to upgrade: "));
       Serial.println(API.getLastError());
+      setup_wifi();
+      start_webserver();
     }
   }
   else

@@ -1,3 +1,6 @@
+#ifndef WEBSERVER_OTA_H
+#define WEBSERVER_OTA_H
+
 #include "ESPAsyncTCP.h"
 #include "ESPAsyncWebServer.h"
 
@@ -17,7 +20,7 @@ void onBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t in
   //Handle body
 }
 
-void setup_webserver(void)
+void start_webserver(void)
 {
   if (WiFi.waitForConnectResult() != WL_CONNECTED)
   {
@@ -72,6 +75,11 @@ void setup_webserver(void)
   server.begin();
 }
 
+void stop_webserver()
+{
+  server.end();
+}
+
 void webserver_loop(void)
 {
   if (shouldReboot)
@@ -81,3 +89,5 @@ void webserver_loop(void)
     ESP.restart();
   }
 }
+
+#endif

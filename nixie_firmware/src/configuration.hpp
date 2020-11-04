@@ -44,9 +44,10 @@
 #define TRANSITION_TIME 10 * 1000 //10s
 
 //GITHUB
+//#define GHOTA_DO_NOT_USE_ARDUINO_JSON
 #define GHOTA_USER PSTR("vascofazza")
 #define GHOTA_REPO PSTR("cloxie_nixie_clock")
-#define GHOTA_CURRENT_TAG PSTR("0.0.1")
+#define GHOTA_CURRENT_TAG PSTR("0.0.3")
 #define GHOTA_BIN_FILE PSTR("cloxie_d1_mini.bin")
 #define GHOTA_ACCEPT_PRERELEASE 0
 #define GHOTA_INTERVAL 3600 * 6 * 1000 //6h

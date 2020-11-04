@@ -46,7 +46,7 @@ void setup()
   setup_configuration();
   setup_wifi();
   setup_cert_store();
-  setup_webserver();
+  start_webserver();
   tube_driver = new TubeDriver();
   clock_driver = new ClockDriver(tube_driver);
   led_driver = new LedDriver(tube_driver, NUM_LEDS);
