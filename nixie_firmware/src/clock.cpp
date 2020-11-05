@@ -25,8 +25,7 @@ void ClockDriver::loop()
   systemClock->loop();
   acetime_t now = systemClock->getNow();
 
-  auto time_zone = TimeZone::forZoneInfo(zonedb::kZoneRegistry[config.timezone], &zoneProcessor);
-  auto current_time = ZonedDateTime::forEpochSeconds(now, time_zone);
+  ace_time::ZonedDateTime current_time = get_current_time();
 
   if (display_timer)
   {
@@ -64,6 +63,15 @@ void ClockDriver::loop()
   }
 }
 
+ace_time::ZonedDateTime ClockDriver::get_current_time()
+{
+  acetime_t now = systemClock->getNow();
+
+  auto time_zone = TimeZone::forZoneInfo(zonedb::kZoneRegistry[config.timezone], &zoneProcessor);
+  auto current_time = ZonedDateTime::forEpochSeconds(now, time_zone);
+  return current_time;
+}
+
 void ClockDriver::blink_dots(void (*pattern)(TubeDriver *, bool, elapsedMillis *))
 {
   static elapsedMillis elapsed;
@@ -89,6 +97,13 @@ void ClockDriver::print_current_date(ace_time::ZonedDateTime current_time)
 
   tube_driver->display_time_and_date(day, month, year, false);
   tube_driver->set_dots_brightness(PWMRANGE, PWMRANGE);
+}
+
+bool ClockDriver::is_night_hours()
+{
+  auto curr_time = get_current_time();
+  int hour = curr_time.hour();
+  return hour > NIGHT_TIME_HOUR_START && hour < NIGHT_TIME_HOUR_END;
 }
 
 void ClockDriver::print_timer()

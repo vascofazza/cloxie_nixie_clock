@@ -6,6 +6,7 @@
 
 void no_blink(TubeDriver *driver, bool sync_pulse, elapsedMillis *elapsed)
 {
+    driver->set_dots_brightness(0, 0);
 }
 
 void static_on(TubeDriver *driver, bool sync_pulse, elapsedMillis *elapsed)

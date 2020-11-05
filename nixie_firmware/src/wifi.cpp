@@ -11,6 +11,8 @@ WiFiManagerParameter *adaptive_field;
 WiFiManagerParameter *brightness_offset;
 WiFiManagerParameter *shutdown_threshold;
 WiFiManagerParameter *shutdown_delay;
+WiFiManagerParameter *leds;
+WiFiManagerParameter *leds_mode;
 
 void setup_wifi()
 {
@@ -33,6 +35,14 @@ void setup_wifi()
   adaptive_field = new WiFiManagerParameter(adaptive_radio_str);
   wifiManager.addParameter(adaptive_field);
 
+  auto leds_str = F("<br/><p>Leds:</p><input type='radio' name='leds_field' value='1' checked><label for='1'>ON</label><br><input type='radio' name='leds_field' value='0'><label for='0'>OFF</label><br>");
+  leds = new WiFiManagerParameter(leds_str);
+  wifiManager.addParameter(leds);
+
+  auto leds_mode_str = F("<br/><p>Leds:</p><input type='radio' name='leds_mode_field' value='0' checked><label for='0'>static</label><br><input type='radio' name='leds_mode_field' value='1'><label for='1'>rotating</label><br><input type='radio' name='leds_mode_field' value='2'><label for='2'>random</label><br>");
+  leds_mode = new WiFiManagerParameter(leds_mode_str);
+  wifiManager.addParameter(leds_mode);
+
   shutdown_threshold = new WiFiManagerParameter(F("shutdown_threshold"), F("shutdown_threshold"), String(config.shutdown_threshold).c_str(), 10);
   wifiManager.addParameter(shutdown_threshold);
 
@@ -42,15 +52,14 @@ void setup_wifi()
   shutdown_delay = new WiFiManagerParameter(F("shutdown_delay"), F("shutdown_delay"), String(config.shutdown_delay).c_str(), 10);
   wifiManager.addParameter(shutdown_delay);
 
-  wifiManager.setSaveParamsCallback(saveParamsCallback);
-
   google_token = new WiFiManagerParameter(F("google_token"), F("google_token"), config.google_token, 40);
   wifiManager.addParameter(google_token);
+
+  wifiManager.setSaveParamsCallback(saveParamsCallback);
 
   std::vector<const char *> menu = {"wifi", "info", "param", "sep", "restart", "exit"};
   wifiManager.setMenu(menu);
 
-  //wifiManager.setHostname(HOST_NAME);
   wifiManager.setDebugOutput(false);
   // Configuration portal stays up for this amount of time on powerup
   wifiManager.setConfigPortalTimeout(PORTAL_TIMEOUT);
@@ -135,6 +144,10 @@ void saveParamsCallback()
   Serial.println(shutdown_threshold->getValue());
   Serial.print(F("PARAM shutdown_delay = "));
   Serial.println(shutdown_delay->getValue());
+  Serial.print(F("PARAM leds = "));
+  Serial.println(getParam(F("leds_field")));
+  Serial.print(F("PARAM leds_mode = "));
+  Serial.println(getParam(F("leds_mode_field")));
 
   strcpy(config.google_token, google_token->getValue());
   config.timezone = getParam(F("timezone_field")).toInt();
@@ -145,6 +158,8 @@ void saveParamsCallback()
   config.brightness_offset = String(brightness_offset->getValue()).toInt();
   config.shutdown_delay = String(shutdown_delay->getValue()).toInt();
   config.shutdown_threshold = String(shutdown_threshold->getValue()).toInt();
+  config.leds = (bool)getParam(F("leds_field")).toInt();
+  config.led_configuration = getParam(F("leds_mode_field")).toInt();
   save_configuration();
 }
 
@@ -177,4 +192,6 @@ void wifi_free_resources()
   free(brightness_offset);
   free(shutdown_threshold);
   free(shutdown_delay);
+  free(leds);
+  free(leds_mode);
 }

@@ -1,9 +1,6 @@
 #include "leds.hpp"
-#include "leds_patterns.hpp"
 
-LedPatternList gPatterns = {rainbow, rainbowWithGlitter, confetti, sinelon, juggle, bpm};
-
-LedDriver::LedDriver(TubeDriver *tube_driver, int num_leds)
+LedDriver::LedDriver(TubeDriver *tube_driver, int num_leds, void (**default_pattern)(CRGB *, int, int), int patterns_num)
 {
   this->tube_driver = tube_driver;
   leds = new CRGB[num_leds];
@@ -11,11 +8,22 @@ LedDriver::LedDriver(TubeDriver *tube_driver, int num_leds)
   FastLED.setBrightness(0);
   pattern = 0;
   brightness = 0;
+  patterns = default_pattern;
+  this->patterns_num = patterns_num;
+}
+
+void LedDriver::set_patterns(LedPatternList patterns, int patterns_num)
+{
+  this->pattern = 0;
+  this->patterns = patterns;
+  this->patterns_num = patterns_num;
 }
 
 void LedDriver::turn_off()
 {
+  brightness = 0;
   FastLED.setBrightness(0);
+  FastLED.show();
 }
 
 void LedDriver::turn_on()
@@ -35,8 +43,9 @@ void LedDriver::loop()
     //HACK - esp8266 does not have hardware PWM.
     tube_driver->turn_off();
 
+    auto current_pattern = (void (*)(CRGB *, int, int))patterns[pattern];
     // Call the current pattern function once, updating the 'leds' array
-    gPatterns[pattern](leds, NUM_LEDS, gHue);
+    current_pattern(leds, NUM_LEDS, gHue);
     // send the 'leds' array out to the actual LED strip
     FastLED.show();
     tube_driver->turn_on();
@@ -45,7 +54,14 @@ void LedDriver::loop()
 
   if (hueDelay > HUE_DELAY)
   {
-    gHue++;
+    if ((config.led_configuration == LED_MODE::STATIC))
+    {
+      gHue = LED_STATIC_HUE_VALUE;
+    }
+    else
+    {
+      gHue++;
+    }
     hueDelay = 0;
   }
 
@@ -58,12 +74,12 @@ void LedDriver::loop()
 
 void LedDriver::nextPattern()
 {
-  pattern = (pattern + 1) % ARRAY_SIZE(gPatterns);
+  pattern = (pattern + 1) % patterns_num;
 }
 
 void LedDriver::set_brightness(int brightness)
 {
   brightness = map(brightness, 0, PWMRANGE, MIN_LED_BRIGHTNESS, MAX_LED_BRIGHNTESS);
   this->brightness = brightness;
-  LEDS.setBrightness(brightness);
+  FastLED.setBrightness(brightness);
 }

@@ -3,6 +3,27 @@
 
 #include <FastLED.h>
 
+void solid(CRGB *leds, int num_leds, int gHue)
+{
+  fill_rainbow(leds, num_leds, gHue, 0);
+}
+
+void lava(CRGB *leds, int num_leds, int gHue)
+{
+  // random colored speckles that blink in and fade smoothly
+  fadeToBlackBy(leds, num_leds, 10);
+  int pos = random16(num_leds);
+  leds[pos] = CHSV(gHue + random8(3), 255, 255);
+}
+
+void lava_beat(CRGB *leds, int num_leds, int gHue)
+{
+  // a colored dot sweeping back and forth, with fading trails
+  fadeToBlackBy(leds, num_leds, 5);
+  int pos = beatsin16(13, 0, num_leds - 1);
+  leds[pos] += CHSV(gHue, 255, 100);
+}
+
 void rainbow(CRGB *leds, int num_leds, int gHue)
 {
   // FastLED's built-in rainbow generator
@@ -37,7 +58,7 @@ void sinelon(CRGB *leds, int num_leds, int gHue)
   // a colored dot sweeping back and forth, with fading trails
   fadeToBlackBy(leds, num_leds, 20);
   int pos = beatsin16(13, 0, num_leds - 1);
-  leds[pos] += CHSV(gHue, 255, 192);
+  leds[pos] += CHSV(gHue, 255, 100);
 }
 
 void bpm(CRGB *leds, int num_leds, int gHue)

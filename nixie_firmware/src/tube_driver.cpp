@@ -159,7 +159,7 @@ void TubeDriver::set_tubes(int h, int hh, int m, int mm, int s, int ss)
 
 void TubeDriver::loop()
 {
-  static elapsedSeconds running_time;
+  static elapsedSeconds running_time; 
 
   if (running_time > CATHODE_POISONING_TRIGGER_TIME)
   {
@@ -230,7 +230,7 @@ void TubeDriver::set_dots_brightness(int left, int right)
 
 void TubeDriver::shutdown()
 {
-  digitalWrite(SHUTDOWN_PIN, LOW);
+  digitalWrite(SHUTDOWN_PIN, HIGH);
 }
 
 void TubeDriver::turn_off()
@@ -242,7 +242,7 @@ void TubeDriver::turn_off()
 
 void TubeDriver::turn_on()
 {
-  digitalWrite(SHUTDOWN_PIN, HIGH);
+  digitalWrite(SHUTDOWN_PIN, LOW);
   set_brightness(-1);
 }
 
@@ -265,14 +265,9 @@ void TubeDriver::cathode_poisoning_prevention(unsigned long time)
     auto delay_val = map(timeout, 0, time, 10, 1000);
     i = i % 10;
     set_tubes(i, i, i, i, i, i);
+    set_dots_brightness((i % 2) * PWMRANGE, ((i + 1) % 2) * PWMRANGE);
     delay(delay_val);
     i++;
-
-    // for (int i = 0; i < 10; i++)
-    // {
-    //   set_tubes(i % 10, (i + 1) % 10, (i + 2) % 10, (i + 3) % 10, (i + 4) % 10, (i + 5) % 10);
-    //   delay(map(timeout, 0, time, 0, 1000));
-    // }
   }
 
   set_brightness(-1);

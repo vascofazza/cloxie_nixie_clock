@@ -7,8 +7,6 @@
 #include "configuration.hpp"
 #include "tube_driver.hpp"
 
-#define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
-
 // List of patterns to cycle through.  Each is defined as a separate function below.
 typedef void (*LedPatternList[])(CRGB *, int, int);
 
@@ -16,16 +14,25 @@ typedef void (*LedPatternList[])(CRGB *, int, int);
 #define LED_TYPE WS2812B
 #define COLOR_ORDER GRB
 
+enum LED_MODE
+{
+  STATIC = 0,
+  CYCLYNG = 1,
+  RANDOM = 2,
+};
+
 class LedDriver
 {
 private:
     TubeDriver *tube_driver;
     CRGB *leds;
+    void (**patterns)(CRGB*, int, int);
     int pattern;
     int brightness;
+    int patterns_num;
 
 public:
-    LedDriver(TubeDriver *, int);
+    LedDriver(TubeDriver *, int, void (**patterns)(CRGB*, int, int), int);
 
     void turn_off();
 
@@ -34,6 +41,8 @@ public:
     void loop();
 
     void set_brightness(int brightness);
+
+    void set_patterns(LedPatternList, int);
 
     void nextPattern();
 };

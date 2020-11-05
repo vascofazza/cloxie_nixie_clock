@@ -1,6 +1,6 @@
 #include "sensors.hpp"
 
-SensorDriver::SensorDriver(TubeDriver* tube_driver)
+SensorDriver::SensorDriver(TubeDriver *tube_driver)
 {
   this->tube_driver = tube_driver;
   pinMode(LIGHT_SENSOR_PIN, INPUT);
@@ -29,8 +29,9 @@ float SensorDriver::get_light_sensor_reading()
   if (reading_interval > ANALOG_READ_INTERVAL)
   {
     auto last_reading = analogRead(LIGHT_SENSOR_PIN);
-    // Serial.print(F("Light sensor read: "));
-    // Serial.println(last_reading);
+    last_reading = map(last_reading, 0, MAX_LIGHT_READING_VAL, 0, PWMRANGE);
+    //Serial.print(F("Light sensor read: "));
+    //Serial.println(last_reading);
     total -= light_sensor_readings[idx];
     total += last_reading;
     light_sensor_readings[idx] = last_reading;
@@ -47,16 +48,22 @@ float SensorDriver::get_light_sensor_reading()
 
 float SensorDriver::get_temperature_sensor_reading()
 {
-  static float last_temp_reading = 0;
-  Serial.print(F("Requesting temperatures..."));
-  sensors->requestTemperatures();
-  Serial.println(F("DONE"));
-  float temperature_reading = config.celsius ? sensors->getTempCByIndex(0) : sensors->getTempFByIndex(0);
-  if (temperature_reading != DEVICE_DISCONNECTED_C)
+  static elapsedMillis reading_interval;
+  static float last_temp_reading = -1;
+
+  if (last_temp_reading < 0 || reading_interval > TEMP_READ_INTERVAL)
   {
-    last_temp_reading = temperature_reading;
+    Serial.print(F("Requesting temperatures..."));
+    sensors->requestTemperatures();
+    Serial.println(F("DONE"));
+    float temperature_reading = config.celsius ? sensors->getTempCByIndex(0) : sensors->getTempFByIndex(0);
+    if (temperature_reading != DEVICE_DISCONNECTED_C)
+    {
+      last_temp_reading = temperature_reading;
+    }
+    Serial.print(F("Temperature for the device 1 (index 0) is: "));
+    Serial.println(last_temp_reading);
+    reading_interval = 0;
+    return last_temp_reading;
   }
-  Serial.print(F("Temperature for the device 1 (index 0) is: "));
-  Serial.println(last_temp_reading);
-  return last_temp_reading;
 }

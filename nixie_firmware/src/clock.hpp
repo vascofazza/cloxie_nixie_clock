@@ -32,6 +32,8 @@ public:
 
     void loop();
 
+    ace_time::ZonedDateTime get_current_time();
+
     void show_time(bool);
 
     void show_date(bool);
@@ -47,6 +49,8 @@ public:
     bool is_timer_set();
 
     bool is_timer_running();
+
+    bool is_night_hours();
 
     void set_alarm(long offset);
 };

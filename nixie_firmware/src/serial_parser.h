@@ -45,12 +45,19 @@ void cmd_resume_timer(SerialCommands *sender)
   clock_driver->start_timer(-1);
 }
 
+void cmd_next_pattern(SerialCommands *sender)
+{
+  sender->GetSerial()->println(F("Next pattern."));
+  led_driver->nextPattern();
+}
+
 //Note: Commands are case sensitive
 SerialCommand cmd_reset_wifi_("WIFI_RESET", cmd_reset_wifi);
 SerialCommand cmd_start_timer_("TIMER_START", cmd_start_timer);
 SerialCommand cmd_stop_timer_("TIMER_STOP", cmd_stop_timer);
 SerialCommand cmd_reset_timer_("TIMER_RESET", cmd_reset_timer);
 SerialCommand cmd_resume_timer_("TIMER_RESUME", cmd_resume_timer);
+SerialCommand cmd_next_pattern_("NEXT", cmd_next_pattern);
 
 void setup_serial_parser()
 {
@@ -60,6 +67,7 @@ void setup_serial_parser()
   serial_commands_.AddCommand(&cmd_stop_timer_);
   serial_commands_.AddCommand(&cmd_reset_timer_);
   serial_commands_.AddCommand(&cmd_resume_timer_);
+  serial_commands_.AddCommand(&cmd_next_pattern_);
 }
 
 void serial_parser_loop()

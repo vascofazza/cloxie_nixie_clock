@@ -3,6 +3,7 @@
 #include "configuration.hpp"
 #include "tube_driver.hpp"
 #include "clock.hpp"
+#include "leds_patterns.hpp"
 #include "leds.hpp"
 #include "wifi.hpp"
 #include "webserver.h"
@@ -32,6 +33,17 @@ enum CYCLE
 
 int cycle = CYCLE::NONE;
 
+LedPatternList clock_patterns = {lava, lava_beat};
+LedPatternList random_patterns = {rainbow, confetti, juggle, sinelon};
+LedPatternList date_patterns = {rainbowWithGlitter};
+LedPatternList temp_patterns = {bpm};
+LedPatternList timer_patterns = {sinelon};
+// rainbow, confetti clock
+// sinelon supercar timer
+// rainbowWithGlitter date
+// juggle random
+// bpm temp
+
 void next_cycle();
 
 void setup()
@@ -49,7 +61,7 @@ void setup()
   start_webserver();
   tube_driver = new TubeDriver();
   clock_driver = new ClockDriver(tube_driver);
-  led_driver = new LedDriver(tube_driver, NUM_LEDS);
+  led_driver = new LedDriver(tube_driver, NUM_LEDS, clock_patterns, ARRAY_SIZE(clock_patterns));
   sensor_driver = new SensorDriver(tube_driver);
 
   ota_handler.Every(GHOTA_INTERVAL, check_for_updates);
@@ -67,24 +79,33 @@ void next_cycle()
 
   switch (cycle)
   {
-  case CYCLE::CLOCK:
-    cycle_handler.OneShot(CLOCK_CYCLE, next_cycle);
-    break;
   case CYCLE::DATE:
     cycle_handler.OneShot(DATE_CYCLE, next_cycle);
+    led_driver->set_patterns(date_patterns, ARRAY_SIZE(date_patterns));
     break;
   case CYCLE::TEMPERATURE:
     cycle_handler.OneShot(TEMP_CYCLE, next_cycle);
+    led_driver->set_patterns(temp_patterns, ARRAY_SIZE(temp_patterns));
     break;
   case CYCLE::TIMER:
     if (clock_driver->is_timer_set())
     {
       cycle_handler.OneShot(TIMER_CYCLE, next_cycle);
+      led_driver->set_patterns(timer_patterns, ARRAY_SIZE(timer_patterns));
       break;
     }
+  case CYCLE::CLOCK:
   default:
     cycle = CYCLE::CLOCK;
     cycle_handler.OneShot(CLOCK_CYCLE, next_cycle);
+    if (config.led_configuration == LED_MODE::RANDOM)
+    {
+      led_driver->set_patterns(random_patterns, ARRAY_SIZE(random_patterns));
+    }
+    else
+    {
+      led_driver->set_patterns(clock_patterns, ARRAY_SIZE(clock_patterns));
+    }
   }
   Serial.println(F("CYCLE"));
 }
@@ -95,13 +116,20 @@ void handle_loop()
 
   if (!config.adaptive_brightness)
   {
-    led_driver->set_brightness(DEFAULT_BRIGHTNESS);
     tube_driver->set_brightness(DEFAULT_BRIGHTNESS);
+    if (config.leds)
+    {
+      led_driver->set_brightness(DEFAULT_BRIGHTNESS);
+    }
   }
   else
   {
     float light_reading = sensor_driver->get_light_sensor_reading();
-    led_driver->set_brightness(light_reading);
+    //Serial.println(light_reading);
+    if (config.leds)
+    {
+      led_driver->set_brightness(light_reading);
+    }
     tube_driver->set_brightness(light_reading);
   }
 
@@ -146,14 +174,44 @@ void handle_loop()
 
 void loop()
 {
-  led_driver->loop();
-  tube_driver->loop();
+  static elapsedMillis shutdown_delay;
+
   clock_driver->loop();
 
   wifi_loop();
   webserver_loop();
   serial_parser_loop();
-
-  handle_loop();
   ota_handler.Update();
+
+  bool hour_check = clock_driver->is_night_hours();
+
+  if (sensor_driver->get_light_sensor_reading() < config.shutdown_threshold || hour_check)
+  {
+    if (shutdown_delay > config.shutdown_delay)
+    {
+      tube_driver->shutdown();
+      led_driver->turn_off();
+    }
+    return;
+  }
+  else
+  {
+    if (shutdown_delay > config.shutdown_delay)
+    {
+      tube_driver->turn_on();
+      led_driver->turn_on();
+    }
+    shutdown_delay = 0;
+    if (config.leds)
+    {
+      led_driver->loop();
+    }
+    else
+    {
+      led_driver->turn_off();
+    }
+
+    tube_driver->loop();
+    handle_loop();
+  }
 }

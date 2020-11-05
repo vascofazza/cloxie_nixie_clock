@@ -2318,4 +2318,23 @@ Wire Wire Line
 	7650 1500 7650 1550
 Wire Wire Line
 	7650 2100 7650 2200
+$Comp
+L Device:R R16
+U 1 1 5FA8D348
+P 3300 8550
+F 0 "R16" H 3370 8596 50  0000 L CNN
+F 1 "10K" H 3370 8505 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" V 3230 8550 50  0001 C CNN
+F 3 "~" H 3300 8550 50  0001 C CNN
+	1    3300 8550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3300 8400 3300 8300
+Connection ~ 3300 8300
+Wire Wire Line
+	3300 8700 2100 8700
+Wire Wire Line
+	2100 8700 2100 8100
+Connection ~ 2100 8100
 $EndSCHEMATC
