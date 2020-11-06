@@ -44,7 +44,7 @@ void check_for_updates()
     {
       Serial.print(F("Unable to upgrade: "));
       Serial.println(API.getLastError());
-      setup_wifi();
+      setup_wifi(nullptr);
       start_webserver();
     }
   }

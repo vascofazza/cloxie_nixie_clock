@@ -14,8 +14,14 @@ WiFiManagerParameter *shutdown_delay;
 WiFiManagerParameter *leds;
 WiFiManagerParameter *leds_mode;
 
-void setup_wifi()
+void (*custom_callback)(void) = nullptr;
+
+void setup_wifi(void (*callback)(void))
 {
+  if (callback != nullptr)
+  {
+    custom_callback = callback;
+  }
   timezone_field = new WiFiManagerParameter(F("<br/><label for='timezone_field'>TimeZone: </label><select name='timezone_field'><option value='163'>GMT</option><option value='164'>GMT+1</option><option value='165'>GMT+10</option><option value='166'>GMT+11</option><option value='167'>GMT+12</option><option value='168'>GMT+2</option><option value='169'>GMT+3</option><option value='170'>GMT+4</option><option value='171'>GMT+5</option><option value='172'>GMT+6</option><option value='173'>GMT+7</option><option value='174'>GMT+8</option><option value='175'>GMT+9</option><option value='176'>GMT-1</option><option value='177'>GMT-10</option><option value='178'>GMT-11</option><option value='179'>GMT-12</option><option value='180'>GMT-13</option><option value='181'>GMT-14</option><option value='182'>GMT-2</option><option value='183'>GMT-3</option><option value='184'>GMT-4</option><option value='185'>GMT-5</option><option value='186'>GMT-6</option><option value='187'>GMT-7</option><option value='188'>GMT-8</option><option value='189'>GMT-9</option><option value='190'>UTC</option></select>")); // custom html input
   wifiManager.addParameter(timezone_field);
 
@@ -161,6 +167,10 @@ void saveParamsCallback()
   config.leds = (bool)getParam(F("leds_field")).toInt();
   config.led_configuration = getParam(F("leds_mode_field")).toInt();
   save_configuration();
+  if (custom_callback != nullptr)
+  {
+    custom_callback();
+  }
 }
 
 String getParam(String name)

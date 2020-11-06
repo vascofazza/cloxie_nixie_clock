@@ -13,7 +13,7 @@ String getParam(String);
 
 void saveParamsCallback();
 
-void setup_wifi();
+void setup_wifi(void (*)());
 
 void wifi_loop();
 
