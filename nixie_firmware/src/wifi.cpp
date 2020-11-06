@@ -156,7 +156,7 @@ void saveParamsCallback()
   config.celsius = (bool)getParam(F("temp_field")).toInt();
   config.adaptive_brightness = (bool)getParam(F("adaptive_field")).toInt();
   config.brightness_offset = String(brightness_offset->getValue()).toInt();
-  config.shutdown_delay = String(shutdown_delay->getValue()).toInt();
+  config.shutdown_delay = (unsigned int)String(shutdown_delay->getValue()).toInt();
   config.shutdown_threshold = String(shutdown_threshold->getValue()).toInt();
   config.leds = (bool)getParam(F("leds_field")).toInt();
   config.led_configuration = getParam(F("leds_mode_field")).toInt();

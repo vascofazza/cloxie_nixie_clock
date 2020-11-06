@@ -59,6 +59,7 @@ void setup()
   setup_wifi();
   setup_cert_store();
   start_webserver();
+
   tube_driver = new TubeDriver();
   clock_driver = new ClockDriver(tube_driver);
   led_driver = new LedDriver(tube_driver, NUM_LEDS, clock_patterns, ARRAY_SIZE(clock_patterns));
@@ -80,14 +81,17 @@ void next_cycle()
   switch (cycle)
   {
   case CYCLE::DATE:
+    Serial.println(F("CYCLE DATE"));
     cycle_handler.OneShot(DATE_CYCLE, next_cycle);
     led_driver->set_patterns(date_patterns, ARRAY_SIZE(date_patterns));
     break;
   case CYCLE::TEMPERATURE:
+    Serial.println(F("CYCLE TEMP"));
     cycle_handler.OneShot(TEMP_CYCLE, next_cycle);
     led_driver->set_patterns(temp_patterns, ARRAY_SIZE(temp_patterns));
     break;
   case CYCLE::TIMER:
+    Serial.println(F("CYCLE TIMER"));
     if (clock_driver->is_timer_set())
     {
       cycle_handler.OneShot(TIMER_CYCLE, next_cycle);
@@ -96,6 +100,7 @@ void next_cycle()
     }
   case CYCLE::CLOCK:
   default:
+    Serial.println(F("CYCLE CLOCK"));
     cycle = CYCLE::CLOCK;
     cycle_handler.OneShot(CLOCK_CYCLE, next_cycle);
     if (config.led_configuration == LED_MODE::RANDOM)
@@ -107,7 +112,6 @@ void next_cycle()
       led_driver->set_patterns(clock_patterns, ARRAY_SIZE(clock_patterns));
     }
   }
-  Serial.println(F("CYCLE"));
 }
 
 void handle_loop()
@@ -174,7 +178,7 @@ void handle_loop()
 
 void loop()
 {
-  static elapsedMillis shutdown_delay;
+  static elapsedSeconds shutdown_delay;
 
   clock_driver->loop();
 
@@ -189,10 +193,13 @@ void loop()
   {
     if (shutdown_delay > config.shutdown_delay)
     {
-      tube_driver->shutdown();
+      tube_driver->turn_off();
       led_driver->turn_off();
+      clock_driver->show_date(false);
+      clock_driver->show_date(false);
+      clock_driver->show_timer(false);
+      return;
     }
-    return;
   }
   else
   {
@@ -202,16 +209,16 @@ void loop()
       led_driver->turn_on();
     }
     shutdown_delay = 0;
-    if (config.leds)
-    {
-      led_driver->loop();
-    }
-    else
-    {
-      led_driver->turn_off();
-    }
-
-    tube_driver->loop();
-    handle_loop();
   }
+  if (config.leds)
+  {
+    led_driver->loop();
+  }
+  else
+  {
+    led_driver->turn_off();
+  }
+
+  tube_driver->loop();
+  handle_loop();
 }

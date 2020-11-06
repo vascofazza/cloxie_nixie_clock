@@ -22,10 +22,10 @@
 
 //TUBES
 #define MIN_TUBE_BRIGHTNESS 80
-#define MAX_TUBE_BRIGHNTESS 800
+#define MAX_TUBE_BRIGHNTESS 700
 #define MIN_DOT_BRIGHTNESS 100
 #define MAX_DOT_BRIGHNTESS 1000
-#define CATHODE_POISONING_PREVENTION_TIME (120 * 1000)     //120 sec
+#define CATHODE_POISONING_PREVENTION_TIME (60 * 5 * 1000)  //5m
 #define CATHODE_POISONING_TRIGGER_TIME (60 * 60 + 30 * 60) //1h30m0s
 
 //LEDS
@@ -68,9 +68,9 @@ struct Config
   char google_token[30];
   int led_configuration;
   bool adaptive_brightness;
-  int brightness_offset;  // light sensor offset
-  int shutdown_threshold; // light sensor threshold for turning off the tubes
-  unsigned int shutdown_delay;     // seconds before shutdown
+  int brightness_offset;       // light sensor offset
+  int shutdown_threshold;      // light sensor threshold for turning off the tubes
+  unsigned int shutdown_delay; // seconds before shutdown
   int blink_mode;
 };
 

@@ -163,6 +163,7 @@ void TubeDriver::loop()
 
   if (running_time > CATHODE_POISONING_TRIGGER_TIME)
   {
+    Serial.println("CATHODE POISONING PREVENTION");
     cathode_poisoning_prevention(CATHODE_POISONING_PREVENTION_TIME);
     running_time = 0;
   }

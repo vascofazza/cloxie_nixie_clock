@@ -64,6 +64,6 @@ float SensorDriver::get_temperature_sensor_reading()
     Serial.print(F("Temperature for the device 1 (index 0) is: "));
     Serial.println(last_temp_reading);
     reading_interval = 0;
-    return last_temp_reading;
   }
+  return last_temp_reading;
 }

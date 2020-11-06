@@ -11,7 +11,7 @@ Config config
     true,
     0,
     10,
-    60 * 30 * 1000, // 30mins shutdown delay
+    60 * 30, // 30mins shutdown delay
     1
 };
 
@@ -47,7 +47,7 @@ void check_params()
   config.timezone = config.timezone > 267 || config.timezone < 0 ? 0 : config.timezone;
   config.brightness_offset = config.brightness_offset > PWMRANGE || config.brightness_offset < -PWMRANGE ? 0 : config.brightness_offset;
   config.shutdown_threshold = config.shutdown_threshold > PWMRANGE || config.shutdown_threshold < 0 ? 0 : config.shutdown_threshold;
-  config.shutdown_delay = config.shutdown_delay > 10000 || config.shutdown_delay < -1 ? 3600 : config.shutdown_delay;
+  config.shutdown_delay = config.shutdown_delay > (7 * 3600) ? (60 * 30) : config.shutdown_delay;
   config.led_configuration = config.led_configuration > 2 || config.led_configuration < 0 ? 0 : config.led_configuration;
   config.blink_mode = config.blink_mode > 3 || config.blink_mode < 0 ? 0 : config.blink_mode;
 }
@@ -67,13 +67,15 @@ void setup_configuration()
 
 void save_configuration()
 {
+  check_params();
   EEPROM.put(1, config);
   if (EEPROM.commit())
   {
-    Serial.println(F("EEPROM successfully committed"));
+    Serial.println(F("EEPROM successfully committed."));
+    
   }
   else
   {
-    Serial.println(F("ERROR! EEPROM commit failed"));
+    Serial.println(F("ERROR! EEPROM commit failed."));
   }
 }
