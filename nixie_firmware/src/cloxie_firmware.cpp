@@ -56,8 +56,8 @@ void setup()
 
   setup_serial_parser();
   setup_configuration();
+  initWiFi();
   setup_wifi(&next_cycle);
-  setup_cert_store();
   start_webserver();
 
   tube_driver = new TubeDriver();
@@ -221,4 +221,5 @@ void loop()
 
   tube_driver->loop();
   handle_loop();
+  yield();
 }

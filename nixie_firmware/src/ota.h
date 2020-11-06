@@ -5,9 +5,12 @@
 #include "webserver.h"
 
 BearSSL::CertStore certStore;
+bool cert_initialized = false;
 
 bool setup_cert_store()
 {
+  if (cert_initialized)
+    return true;
   SPIFFS.begin();
   int numCerts = certStore.initCertStore(SPIFFS, PSTR("/certs.idx"), PSTR("/certs.ar"));
   Serial.print(F("Number of CA certs read: "));
@@ -23,11 +26,22 @@ bool setup_cert_store()
     Serial.print(F("WiFi not connected. Skipping."));
     return false;
   }
+  cert_initialized = true;
   return true;
 }
 
 void check_for_updates()
 {
+  if ((WiFi.status() != WL_CONNECTED))
+  {
+    Serial.print(F("WiFi not connected. Skipping."));
+    return;
+  }
+  if (!setup_cert_store())
+  {
+    Serial.print(F("CertStore cannot be initialized. Skipping."));
+    return;
+  }
   ESPOTAGitHub API(&certStore, GHOTA_USER, GHOTA_REPO, GHOTA_CURRENT_TAG, GHOTA_BIN_FILE, GHOTA_ACCEPT_PRERELEASE);
   Serial.println(F("Checking for update..."));
   if (API.checkUpgrade())

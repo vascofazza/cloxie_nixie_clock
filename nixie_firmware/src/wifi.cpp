@@ -22,6 +22,7 @@ void setup_wifi(void (*callback)(void))
   {
     custom_callback = callback;
   }
+
   timezone_field = new WiFiManagerParameter(F("<br/><label for='timezone_field'>TimeZone: </label><select name='timezone_field'><option value='163'>GMT</option><option value='164'>GMT+1</option><option value='165'>GMT+10</option><option value='166'>GMT+11</option><option value='167'>GMT+12</option><option value='168'>GMT+2</option><option value='169'>GMT+3</option><option value='170'>GMT+4</option><option value='171'>GMT+5</option><option value='172'>GMT+6</option><option value='173'>GMT+7</option><option value='174'>GMT+8</option><option value='175'>GMT+9</option><option value='176'>GMT-1</option><option value='177'>GMT-10</option><option value='178'>GMT-11</option><option value='179'>GMT-12</option><option value='180'>GMT-13</option><option value='181'>GMT-14</option><option value='182'>GMT-2</option><option value='183'>GMT-3</option><option value='184'>GMT-4</option><option value='185'>GMT-5</option><option value='186'>GMT-6</option><option value='187'>GMT-7</option><option value='188'>GMT-8</option><option value='189'>GMT-9</option><option value='190'>UTC</option></select>")); // custom html input
   wifiManager.addParameter(timezone_field);
 
@@ -66,39 +67,45 @@ void setup_wifi(void (*callback)(void))
   std::vector<const char *> menu = {"wifi", "info", "param", "sep", "restart", "exit"};
   wifiManager.setMenu(menu);
 
-  wifiManager.setDebugOutput(false);
+  wifiManager.setDebugOutput(true);
   // Configuration portal stays up for this amount of time on powerup
   wifiManager.setConfigPortalTimeout(PORTAL_TIMEOUT);
 
   //exit after config instead of connecting
   wifiManager.setBreakAfterConfig(false);
 
-  wifiManager.setConfigPortalBlocking(true);
+  wifiManager.setConfigPortalBlocking(false);
+
+  wifiManager.setSaveConfigCallback(postSaveFunction);
 
   //tries to connect to last known settings
   //if it does not connect it starts an access point and goes into a blocking loop awaiting configuration
   Serial.println(F("Connecting to AP"));
   if (!wifiManager.autoConnect(WIFI_SSID, WIFI_PASSWORD))
   {
-    Serial.println(F("AP Error Resetting ESP8266"));
-    delay(3000);
-    ESP.reset();
-    delay(5000);
+    Serial.println(F("Starting portal."));
+    portalRunning = true;
   }
   MDNS.begin(HOST_NAME);
   MDNS.addService(PSTR("http"), PSTR("tcp"), 80);
-  wifiManager.setConfigPortalBlocking(false);
 }
 
 void wifi_loop()
 {
   static elapsedMillis reconnectionDelay; //declare global if you don't want it reset every time loop runs
   static int reconnection_attempt = WIFI_RECONNECT_ATTEMPTS;
-  if (WiFi.status() != WL_CONNECTED)
+  if ((portalRunning && WiFi.status()) != WL_CONNECTED || !hasIPaddr())
   {
     if (reconnectionDelay > WIFI_RECONNECT_DELAY)
     {
-      if (WiFi.waitForConnectResult() == WL_CONNECTED)
+      Serial.println(F("WiFi connection issue, resetting module."));
+      resetWiFi();
+      wifi_free_resources();
+      delay(1000);
+      setup_wifi(nullptr);
+      delay(1000);
+
+      if (WiFi.waitForConnectResult() == WL_CONNECTED && hasIPaddr())
       {
         Serial.println(F("WiFi connection restored."));
         reconnection_attempt = WIFI_RECONNECT_ATTEMPTS;
@@ -112,8 +119,6 @@ void wifi_loop()
       }
       reconnectionDelay = 0;
     }
-    Serial.print(WiFi.status());
-    Serial.println(F("WiFi is not connected, aborting."));
   }
 
   //handle disconnection - reboot and AP setup
@@ -204,4 +209,80 @@ void wifi_free_resources()
   free(shutdown_delay);
   free(leds);
   free(leds_mode);
+}
+
+void postSaveFunction()
+{
+  ESP.reset();
+}
+
+// workaround for https://github.com/esp8266/Arduino/issues/7432
+void initWiFi()
+{
+#ifdef ESP8266
+
+  // See https://github.com/esp8266/Arduino/issues/5527#issuecomment-460537616
+  // FIXME TD-er: Do not destruct WiFi object, it may cause crashes with queued UDP traffic.
+  //  WiFi.~ESP8266WiFiClass();
+  //  WiFi = ESP8266WiFiClass();
+#endif // ifdef ESP8266
+
+  WiFi.persistent(true);
+  WiFi.setAutoReconnect(false);
+  // The WiFi.disconnect() ensures that the WiFi is working correctly. If this is not done before receiving WiFi connections,
+  // those WiFi connections will take a long time to make or sometimes will not work at all.
+  wifiManager.disconnect();
+  WiFi.mode(WIFI_OFF);
+
+  /* #if defined(ESP32)
+  WiFi.onEvent(WiFiEvent);
+#else
+  // WiFi event handlers
+  stationConnectedHandler = WiFi.onStationModeConnected(onConnected);
+  stationDisconnectedHandler = WiFi.onStationModeDisconnected(onDisconnect);
+  stationGotIpHandler = WiFi.onStationModeGotIP(onGotIP);
+  stationModeDHCPTimeoutHandler = WiFi.onStationModeDHCPTimeout(onDHCPTimeout);
+  APModeStationConnectedHandler = WiFi.onSoftAPModeStationConnected(onConnectedAPmode);
+  APModeStationDisconnectedHandler = WiFi.onSoftAPModeStationDisconnected(onDisconnectedAPmode);
+#endif */
+}
+
+// ********************************************************************************
+// Disconnect from Wifi AP
+// ********************************************************************************
+void _WifiDisconnect()
+{
+#if defined(ESP32)
+  WiFi.disconnect();
+#else  // if defined(ESP32)
+  ETS_UART_INTR_DISABLE();
+  wifi_station_disconnect();
+  ETS_UART_INTR_ENABLE();
+#endif // if defined(ESP32)
+}
+
+void resetWiFi()
+{
+  //_WifiDisconnect();
+  initWiFi();
+}
+
+bool hasIPaddr()
+{
+  bool configured = false;
+
+  for (auto addr : addrList)
+  {
+    if ((configured = (!addr.isLocal() && (addr.ifnumber() == STATION_IF))))
+    {
+      /*
+         Serial.printf("STA: IF='%s' hostname='%s' addr= %s\n",
+                    addr.ifname().c_str(),
+                    addr.ifhostname(),
+                    addr.toString().c_str());
+       */
+      break;
+    }
+  }
+  return configured;
 }

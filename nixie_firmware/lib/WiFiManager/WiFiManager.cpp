@@ -174,7 +174,7 @@ bool WiFiManager::addParameter(WiFiManagerParameter *p)
   {
     for (size_t i = 0; i < strlen_P((PGM_P)p->getID()); i++)
     {
-      auto character = pgm_read_byte((PGM_P)p->getID()+i);
+      auto character = pgm_read_byte((PGM_P)p->getID() + i);
       if (!(isAlphaNumeric(character)) && !(character == '_'))
       {
         DEBUG_WM(DEBUG_ERROR, F("[ERROR] parameter IDs can only contain alpha numeric chars"));

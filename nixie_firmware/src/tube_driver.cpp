@@ -159,7 +159,7 @@ void TubeDriver::set_tubes(int h, int hh, int m, int mm, int s, int ss)
 
 void TubeDriver::loop()
 {
-  static elapsedSeconds running_time; 
+  static elapsedSeconds running_time;
 
   if (running_time > CATHODE_POISONING_TRIGGER_TIME)
   {
@@ -271,5 +271,6 @@ void TubeDriver::cathode_poisoning_prevention(unsigned long time)
     i++;
   }
 
+  yield();
   set_brightness(-1);
 }

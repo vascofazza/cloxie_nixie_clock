@@ -51,7 +51,7 @@
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
 
 //GITHUB
-//#define GHOTA_DO_NOT_USE_ARDUINO_JSON
+#define GHOTA_DO_NOT_USE_ARDUINO_JSON
 #define GHOTA_USER PSTR("vascofazza")
 #define GHOTA_REPO PSTR("cloxie_nixie_clock")
 #define GHOTA_CURRENT_TAG PSTR("0.0.3")
