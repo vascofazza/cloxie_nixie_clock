@@ -4,6 +4,20 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 
+#define FIRMWARE_VERSION PSTR("0.0.3")
+
+#define DEBUG
+
+#ifdef DEBUG
+#define DEBUG_PRINT(x) Serial.print(x)
+#define DEBUG_PRINTLN(x) Serial.println(x)
+#define DEBUG_PRINTF(x, y) Serial.printf(x, y)
+#else
+#define DEBUG_PRINT(x)
+#define DEBUG_PRINTLN(x)
+#define DEBUG_PRINTF(x, y)
+#endif
+
 //CLOCK
 #define CLOCK_CYCLE (1800 * 1000) //30m
 #define DATE_CYCLE (60 * 1000)    //60s
@@ -54,7 +68,7 @@
 #define GHOTA_DO_NOT_USE_ARDUINO_JSON
 #define GHOTA_USER PSTR("vascofazza")
 #define GHOTA_REPO PSTR("cloxie_nixie_clock")
-#define GHOTA_CURRENT_TAG PSTR("0.0.3")
+#define GHOTA_CURRENT_TAG FIRMWARE_VERSION
 #define GHOTA_BIN_FILE PSTR("cloxie_d1_mini.bin")
 #define GHOTA_ACCEPT_PRERELEASE 0
 #define GHOTA_INTERVAL (3600 * 6 * 1000) //6h

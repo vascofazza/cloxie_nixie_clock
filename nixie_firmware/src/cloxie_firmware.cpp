@@ -50,9 +50,9 @@ void setup()
 {
   Serial.begin(9600);
 
-  Serial.println("Cloxie Nixie Clock");
-  Serial.print("FW version: ");
-  Serial.println(GHOTA_CURRENT_TAG);
+  DEBUG_PRINTLN("Cloxie Nixie Clock");
+  DEBUG_PRINT("FW version: ");
+  DEBUG_PRINTLN(GHOTA_CURRENT_TAG);
 
   setup_serial_parser();
   setup_configuration();
@@ -81,17 +81,17 @@ void next_cycle()
   switch (cycle)
   {
   case CYCLE::DATE:
-    Serial.println(F("CYCLE DATE"));
+    DEBUG_PRINTLN(F("CYCLE DATE"));
     cycle_handler.OneShot(DATE_CYCLE, next_cycle);
     led_driver->set_patterns(date_patterns, ARRAY_SIZE(date_patterns));
     break;
   case CYCLE::TEMPERATURE:
-    Serial.println(F("CYCLE TEMP"));
+    DEBUG_PRINTLN(F("CYCLE TEMP"));
     cycle_handler.OneShot(TEMP_CYCLE, next_cycle);
     led_driver->set_patterns(temp_patterns, ARRAY_SIZE(temp_patterns));
     break;
   case CYCLE::TIMER:
-    Serial.println(F("CYCLE TIMER"));
+    DEBUG_PRINTLN(F("CYCLE TIMER"));
     if (clock_driver->is_timer_set())
     {
       cycle_handler.OneShot(TIMER_CYCLE, next_cycle);
@@ -100,7 +100,7 @@ void next_cycle()
     }
   case CYCLE::CLOCK:
   default:
-    Serial.println(F("CYCLE CLOCK"));
+    DEBUG_PRINTLN(F("CYCLE CLOCK"));
     cycle = CYCLE::CLOCK;
     cycle_handler.OneShot(CLOCK_CYCLE, next_cycle);
     if (config.led_configuration == LED_MODE::RANDOM)
@@ -129,7 +129,6 @@ void handle_loop()
   else
   {
     float light_reading = sensor_driver->get_light_sensor_reading();
-    //Serial.println(light_reading);
     if (config.leds)
     {
       led_driver->set_brightness(light_reading);

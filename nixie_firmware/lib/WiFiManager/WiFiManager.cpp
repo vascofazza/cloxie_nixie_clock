@@ -1497,6 +1497,11 @@ String WiFiManager::getIpForm(String id, String title, String value)
   return item;
 }
 
+void WiFiManager::setFirmwareVersion(const char *element)
+{
+  _firmware_version = (String)element;
+}
+
 String WiFiManager::getStaticOut()
 {
   String page;
@@ -1772,6 +1777,7 @@ void WiFiManager::handleInfo()
   infos = 27;
   String infoids[] = {
       F("esphead"),
+      F("fwversion"),
       F("uptime"),
       F("chipid"),
       F("fchipid"),
@@ -1887,6 +1893,11 @@ String WiFiManager::getInfoData(String id)
     p.replace(FPSTR(T_1), (String)ESP.getFlashChipId());
   }
 #endif
+  else if (id == F("fwversion"))
+  {
+    p = FPSTR(HTTP_INFO_fwversion);
+    p.replace(FPSTR(T_1), _firmware_version);
+  }
   else if (id == F("idesize"))
   {
     p = FPSTR(HTTP_INFO_idesize);

@@ -24,7 +24,7 @@ void start_webserver(void)
 {
   if (WiFi.waitForConnectResult() != WL_CONNECTED)
   {
-    Serial.println(F("WiFi failed, aborting."));
+    DEBUG_PRINTLN(F("WiFi failed, aborting."));
     return;
   }
 
@@ -44,7 +44,7 @@ void start_webserver(void)
     response->addHeader(PSTR("Connection"), PSTR("close"));
     request->send(response); }, [](AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
     if(!index){
-      Serial.printf(PSTR("Update Start: %s\n"), filename.c_str());
+      DEBUG_PRINTF(PSTR("Update Start: %s\n"), filename.c_str());
       Update.runAsync(true);
       if(!Update.begin((ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000)){
         Update.printError(Serial);
@@ -57,7 +57,7 @@ void start_webserver(void)
     }
     if(final){
       if(Update.end(true)){
-        Serial.printf(PSTR("Update Success: %uB\n"), index+len);
+        DEBUG_PRINTF(PSTR("Update Success: %uB\n"), index+len);
       } else {
         Update.printError(Serial);
       }
@@ -84,7 +84,7 @@ void webserver_loop(void)
 {
   if (shouldReboot)
   {
-    Serial.println(F("Rebooting..."));
+    DEBUG_PRINTLN(F("Rebooting..."));
     delay(100);
     ESP.restart();
   }

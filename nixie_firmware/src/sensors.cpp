@@ -30,8 +30,6 @@ float SensorDriver::get_light_sensor_reading()
   {
     auto last_reading = analogRead(LIGHT_SENSOR_PIN);
     last_reading = map(last_reading, 0, MAX_LIGHT_READING_VAL, 0, PWMRANGE);
-    //Serial.print(F("Light sensor read: "));
-    //Serial.println(last_reading);
     total -= light_sensor_readings[idx];
     total += last_reading;
     light_sensor_readings[idx] = last_reading;
@@ -53,16 +51,16 @@ float SensorDriver::get_temperature_sensor_reading()
 
   if (last_temp_reading < 0 || reading_interval > TEMP_READ_INTERVAL)
   {
-    Serial.print(F("Requesting temperatures..."));
+    DEBUG_PRINT(F("Requesting temperatures..."));
     sensors->requestTemperatures();
-    Serial.println(F("DONE"));
+    DEBUG_PRINTLN(F("DONE"));
     float temperature_reading = config.celsius ? sensors->getTempCByIndex(0) : sensors->getTempFByIndex(0);
     if (temperature_reading != DEVICE_DISCONNECTED_C)
     {
       last_temp_reading = temperature_reading;
     }
-    Serial.print(F("Temperature for the device 1 (index 0) is: "));
-    Serial.println(last_temp_reading);
+    DEBUG_PRINT(F("Temperature for the device 1 (index 0) is: "));
+    DEBUG_PRINTLN(last_temp_reading);
     reading_interval = 0;
   }
   return last_temp_reading;

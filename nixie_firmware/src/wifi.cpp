@@ -18,6 +18,7 @@ void (*custom_callback)(void) = nullptr;
 
 void setup_wifi(void (*callback)(void))
 {
+  wifiManager.setFirmwareVersion(FIRMWARE_VERSION);
   if (callback != nullptr)
   {
     custom_callback = callback;
@@ -67,7 +68,12 @@ void setup_wifi(void (*callback)(void))
   std::vector<const char *> menu = {"wifi", "info", "param", "sep", "restart", "exit"};
   wifiManager.setMenu(menu);
 
+#ifdef DEBUG_FLAG
   wifiManager.setDebugOutput(true);
+#else
+  wifiManager.setDebugOutput(false);
+#endif
+
   // Configuration portal stays up for this amount of time on powerup
   wifiManager.setConfigPortalTimeout(PORTAL_TIMEOUT);
 
@@ -80,10 +86,10 @@ void setup_wifi(void (*callback)(void))
 
   //tries to connect to last known settings
   //if it does not connect it starts an access point and goes into a blocking loop awaiting configuration
-  Serial.println(F("Connecting to AP"));
+  DEBUG_PRINTLN(F("Connecting to AP"));
   if (!wifiManager.autoConnect(WIFI_SSID, WIFI_PASSWORD))
   {
-    Serial.println(F("Starting portal."));
+    DEBUG_PRINTLN(F("Starting portal."));
     portalRunning = true;
   }
   MDNS.begin(HOST_NAME);
@@ -94,11 +100,13 @@ void wifi_loop()
 {
   static elapsedMillis reconnectionDelay; //declare global if you don't want it reset every time loop runs
   static int reconnection_attempt = WIFI_RECONNECT_ATTEMPTS;
-  if ((portalRunning && WiFi.status()) != WL_CONNECTED || !hasIPaddr())
+  if (WiFi.status() != WL_CONNECTED || !hasIPaddr())
   {
+    DEBUG_PRINT(F("WiFi connection lost. Reconnecting in... "));
+    DEBUG_PRINTLN(WIFI_RECONNECT_DELAY - reconnectionDelay);
     if (reconnectionDelay > WIFI_RECONNECT_DELAY)
     {
-      Serial.println(F("WiFi connection issue, resetting module."));
+      DEBUG_PRINTLN(F("WiFi connection issue, resetting module."));
       resetWiFi();
       wifi_free_resources();
       delay(1000);
@@ -107,12 +115,12 @@ void wifi_loop()
 
       if (WiFi.waitForConnectResult() == WL_CONNECTED && hasIPaddr())
       {
-        Serial.println(F("WiFi connection restored."));
+        DEBUG_PRINTLN(F("WiFi connection restored."));
         reconnection_attempt = WIFI_RECONNECT_ATTEMPTS;
       }
       else if (reconnection_attempt-- == 0)
       {
-        Serial.println(F("AP Error Resetting ESP8266"));
+        DEBUG_PRINTLN(F("AP Error Resetting ESP8266"));
         delay(3000);
         ESP.reset();
         delay(5000);
@@ -128,7 +136,7 @@ void wifi_loop()
   }
   else
   {
-    Serial.println(F("Starting Portal"));
+    DEBUG_PRINTLN(F("Starting Portal"));
     wifiManager.startWebPortal();
     portalRunning = true;
   }
@@ -137,28 +145,28 @@ void wifi_loop()
 
 void saveParamsCallback()
 {
-  Serial.print(F("PARAM google_token = "));
-  Serial.println(google_token->getValue());
-  Serial.print(F("PARAM timezone_field = "));
-  Serial.println(getParam(F("timezone_field")));
-  Serial.print(F("PARAM h24_field = "));
-  Serial.println(getParam(F("h24_field")));
-  Serial.print(F("PARAM blink_field = "));
-  Serial.println(getParam(F("blink_field")));
-  Serial.print(F("PARAM temp_field = "));
-  Serial.println(getParam(F("temp_field")));
-  Serial.print(F("PARAM adaptive_field = "));
-  Serial.println(getParam(F("adaptive_field")));
-  Serial.print(F("PARAM brightness_offset = "));
-  Serial.println(brightness_offset->getValue());
-  Serial.print(F("PARAM shutdown_threshold = "));
-  Serial.println(shutdown_threshold->getValue());
-  Serial.print(F("PARAM shutdown_delay = "));
-  Serial.println(shutdown_delay->getValue());
-  Serial.print(F("PARAM leds = "));
-  Serial.println(getParam(F("leds_field")));
-  Serial.print(F("PARAM leds_mode = "));
-  Serial.println(getParam(F("leds_mode_field")));
+  DEBUG_PRINT(F("PARAM google_token = "));
+  DEBUG_PRINTLN(google_token->getValue());
+  DEBUG_PRINT(F("PARAM timezone_field = "));
+  DEBUG_PRINTLN(getParam(F("timezone_field")));
+  DEBUG_PRINT(F("PARAM h24_field = "));
+  DEBUG_PRINTLN(getParam(F("h24_field")));
+  DEBUG_PRINT(F("PARAM blink_field = "));
+  DEBUG_PRINTLN(getParam(F("blink_field")));
+  DEBUG_PRINT(F("PARAM temp_field = "));
+  DEBUG_PRINTLN(getParam(F("temp_field")));
+  DEBUG_PRINT(F("PARAM adaptive_field = "));
+  DEBUG_PRINTLN(getParam(F("adaptive_field")));
+  DEBUG_PRINT(F("PARAM brightness_offset = "));
+  DEBUG_PRINTLN(brightness_offset->getValue());
+  DEBUG_PRINT(F("PARAM shutdown_threshold = "));
+  DEBUG_PRINTLN(shutdown_threshold->getValue());
+  DEBUG_PRINT(F("PARAM shutdown_delay = "));
+  DEBUG_PRINTLN(shutdown_delay->getValue());
+  DEBUG_PRINT(F("PARAM leds = "));
+  DEBUG_PRINTLN(getParam(F("leds_field")));
+  DEBUG_PRINT(F("PARAM leds_mode = "));
+  DEBUG_PRINTLN(getParam(F("leds_mode_field")));
 
   strcpy(config.google_token, google_token->getValue());
   config.timezone = getParam(F("timezone_field")).toInt();
@@ -219,32 +227,12 @@ void postSaveFunction()
 // workaround for https://github.com/esp8266/Arduino/issues/7432
 void initWiFi()
 {
-#ifdef ESP8266
-
-  // See https://github.com/esp8266/Arduino/issues/5527#issuecomment-460537616
-  // FIXME TD-er: Do not destruct WiFi object, it may cause crashes with queued UDP traffic.
-  //  WiFi.~ESP8266WiFiClass();
-  //  WiFi = ESP8266WiFiClass();
-#endif // ifdef ESP8266
-
   WiFi.persistent(true);
   WiFi.setAutoReconnect(false);
   // The WiFi.disconnect() ensures that the WiFi is working correctly. If this is not done before receiving WiFi connections,
   // those WiFi connections will take a long time to make or sometimes will not work at all.
   wifiManager.disconnect();
   WiFi.mode(WIFI_OFF);
-
-  /* #if defined(ESP32)
-  WiFi.onEvent(WiFiEvent);
-#else
-  // WiFi event handlers
-  stationConnectedHandler = WiFi.onStationModeConnected(onConnected);
-  stationDisconnectedHandler = WiFi.onStationModeDisconnected(onDisconnect);
-  stationGotIpHandler = WiFi.onStationModeGotIP(onGotIP);
-  stationModeDHCPTimeoutHandler = WiFi.onStationModeDHCPTimeout(onDHCPTimeout);
-  APModeStationConnectedHandler = WiFi.onSoftAPModeStationConnected(onConnectedAPmode);
-  APModeStationDisconnectedHandler = WiFi.onSoftAPModeStationDisconnected(onDisconnectedAPmode);
-#endif */
 }
 
 // ********************************************************************************
@@ -252,18 +240,15 @@ void initWiFi()
 // ********************************************************************************
 void _WifiDisconnect()
 {
-#if defined(ESP32)
-  WiFi.disconnect();
-#else  // if defined(ESP32)
-  ETS_UART_INTR_DISABLE();
+  wifiManager.disconnect();
+  /* ETS_UART_INTR_DISABLE();
   wifi_station_disconnect();
-  ETS_UART_INTR_ENABLE();
-#endif // if defined(ESP32)
+  ETS_UART_INTR_ENABLE(); */
 }
 
 void resetWiFi()
 {
-  //_WifiDisconnect();
+  _WifiDisconnect();
   initWiFi();
 }
 
@@ -275,12 +260,6 @@ bool hasIPaddr()
   {
     if ((configured = (!addr.isLocal() && (addr.ifnumber() == STATION_IF))))
     {
-      /*
-         Serial.printf("STA: IF='%s' hostname='%s' addr= %s\n",
-                    addr.ifname().c_str(),
-                    addr.ifhostname(),
-                    addr.toString().c_str());
-       */
       break;
     }
   }

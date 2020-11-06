@@ -19,53 +19,27 @@ TubeDriver::TubeDriver()
 
 void TubeDriver::run_test()
 {
-  Serial.print(F("Running tube tests..."));
+  DEBUG_PRINT(F("Running tube tests..."));
   elapsedSeconds test_time;
-  while (test_time < TEST_TIME)
-  {
-    set_tube_brightness(PWMRANGE, PWMRANGE, PWMRANGE);
-    for (int i = 0; i < 10; i++)
-    {
-      set_tubes(i, i, i, i, i, i);
-      delay(250);
-    }
-    delay(1000);
-    turn_off();
-    delay(1000);
 
-    for (int b = 0; b < 1024; b += 200)
+  set_tube_brightness(PWMRANGE, PWMRANGE, PWMRANGE);
+  for (int i = 0; i < 10; i++)
+  {
+    set_tubes(i, i, i, i, i, i);
+    for (int b = 0; b < 1024; b += 100)
     {
       set_tube_brightness(b, b, b);
-      for (int i = 0; i < 10; i++)
-      {
-        set_tubes(i, i, i, i, i, i);
-        delay(50);
-      }
+      delay(25);
     }
-    delay(1000);
-    turn_off();
-    delay(1000);
-
-    for (int i = 0; i < 10; i++)
+    for (int b = 1024; b >= 0; b -= 100)
     {
-      set_tubes(i, i, i, i, i, i);
-      for (int b = 0; b < 1024; b += 100)
-      {
-        set_tube_brightness(b, b, b);
-        delay(25);
-      }
-      for (int b = 1024; b >= 0; b -= 100)
-      {
-        set_tube_brightness(b, b, b);
-        delay(25);
-      }
+      set_tube_brightness(b, b, b);
+      delay(25);
     }
-    delay(1000);
-    turn_off();
-    delay(1000);
   }
+  delay(1000);
   turn_off();
-  Serial.println(F("Done!"));
+  DEBUG_PRINTLN(F("Done!"));
 }
 
 /*
@@ -163,7 +137,7 @@ void TubeDriver::loop()
 
   if (running_time > CATHODE_POISONING_TRIGGER_TIME)
   {
-    Serial.println("CATHODE POISONING PREVENTION");
+    DEBUG_PRINTLN("CATHODE POISONING PREVENTION");
     cathode_poisoning_prevention(CATHODE_POISONING_PREVENTION_TIME);
     running_time = 0;
   }

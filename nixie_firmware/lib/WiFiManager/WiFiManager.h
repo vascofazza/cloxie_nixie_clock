@@ -256,6 +256,9 @@ public:
   //if this is set, customise style
   void setCustomHeadElement(const char *element);
 
+  //if this is set, customise style
+  void setFirmwareVersion(const char *element);
+
   //if this is true, remove duplicated Access Points - defaut true
   void setRemoveDuplicateAPs(boolean removeDuplicates);
 
@@ -382,6 +385,7 @@ private:
   String _apPassword = "";
   String _ssid = "";
   String _pass = "";
+  String _firmware_version = "";
 
   // options flags
   unsigned long _configPortalTimeout = 0;    // ms close config portal loop if set (depending on  _cp/webClientCheck options)
@@ -616,5 +620,4 @@ private:
 };
 
 #endif
-
 #endif

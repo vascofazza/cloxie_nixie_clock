@@ -58,8 +58,10 @@ void ClockDriver::loop()
   {
     blinking = true;
     prevNow = now;
+#ifdef DEBUG
     current_time.printTo(Serial);
     Serial.println();
+#endif
   }
 }
 

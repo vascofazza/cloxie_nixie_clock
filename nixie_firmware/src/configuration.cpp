@@ -17,29 +17,29 @@ Config config
 
 void printParams()
 {
-  Serial.println(F("Configuration:"));
-  Serial.print(F("\tTimeZone: "));
-  Serial.println(config.timezone);
-  Serial.print(F("\tH24/12: "));
-  Serial.println(config.h24);
-  Serial.print(F("\tC°/F°: "));
-  Serial.println(config.celsius);
-  Serial.print(F("\tGoogle Token: "));
-  Serial.println(config.google_token);
-  Serial.print(F("\tAdaptive Brightness: "));
-  Serial.println(config.adaptive_brightness);
-  Serial.print(F("\tBrightness Offset: "));
-  Serial.println(config.brightness_offset);
-  Serial.print(F("\tShutdown Threshold: "));
-  Serial.println(config.shutdown_threshold);
-  Serial.print(F("\tShutdown Delay: "));
-  Serial.println(config.shutdown_delay);
-  Serial.print(F("\tBlink Mode: "));
-  Serial.println(config.blink_mode);
-  Serial.print(F("\tLeds: "));
-  Serial.println(config.leds);
-  Serial.print(F("\tLed Configuration: "));
-  Serial.println(config.led_configuration);
+  DEBUG_PRINTLN(F("Configuration:"));
+  DEBUG_PRINT(F("\tTimeZone: "));
+  DEBUG_PRINTLN(config.timezone);
+  DEBUG_PRINT(F("\tH24/12: "));
+  DEBUG_PRINTLN(config.h24);
+  DEBUG_PRINT(F("\tC°/F°: "));
+  DEBUG_PRINTLN(config.celsius);
+  DEBUG_PRINT(F("\tGoogle Token: "));
+  DEBUG_PRINTLN(config.google_token);
+  DEBUG_PRINT(F("\tAdaptive Brightness: "));
+  DEBUG_PRINTLN(config.adaptive_brightness);
+  DEBUG_PRINT(F("\tBrightness Offset: "));
+  DEBUG_PRINTLN(config.brightness_offset);
+  DEBUG_PRINT(F("\tShutdown Threshold: "));
+  DEBUG_PRINTLN(config.shutdown_threshold);
+  DEBUG_PRINT(F("\tShutdown Delay: "));
+  DEBUG_PRINTLN(config.shutdown_delay);
+  DEBUG_PRINT(F("\tBlink Mode: "));
+  DEBUG_PRINTLN(config.blink_mode);
+  DEBUG_PRINT(F("\tLeds: "));
+  DEBUG_PRINTLN(config.leds);
+  DEBUG_PRINT(F("\tLed Configuration: "));
+  DEBUG_PRINTLN(config.led_configuration);
 }
 
 void check_params()
@@ -71,11 +71,11 @@ void save_configuration()
   EEPROM.put(1, config);
   if (EEPROM.commit())
   {
-    Serial.println(F("EEPROM successfully committed."));
+    DEBUG_PRINTLN(F("EEPROM successfully committed."));
     
   }
   else
   {
-    Serial.println(F("ERROR! EEPROM commit failed."));
+    DEBUG_PRINTLN(F("ERROR! EEPROM commit failed."));
   }
 }

@@ -2,7 +2,6 @@
 #define WIFI_HPP
 
 #include <ESP8266WiFi.h>
-//#include <AddrList.h>
 #include <ESP8266mDNS.h>
 #include <WiFiManager.h>
 #include <elapsedMillis.h>
