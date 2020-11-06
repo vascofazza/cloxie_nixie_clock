@@ -1280,17 +1280,6 @@ Wire Wire Line
 	4050 3150 4050 3050
 Connection ~ 4050 3150
 $Comp
-L Regulator_Linear:L7805 U12
-U 1 1 60A30EEF
-P 9100 6550
-F 0 "U12" H 9100 6792 50  0000 C CNN
-F 1 "L7805" H 9100 6701 50  0000 C CNN
-F 2 "Package_TO_SOT_THT:TO-220-3_Horizontal_TabDown" H 9125 6400 50  0001 L CIN
-F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 9100 6500 50  0001 C CNN
-	1    9100 6550
-	1    0    0    -1  
-$EndComp
-$Comp
 L Device:C C1
 U 1 1 60A3349A
 P 2200 2000
@@ -1516,8 +1505,6 @@ Wire Wire Line
 Wire Wire Line
 	9500 6950 9100 6950
 Connection ~ 9100 6950
-Wire Wire Line
-	9100 6950 9100 6850
 Text Label 2800 7100 0    50   ~ 0
 SER
 Wire Wire Line
@@ -1963,9 +1950,6 @@ Wire Wire Line
 	8050 6250 8650 6250
 Wire Wire Line
 	8650 6250 8650 6550
-Connection ~ 8650 6550
-Wire Wire Line
-	8650 6550 8800 6550
 Wire Wire Line
 	8050 6800 8050 6950
 Wire Wire Line
@@ -2123,7 +2107,7 @@ L Device:R R14
 U 1 1 5FA29DD7
 P 7500 900
 F 0 "R14" H 7570 946 50  0000 L CNN
-F 1 "150K" H 7570 855 50  0000 L CNN
+F 1 "130K" H 7570 855 50  0000 L CNN
 F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" V 7430 900 50  0001 C CNN
 F 3 "~" H 7500 900 50  0001 C CNN
 	1    7500 900 
@@ -2273,7 +2257,7 @@ L Device:R R10
 U 1 1 601C6841
 P 3850 900
 F 0 "R10" H 3920 946 50  0000 L CNN
-F 1 "150K" H 3920 855 50  0000 L CNN
+F 1 "130K" H 3920 855 50  0000 L CNN
 F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" V 3780 900 50  0001 C CNN
 F 3 "~" H 3850 900 50  0001 C CNN
 	1    3850 900 
@@ -2337,4 +2321,15 @@ Wire Wire Line
 Wire Wire Line
 	2100 8700 2100 8100
 Connection ~ 2100 8100
+$Comp
+L Connector_Generic:Conn_01x01 J6
+U 1 1 5FB118D1
+P 9200 6550
+F 0 "J6" H 9118 6325 50  0000 C CNN
+F 1 "5V" H 9118 6416 50  0000 C CNN
+F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 9200 6550 50  0001 C CNN
+F 3 "~" H 9200 6550 50  0001 C CNN
+	1    9200 6550
+	-1   0    0    1   
+$EndComp
 $EndSCHEMATC
