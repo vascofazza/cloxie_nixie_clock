@@ -41,7 +41,6 @@ void ClockDriver::loop()
     {
       blink_dots(static_on);
     }
-
     print_timer();
   }
   else if (display_time)
@@ -105,7 +104,7 @@ bool ClockDriver::is_night_hours()
 {
   auto curr_time = get_current_time();
   int hour = curr_time.hour();
-  return hour > NIGHT_TIME_HOUR_START && hour < NIGHT_TIME_HOUR_END;
+  return hour >= NIGHT_TIME_HOUR_START && hour <= NIGHT_TIME_HOUR_END;
 }
 
 void ClockDriver::print_timer()

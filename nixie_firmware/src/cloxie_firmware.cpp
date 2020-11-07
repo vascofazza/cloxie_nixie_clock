@@ -194,9 +194,10 @@ void loop()
     {
       tube_driver->turn_off();
       led_driver->turn_off();
-      clock_driver->show_date(false);
+      clock_driver->show_time(false);
       clock_driver->show_date(false);
       clock_driver->show_timer(false);
+      yield();
       return;
     }
   }
