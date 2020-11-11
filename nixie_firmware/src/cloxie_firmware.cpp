@@ -195,8 +195,8 @@ void loop()
     if (shutdown_delay > config.shutdown_delay)
     {
       DEBUG_PRINTLN(F("Sleeping..."));
-      tube_driver->turn_off();
-      led_driver->turn_off();
+      tube_driver->turn_off(true);
+      led_driver->turn_off(true);
       clock_driver->show_time(false);
       clock_driver->show_date(false);
       clock_driver->show_timer(false);
@@ -211,8 +211,9 @@ void loop()
     if (shutdown_delay > config.shutdown_delay)
     {
       DEBUG_PRINTLN(F("Waking up."));
-      tube_driver->turn_on();
-      led_driver->turn_on();
+      auto light_value = config.adaptive_brightness ? sensor_driver->get_light_sensor_reading() : DEFAULT_BRIGHTNESS;
+      led_driver->turn_on(light_value);
+      tube_driver->turn_on(light_value);
     }
     shutdown_delay = 0;
   }
@@ -223,7 +224,7 @@ void loop()
   }
   else
   {
-    led_driver->turn_off();
+    led_driver->turn_off(true);
   }
 
   tube_driver->loop();

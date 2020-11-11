@@ -15,7 +15,7 @@ TubeDriver::TubeDriver()
   pinMode(SHF_DATA, OUTPUT);
   pinMode(SHUTDOWN_PIN, OUTPUT);
 
-  turn_on();
+  turn_on(-1);
 }
 
 void TubeDriver::run_test()
@@ -212,19 +212,40 @@ void TubeDriver::shutdown()
   digitalWrite(SHUTDOWN_PIN, HIGH);
 }
 
-void TubeDriver::turn_off()
+void TubeDriver::turn_off(bool fade)
 {
-  status = false;
+  if (!status)
+    return;
+  if (fade)
+  {
+    for (int i = brightness; i >= 0; i--)
+    {
+      set_tube_brightness(i, 0, 0);
+      delay(10);
+    }
+  }
   digitalWrite(STROBE, HIGH);
   digitalWrite(LEFT_DOT, LOW);
   digitalWrite(RIGHT_DOT, LOW);
+  status = false;
 }
 
-void TubeDriver::turn_on()
+void TubeDriver::turn_on(int brightness)
 {
   status = true;
   digitalWrite(SHUTDOWN_PIN, LOW);
-  set_brightness(-1);
+  if (brightness > 0)
+  {
+    for (int i = 0; i <= brightness; i++)
+    {
+      set_tube_brightness(i, 0, 0);
+      delay(10);
+    }
+  }
+  else
+  {
+    set_brightness(-1);
+  }
 }
 
 void TubeDriver::cathode_poisoning_prevention(unsigned long time)

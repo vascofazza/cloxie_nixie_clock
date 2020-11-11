@@ -35,9 +35,9 @@ private:
 public:
     LedDriver(TubeDriver *, int, void (**patterns)(CRGB*, int, int), int);
 
-    void turn_off();
+    void turn_off(bool);
 
-    void turn_on();
+    void turn_on(int);
 
     void loop();
 

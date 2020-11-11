@@ -43,9 +43,9 @@ public:
 
     void shutdown();
 
-    void turn_off();
+    void turn_off(bool);
 
-    void turn_on();
+    void turn_on(int);
 
     void cathode_poisoning_prevention(unsigned long);
 };

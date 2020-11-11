@@ -20,18 +20,44 @@ void LedDriver::set_patterns(LedPatternList patterns, int patterns_num)
   this->patterns_num = patterns_num;
 }
 
-void LedDriver::turn_off()
+void LedDriver::turn_off(bool fade)
 {
-  status = false;
+  if (!status)
+    return;
+  if (fade)
+  {
+    for (int i = brightness; i >= 0; i--)
+    {
+      FastLED.setBrightness(i);
+      FastLED.show();
+      delay(10);
+    }
+  }
+  else
+  {
+    FastLED.setBrightness(0);
+    FastLED.show();
+  }
   brightness = 0;
-  FastLED.setBrightness(0);
-  FastLED.show();
+  status = false;
 }
 
-void LedDriver::turn_on()
+void LedDriver::turn_on(int brightness)
 {
   status = true;
-  FastLED.setBrightness(brightness);
+  if (brightness > 0)
+  {
+    for (int i = 0; i <= brightness; i++)
+    {
+      FastLED.setBrightness(i);
+      FastLED.show();
+      delay(10);
+    }
+  }
+  else
+  {
+    FastLED.setBrightness(this->brightness);
+  }
 }
 
 void LedDriver::loop()
@@ -46,14 +72,14 @@ void LedDriver::loop()
   if (renderDelay > (1000 / FRAMES_PER_SECOND))
   {
     //HACK - esp8266 does not have hardware PWM.
-    tube_driver->turn_off();
+    tube_driver->turn_off(false);
 
     auto current_pattern = (void (*)(CRGB *, int, int))patterns[pattern];
     // Call the current pattern function once, updating the 'leds' array
     current_pattern(leds, NUM_LEDS, gHue);
     // send the 'leds' array out to the actual LED strip
     FastLED.show();
-    tube_driver->turn_on();
+    tube_driver->turn_on(-1);
     renderDelay = 0;
   }
 
