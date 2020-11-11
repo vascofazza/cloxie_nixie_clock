@@ -1444,51 +1444,8 @@ Connection ~ 10950 5250
 Wire Wire Line
 	10500 6600 10500 6700
 Connection ~ 10800 6700
-$Comp
-L Connector_Generic:Conn_01x01 J1
-U 1 1 5F7DCC26
-P 8400 6550
-F 0 "J1" H 8318 6325 50  0000 C CNN
-F 1 "12V" H 8318 6416 50  0000 C CNN
-F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 8400 6550 50  0001 C CNN
-F 3 "~" H 8400 6550 50  0001 C CNN
-	1    8400 6550
-	-1   0    0    1   
-$EndComp
-$Comp
-L Connector_Generic:Conn_01x01 J3
-U 1 1 5F7DDFC8
-P 9100 7200
-F 0 "J3" V 8972 7280 50  0000 L CNN
-F 1 "GND" V 9063 7280 50  0000 L CNN
-F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 9100 7200 50  0001 C CNN
-F 3 "~" H 9100 7200 50  0001 C CNN
-	1    9100 7200
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	8600 6550 8650 6550
-Wire Wire Line
-	9100 7000 9100 6950
-Text Label 9600 6550 0    50   ~ 0
-5V
-Wire Wire Line
-	9600 6550 9400 6550
-$Comp
-L Connector_Generic:Conn_01x01 J2
-U 1 1 5F893BFD
-P 8400 6850
-F 0 "J2" H 8318 6625 50  0000 C CNN
-F 1 "170V" H 8318 6716 50  0000 C CNN
-F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 8400 6850 50  0001 C CNN
-F 3 "~" H 8400 6850 50  0001 C CNN
-	1    8400 6850
-	-1   0    0    1   
-$EndComp
-Text Label 8800 6850 0    50   ~ 0
+Text Label 9100 6300 2    50   ~ 0
 170V
-Wire Wire Line
-	8800 6850 8600 6850
 $Comp
 L power:GND #PWR01
 U 1 1 5F90D3EF
@@ -1502,9 +1459,6 @@ F 3 "" H 9500 7050 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	9500 7050 9500 6950
-Wire Wire Line
-	9500 6950 9100 6950
-Connection ~ 9100 6950
 Text Label 2800 7100 0    50   ~ 0
 SER
 Wire Wire Line
@@ -1821,21 +1775,8 @@ Wire Wire Line
 	4100 6550 4250 6550
 Wire Wire Line
 	4100 6250 4100 6200
-$Comp
-L Connector_Generic:Conn_01x01 J4
-U 1 1 60B714B6
-P 9300 7750
-F 0 "J4" V 9172 7830 50  0000 L CNN
-F 1 "SHDN" V 9263 7830 50  0000 L CNN
-F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 9300 7750 50  0001 C CNN
-F 3 "~" H 9300 7750 50  0001 C CNN
-	1    9300 7750
-	0    1    1    0   
-$EndComp
-Text Label 9300 7500 2    50   ~ 0
+Text Label 9100 6500 2    50   ~ 0
 SHUTDOWN
-Wire Wire Line
-	9300 7550 9300 7500
 Wire Wire Line
 	4750 8950 5350 8950
 Wire Wire Line
@@ -1947,10 +1888,6 @@ $EndComp
 Wire Wire Line
 	8050 6500 8050 6250
 Wire Wire Line
-	8050 6250 8650 6250
-Wire Wire Line
-	8650 6250 8650 6550
-Wire Wire Line
 	8050 6800 8050 6950
 Wire Wire Line
 	2300 3550 3900 3550
@@ -2021,7 +1958,6 @@ Wire Wire Line
 	7900 7450 7900 6250
 Wire Wire Line
 	7900 6250 8050 6250
-Connection ~ 8050 6250
 Wire Wire Line
 	7750 7250 7750 7650
 Wire Wire Line
@@ -2089,8 +2025,6 @@ Wire Wire Line
 	8750 8050 8750 6950
 Connection ~ 9850 8050
 Connection ~ 8750 6950
-Wire Wire Line
-	8750 6950 9100 6950
 $Comp
 L nixies-us:IN-3 NL1
 U 1 1 5F8B273F
@@ -2322,14 +2256,94 @@ Wire Wire Line
 	2100 8700 2100 8100
 Connection ~ 2100 8100
 $Comp
-L Connector_Generic:Conn_01x01 J6
-U 1 1 5FB118D1
-P 9200 6550
-F 0 "J6" H 9118 6325 50  0000 C CNN
-F 1 "5V" H 9118 6416 50  0000 C CNN
-F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 9200 6550 50  0001 C CNN
-F 3 "~" H 9200 6550 50  0001 C CNN
-	1    9200 6550
-	-1   0    0    1   
+L Mechanical:MountingHole_Pad H1
+U 1 1 5FAC9C1B
+P 7650 7950
+F 0 "H1" H 7750 7999 50  0000 L CNN
+F 1 "MountingHole_Pad" H 7750 7908 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3_Pad_Via" H 7650 7950 50  0001 C CNN
+F 3 "~" H 7650 7950 50  0001 C CNN
+	1    7650 7950
+	1    0    0    -1  
 $EndComp
+$Comp
+L Mechanical:MountingHole_Pad H2
+U 1 1 5FB2F61B
+P 7950 7950
+F 0 "H2" H 8050 7999 50  0000 L CNN
+F 1 "MountingHole_Pad" H 8050 7908 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3_Pad_Via" H 7950 7950 50  0001 C CNN
+F 3 "~" H 7950 7950 50  0001 C CNN
+	1    7950 7950
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole_Pad H3
+U 1 1 5FB92E6C
+P 8200 7950
+F 0 "H3" H 8300 7999 50  0000 L CNN
+F 1 "MountingHole_Pad" H 8300 7908 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3_Pad_Via" H 8200 7950 50  0001 C CNN
+F 3 "~" H 8200 7950 50  0001 C CNN
+	1    8200 7950
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole_Pad H4
+U 1 1 5FBF6684
+P 8450 7950
+F 0 "H4" H 8550 7999 50  0000 L CNN
+F 1 "MountingHole_Pad" H 8550 7908 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3_Pad_Via" H 8450 7950 50  0001 C CNN
+F 3 "~" H 8450 7950 50  0001 C CNN
+	1    8450 7950
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7650 8050 7950 8050
+Wire Wire Line
+	7950 8050 8200 8050
+Connection ~ 7950 8050
+Wire Wire Line
+	8200 8050 8450 8050
+Connection ~ 8200 8050
+Wire Wire Line
+	8450 8050 8750 8050
+Connection ~ 8450 8050
+Connection ~ 8750 8050
+Text Label 9100 6600 2    50   ~ 0
+5V
+$Comp
+L Connector:Screw_Terminal_01x05 J1
+U 1 1 5FCC990A
+P 9500 6500
+F 0 "J1" H 9580 6542 50  0000 L CNN
+F 1 "POWER" H 9580 6451 50  0000 L CNN
+F 2 "TerminalBlock:TerminalBlock_bornier-5_P5.08mm" H 9500 6500 50  0001 C CNN
+F 3 "~" H 9500 6500 50  0001 C CNN
+	1    9500 6500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8750 6950 9200 6950
+Wire Wire Line
+	8050 6250 8600 6250
+Wire Wire Line
+	8600 6250 8600 6700
+Wire Wire Line
+	8600 6700 9300 6700
+Connection ~ 8050 6250
+Wire Wire Line
+	9300 6300 9100 6300
+Wire Wire Line
+	9100 6500 9300 6500
+Wire Wire Line
+	9100 6600 9300 6600
+Wire Wire Line
+	9300 6400 9200 6400
+Wire Wire Line
+	9200 6400 9200 6950
+Connection ~ 9200 6950
+Wire Wire Line
+	9200 6950 9500 6950
 $EndSCHEMATC
