@@ -8,6 +8,7 @@ LedDriver::LedDriver(TubeDriver *tube_driver, int num_leds, void (**default_patt
   FastLED.setBrightness(0);
   pattern = 0;
   brightness = 0;
+  status = true;
   patterns = default_pattern;
   this->patterns_num = patterns_num;
 }
@@ -21,6 +22,7 @@ void LedDriver::set_patterns(LedPatternList patterns, int patterns_num)
 
 void LedDriver::turn_off()
 {
+  status = false;
   brightness = 0;
   FastLED.setBrightness(0);
   FastLED.show();
@@ -28,11 +30,14 @@ void LedDriver::turn_off()
 
 void LedDriver::turn_on()
 {
+  status = true;
   FastLED.setBrightness(brightness);
 }
 
 void LedDriver::loop()
 {
+  if (!status)
+    return;
   static int gHue = 0;
   static elapsedMillis hueDelay;
   static elapsedMillis patternDelay;
@@ -79,6 +84,8 @@ void LedDriver::nextPattern()
 
 void LedDriver::set_brightness(int brightness)
 {
+  if (!status)
+    return;
   brightness = map(brightness, 0, PWMRANGE, MIN_LED_BRIGHTNESS, MAX_LED_BRIGHNTESS);
   this->brightness = brightness;
   FastLED.setBrightness(brightness);

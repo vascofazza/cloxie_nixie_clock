@@ -104,7 +104,16 @@ bool ClockDriver::is_night_hours()
 {
   auto curr_time = get_current_time();
   int hour = curr_time.hour();
-  return hour >= NIGHT_TIME_HOUR_START && hour <= NIGHT_TIME_HOUR_END;
+  int sleep_hour = config.sleep_hour;
+  int wake_hour = config.wake_hour;
+  if (sleep_hour > wake_hour)
+  {
+    int offset = sleep_hour % 24;
+    sleep_hour = 0;
+    wake_hour += offset;
+    hour = (hour + offset) % 24;
+  }
+  return hour >= sleep_hour && hour <= wake_hour;
 }
 
 void ClockDriver::print_timer()

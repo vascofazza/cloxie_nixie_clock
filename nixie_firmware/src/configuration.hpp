@@ -6,7 +6,7 @@
 
 #define FIRMWARE_VERSION PSTR("0.0.3")
 
-#define DEBUG
+//#define DEBUG
 
 #ifdef DEBUG
 #define DEBUG_PRINT(x) Serial.print(x)
@@ -23,8 +23,6 @@
 #define DATE_CYCLE (60 * 1000)    //60s
 #define TEMP_CYCLE (60 * 1000)    //60s
 #define TIMER_CYCLE (60 * 1000)   //60s
-#define NIGHT_TIME_HOUR_START 0
-#define NIGHT_TIME_HOUR_END 7
 
 //WIFI
 #define HOST_NAME PSTR("cloxie")
@@ -86,6 +84,8 @@ struct Config
   int shutdown_threshold;      // light sensor threshold for turning off the tubes
   unsigned int shutdown_delay; // seconds before shutdown
   int blink_mode;
+  int sleep_hour;
+  int wake_hour;
 };
 
 extern Config config;

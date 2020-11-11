@@ -3,6 +3,7 @@
 SensorDriver::SensorDriver(TubeDriver *tube_driver)
 {
   this->tube_driver = tube_driver;
+  reset_readings();
   pinMode(LIGHT_SENSOR_PIN, INPUT);
   // Setup a oneWire instance to communicate with any OneWire devices
   onewire_instance = new OneWire(ONE_WIRE_BUS);
@@ -21,27 +22,35 @@ void SensorDriver::loop()
 */
 float SensorDriver::get_light_sensor_reading()
 {
-  static int light_sensor_readings[NUM_OF_READINGS];
   static int idx = 0;
-  static long total = 0;
   static elapsedMillis reading_interval;
 
   if (reading_interval > ANALOG_READ_INTERVAL)
   {
     auto last_reading = analogRead(LIGHT_SENSOR_PIN);
     last_reading = map(last_reading, 0, MAX_LIGHT_READING_VAL, 0, PWMRANGE);
-    total -= light_sensor_readings[idx];
-    total += last_reading;
+    light_sensor_total -= light_sensor_readings[idx];
+    light_sensor_total += last_reading;
     light_sensor_readings[idx] = last_reading;
     idx = (idx + 1) % NUM_OF_READINGS;
     reading_interval = 0;
   }
 
-  float average_reading = (float)total / NUM_OF_READINGS;
+  float average_reading = (float)light_sensor_total / NUM_OF_READINGS;
 
   average_reading += config.brightness_offset;
 
   return min((float)PWMRANGE, max(0.f, average_reading));
+}
+
+void SensorDriver::reset_readings()
+{
+  light_sensor_total = 0;
+  for (int i = 0; i < NUM_OF_READINGS; i++)
+  {
+    light_sensor_readings[i] = DEFAULT_BRIGHTNESS;
+    light_sensor_total += DEFAULT_BRIGHTNESS;
+  }
 }
 
 float SensorDriver::get_temperature_sensor_reading()

@@ -1,7 +1,6 @@
 #include "configuration.hpp"
 
-Config config
-{
+Config config{
     163,
     true,
     true,
@@ -12,8 +11,10 @@ Config config
     0,
     10,
     60 * 30, // 30mins shutdown delay
-    1
-};
+    1,
+    0,
+    7,
+    };
 
 void printParams()
 {
@@ -30,6 +31,10 @@ void printParams()
   DEBUG_PRINTLN(config.adaptive_brightness);
   DEBUG_PRINT(F("\tBrightness Offset: "));
   DEBUG_PRINTLN(config.brightness_offset);
+  DEBUG_PRINT(F("\tSleep Hour: "));
+  DEBUG_PRINTLN(config.sleep_hour);
+  DEBUG_PRINT(F("\tWake Hour: "));
+  DEBUG_PRINTLN(config.wake_hour);
   DEBUG_PRINT(F("\tShutdown Threshold: "));
   DEBUG_PRINTLN(config.shutdown_threshold);
   DEBUG_PRINT(F("\tShutdown Delay: "));
@@ -50,6 +55,8 @@ void check_params()
   config.shutdown_delay = config.shutdown_delay > (7 * 3600) ? (60 * 30) : config.shutdown_delay;
   config.led_configuration = config.led_configuration > 2 || config.led_configuration < 0 ? 0 : config.led_configuration;
   config.blink_mode = config.blink_mode > 3 || config.blink_mode < 0 ? 0 : config.blink_mode;
+  config.sleep_hour = config.sleep_hour > 23 || config.sleep_hour < 0 ? 0 : config.sleep_hour;
+  config.wake_hour = config.wake_hour > 23 || config.wake_hour < 0 ? 7 : config.wake_hour;
 }
 
 void setup_configuration()
@@ -72,7 +79,6 @@ void save_configuration()
   if (EEPROM.commit())
   {
     DEBUG_PRINTLN(F("EEPROM successfully committed."));
-    
   }
   else
   {

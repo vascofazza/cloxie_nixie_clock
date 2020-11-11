@@ -188,10 +188,13 @@ void loop()
 
   bool hour_check = clock_driver->is_night_hours();
 
-  if (sensor_driver->get_light_sensor_reading() < config.shutdown_threshold || hour_check)
+  //DEBUG_PRINTLN(sensor_driver->get_light_sensor_reading());
+  //DEBUG_PRINTLN(analogRead(LIGHT_SENSOR_PIN));
+  if ((config.adaptive_brightness && sensor_driver->get_light_sensor_reading() < config.shutdown_threshold) || hour_check)
   {
     if (shutdown_delay > config.shutdown_delay)
     {
+      DEBUG_PRINTLN(F("Sleeping..."));
       tube_driver->turn_off();
       led_driver->turn_off();
       clock_driver->show_time(false);
@@ -200,16 +203,20 @@ void loop()
       yield();
       return;
     }
+    DEBUG_PRINT(F("Going to sleep in: "));
+    DEBUG_PRINTLN(config.shutdown_delay - shutdown_delay);
   }
   else
   {
     if (shutdown_delay > config.shutdown_delay)
     {
+      DEBUG_PRINTLN(F("Waking up."));
       tube_driver->turn_on();
       led_driver->turn_on();
     }
     shutdown_delay = 0;
   }
+
   if (config.leds)
   {
     led_driver->loop();

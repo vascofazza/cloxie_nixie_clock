@@ -1,7 +1,5 @@
 #include "wifi.hpp"
 
-static bool portalRunning = false;
-
 WiFiManagerParameter *google_token;
 WiFiManagerParameter *timezone_field;
 WiFiManagerParameter *h24_field;
@@ -13,6 +11,8 @@ WiFiManagerParameter *shutdown_threshold;
 WiFiManagerParameter *shutdown_delay;
 WiFiManagerParameter *leds;
 WiFiManagerParameter *leds_mode;
+WiFiManagerParameter *sleep_hour;
+WiFiManagerParameter *wake_hour;
 
 void (*custom_callback)(void) = nullptr;
 
@@ -51,11 +51,17 @@ void setup_wifi(void (*callback)(void))
   leds_mode = new WiFiManagerParameter(leds_mode_str);
   wifiManager.addParameter(leds_mode);
 
+  brightness_offset = new WiFiManagerParameter(F("brightness_offset"), F("brightness_offset"), String(config.brightness_offset).c_str(), 10);
+  wifiManager.addParameter(brightness_offset);
+
   shutdown_threshold = new WiFiManagerParameter(F("shutdown_threshold"), F("shutdown_threshold"), String(config.shutdown_threshold).c_str(), 10);
   wifiManager.addParameter(shutdown_threshold);
 
-  brightness_offset = new WiFiManagerParameter(F("brightness_offset"), F("brightness_offset"), String(config.brightness_offset).c_str(), 10);
-  wifiManager.addParameter(brightness_offset);
+  sleep_hour = new WiFiManagerParameter(F("sleep_hour"), F("sleep_hour"), String(config.sleep_hour).c_str(), 3);
+  wifiManager.addParameter(sleep_hour);
+
+  wake_hour = new WiFiManagerParameter(F("wake_hour"), F("wake_hour"), String(config.wake_hour).c_str(), 3);
+  wifiManager.addParameter(wake_hour);
 
   shutdown_delay = new WiFiManagerParameter(F("shutdown_delay"), F("shutdown_delay"), String(config.shutdown_delay).c_str(), 10);
   wifiManager.addParameter(shutdown_delay);
@@ -89,8 +95,7 @@ void setup_wifi(void (*callback)(void))
   DEBUG_PRINTLN(F("Connecting to AP"));
   if (!wifiManager.autoConnect(WIFI_SSID, WIFI_PASSWORD))
   {
-    DEBUG_PRINTLN(F("Starting portal."));
-    portalRunning = true;
+    DEBUG_PRINTLN(F("Starting config portal."));
   }
   MDNS.begin(HOST_NAME);
   MDNS.addService(PSTR("http"), PSTR("tcp"), 80);
@@ -130,7 +135,7 @@ void wifi_loop()
   }
 
   //handle disconnection - reboot and AP setup
-  if (portalRunning)
+  if (wifiManager.isConfigPortalActive() || wifiManager.isWebPortalActive())
   {
     wifiManager.process();
   }
@@ -138,7 +143,6 @@ void wifi_loop()
   {
     DEBUG_PRINTLN(F("Starting Portal"));
     wifiManager.startWebPortal();
-    portalRunning = true;
   }
   MDNS.update();
 }
@@ -159,6 +163,10 @@ void saveParamsCallback()
   DEBUG_PRINTLN(getParam(F("adaptive_field")));
   DEBUG_PRINT(F("PARAM brightness_offset = "));
   DEBUG_PRINTLN(brightness_offset->getValue());
+  DEBUG_PRINT(F("PARAM sleep_hour = "));
+  DEBUG_PRINTLN(sleep_hour->getValue());
+  DEBUG_PRINT(F("PARAM wake_hour = "));
+  DEBUG_PRINTLN(wake_hour->getValue());
   DEBUG_PRINT(F("PARAM shutdown_threshold = "));
   DEBUG_PRINTLN(shutdown_threshold->getValue());
   DEBUG_PRINT(F("PARAM shutdown_delay = "));
@@ -179,6 +187,8 @@ void saveParamsCallback()
   config.shutdown_threshold = String(shutdown_threshold->getValue()).toInt();
   config.leds = (bool)getParam(F("leds_field")).toInt();
   config.led_configuration = getParam(F("leds_mode_field")).toInt();
+  config.sleep_hour = String(sleep_hour->getValue()).toInt();
+  config.wake_hour = String(wake_hour->getValue()).toInt();
   save_configuration();
   if (custom_callback != nullptr)
   {

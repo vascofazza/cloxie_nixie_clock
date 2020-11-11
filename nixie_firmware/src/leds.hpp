@@ -30,6 +30,7 @@ private:
     int pattern;
     int brightness;
     int patterns_num;
+    bool status;
 
 public:
     LedDriver(TubeDriver *, int, void (**patterns)(CRGB*, int, int), int);

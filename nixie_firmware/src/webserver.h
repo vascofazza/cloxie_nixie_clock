@@ -6,6 +6,8 @@
 
 AsyncWebServer server(8080);
 
+bool server_status = false;
+
 //flag to use from web update to reboot the ESP
 bool shouldReboot = false;
 
@@ -22,7 +24,7 @@ void onBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t in
 
 void start_webserver(void)
 {
-  if (WiFi.waitForConnectResult() != WL_CONNECTED)
+  if (WiFi.status() != WL_CONNECTED)
   {
     DEBUG_PRINTLN(F("WiFi failed, aborting."));
     return;
@@ -73,11 +75,14 @@ void start_webserver(void)
   server.onRequestBody(onBody);
 
   server.begin();
+
+  server_status = true;
 }
 
 void stop_webserver()
 {
   server.end();
+  server_status = false;
 }
 
 void webserver_loop(void)
@@ -87,6 +92,10 @@ void webserver_loop(void)
     DEBUG_PRINTLN(F("Rebooting..."));
     delay(100);
     ESP.restart();
+  }
+  if (!server_status)
+  {
+    start_webserver();
   }
 }
 

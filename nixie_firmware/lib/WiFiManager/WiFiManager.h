@@ -354,6 +354,10 @@ public:
   // set port of webserver, 80
   void setHttpPort(uint16_t port);
 
+  bool isConfigPortalActive();
+
+  bool isWebPortalActive();
+
   std::unique_ptr<DNSServer> dnsServer;
 
 #if defined(ESP32) && defined(WM_WEBSERVERSHIM)

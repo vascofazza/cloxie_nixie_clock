@@ -19,6 +19,7 @@ private:
     int brightness;
     int l_dot_brightness;
     int r_dot_brightness;
+    bool status;
     EveryTimer cathode_poisoning_cycle;
 
     void set_tube_brightness(int, int, int);

@@ -556,6 +556,16 @@ void WiFiManager::startWebPortal()
   webPortalActive = true;
 }
 
+bool WiFiManager::isConfigPortalActive()
+{
+  return configPortalActive;
+}
+
+bool WiFiManager::isWebPortalActive()
+{
+  return webPortalActive;
+}
+
 /**
  * [stopWebPortal description]
  * @access public
