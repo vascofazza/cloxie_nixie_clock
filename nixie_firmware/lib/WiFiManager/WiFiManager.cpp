@@ -1859,9 +1859,10 @@ String WiFiManager::getInfoData(String id)
   {
     // subject to rollover!
     p = FPSTR(HTTP_INFO_uptime);
-    p.replace(FPSTR(T_1), (String)(millis() / 1000 / 3600));
-    p.replace(FPSTR(T_2), (String)((millis() / 1000 / 60) % 60));
-    p.replace(FPSTR(T_3), (String)((millis() / 1000) % 60));
+    p.replace(FPSTR(T_1), (String)(millis() / 1000 / 3600 / 24));
+    p.replace(FPSTR(T_2), (String)(millis() / 1000 / 3600));
+    p.replace(FPSTR(T_3), (String)((millis() / 1000 / 60) % 60));
+    p.replace(FPSTR(T_4), (String)((millis() / 1000) % 60));
   }
   else if (id == F("chipid"))
   {
