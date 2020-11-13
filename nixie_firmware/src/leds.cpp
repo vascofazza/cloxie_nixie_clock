@@ -30,7 +30,7 @@ void LedDriver::turn_off(bool fade)
     {
       FastLED.setBrightness(i);
       FastLED.show();
-      delay(10);
+      delay(50);
     }
   }
   else
@@ -51,7 +51,7 @@ void LedDriver::turn_on(int brightness)
     {
       FastLED.setBrightness(i);
       FastLED.show();
-      delay(10);
+      delay(50);
     }
   }
   else

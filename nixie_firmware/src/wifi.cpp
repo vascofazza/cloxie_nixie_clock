@@ -71,10 +71,10 @@ void setup_wifi(void (*callback)(void))
 
   wifiManager.setSaveParamsCallback(saveParamsCallback);
 
-  std::vector<const char *> menu = {"wifi", "info", "param", "sep", "restart", "exit"};
+  std::vector<const char *> menu = {"wifi", "info", "param", "sep", "restart"};
   wifiManager.setMenu(menu);
 
-#ifdef DEBUG_FLAG
+#ifdef DEBUG
   wifiManager.setDebugOutput(true);
 #else
   wifiManager.setDebugOutput(false);
@@ -103,12 +103,19 @@ void setup_wifi(void (*callback)(void))
 
 void wifi_loop()
 {
-  static elapsedMillis reconnectionDelay; //declare global if you don't want it reset every time loop runs
+  static elapsedSeconds reconnectionDelay; //declare global if you don't want it reset every time loop runs
   static int reconnection_attempt = WIFI_RECONNECT_ATTEMPTS;
-  if (WiFi.status() != WL_CONNECTED || !hasIPaddr())
+  if ((WiFi.status() != WL_CONNECTED || !hasIPaddr()) && !wifiManager.isConfigPortalActive())
   {
-    DEBUG_PRINT(F("WiFi connection lost. Reconnecting in... "));
-    DEBUG_PRINTLN(WIFI_RECONNECT_DELAY - reconnectionDelay);
+#ifdef DEBUG
+    static elapsedMillis deb_mils;
+    if (deb_mils > 1000)
+    {
+      DEBUG_PRINT(F("WiFi connection lost. Reconnecting in... "));
+      DEBUG_PRINTLN(WIFI_RECONNECT_DELAY - reconnectionDelay);
+      deb_mils = 0;
+    }
+#endif
     if (reconnectionDelay > WIFI_RECONNECT_DELAY)
     {
       DEBUG_PRINTLN(F("WiFi connection issue, resetting module."));
@@ -147,20 +154,20 @@ void wifi_loop()
   MDNS.update();
 }
 
-void saveParamsCallback()
+void saveParamsCallback(AsyncWebServerRequest *request)
 {
   DEBUG_PRINT(F("PARAM google_token = "));
   DEBUG_PRINTLN(google_token->getValue());
   DEBUG_PRINT(F("PARAM timezone_field = "));
-  DEBUG_PRINTLN(getParam(F("timezone_field")));
+  DEBUG_PRINTLN(getParam(request, F("timezone_field")));
   DEBUG_PRINT(F("PARAM h24_field = "));
-  DEBUG_PRINTLN(getParam(F("h24_field")));
+  DEBUG_PRINTLN(getParam(request, F("h24_field")));
   DEBUG_PRINT(F("PARAM blink_field = "));
-  DEBUG_PRINTLN(getParam(F("blink_field")));
+  DEBUG_PRINTLN(getParam(request, F("blink_field")));
   DEBUG_PRINT(F("PARAM temp_field = "));
-  DEBUG_PRINTLN(getParam(F("temp_field")));
+  DEBUG_PRINTLN(getParam(request, F("temp_field")));
   DEBUG_PRINT(F("PARAM adaptive_field = "));
-  DEBUG_PRINTLN(getParam(F("adaptive_field")));
+  DEBUG_PRINTLN(getParam(request, F("adaptive_field")));
   DEBUG_PRINT(F("PARAM brightness_offset = "));
   DEBUG_PRINTLN(brightness_offset->getValue());
   DEBUG_PRINT(F("PARAM sleep_hour = "));
@@ -172,21 +179,21 @@ void saveParamsCallback()
   DEBUG_PRINT(F("PARAM shutdown_delay = "));
   DEBUG_PRINTLN(shutdown_delay->getValue());
   DEBUG_PRINT(F("PARAM leds = "));
-  DEBUG_PRINTLN(getParam(F("leds_field")));
+  DEBUG_PRINTLN(getParam(request, F("leds_field")));
   DEBUG_PRINT(F("PARAM leds_mode = "));
-  DEBUG_PRINTLN(getParam(F("leds_mode_field")));
+  DEBUG_PRINTLN(getParam(request, F("leds_mode_field")));
 
   strcpy(config.google_token, google_token->getValue());
-  config.timezone = getParam(F("timezone_field")).toInt();
-  config.h24 = (bool)getParam(F("h24_field")).toInt();
-  config.blink_mode = getParam(F("blink_field")).toInt();
-  config.celsius = (bool)getParam(F("temp_field")).toInt();
-  config.adaptive_brightness = (bool)getParam(F("adaptive_field")).toInt();
+  config.timezone = getParam(request, F("timezone_field")).toInt();
+  config.h24 = (bool)getParam(request, F("h24_field")).toInt();
+  config.blink_mode = getParam(request, F("blink_field")).toInt();
+  config.celsius = (bool)getParam(request, F("temp_field")).toInt();
+  config.adaptive_brightness = (bool)getParam(request, F("adaptive_field")).toInt();
   config.brightness_offset = String(brightness_offset->getValue()).toInt();
   config.shutdown_delay = (unsigned int)String(shutdown_delay->getValue()).toInt();
   config.shutdown_threshold = String(shutdown_threshold->getValue()).toInt();
-  config.leds = (bool)getParam(F("leds_field")).toInt();
-  config.led_configuration = getParam(F("leds_mode_field")).toInt();
+  config.leds = (bool)getParam(request, F("leds_field")).toInt();
+  config.led_configuration = getParam(request, F("leds_mode_field")).toInt();
   config.sleep_hour = String(sleep_hour->getValue()).toInt();
   config.wake_hour = String(wake_hour->getValue()).toInt();
   save_configuration();
@@ -196,13 +203,13 @@ void saveParamsCallback()
   }
 }
 
-String getParam(String name)
+String getParam(AsyncWebServerRequest *request, String name)
 {
   //read parameter from server, for customhmtl input
   String value;
-  if (wifiManager.server->hasArg(name))
+  if (request->hasArg(name.c_str()))
   {
-    value = wifiManager.server->arg(name);
+    value = request->arg(name.c_str());
   }
   return value;
 }

@@ -41,11 +41,11 @@ public:
 
   // Start executing the callback every specified amount of milliseconds.
   // Return false if error
-  bool Every(unsigned long milliseconds, void (*callback)());
+  bool Every(unsigned long milliseconds, std::function<void()> callback);
 
   // Start executing the callback every specified amount of milliseconds with ctx.
   // Return false if error
-  bool Every(unsigned long milliseconds, void (*callback)(void*), void* ctx);
+  bool Every(unsigned long milliseconds, std::function<void(void*)> callback, void* ctx);
 
   // Stop calling the provided callback
   void Stop();
@@ -57,16 +57,16 @@ protected:
   inline void invokeCallback(){
     // choose between callback with or without context
     if (m_hasContext){
-        (*ctxCallback)(m_ctx);
+        ctxCallback(m_ctx);
     }else{
-        (*Callback)();
+        Callback();
     }
   }
   // Callback reference
-  void (*Callback)();
+  std::function<void()> Callback;
 
   // Context Callback reference
-  void (*ctxCallback)(void*);
+  std::function<void(void*)> ctxCallback;
 
   // Context for callback
   void* m_ctx;

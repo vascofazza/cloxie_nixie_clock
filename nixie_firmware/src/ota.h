@@ -23,7 +23,7 @@ bool setup_cert_store()
 
   if ((WiFi.status() != WL_CONNECTED))
   {
-    DEBUG_PRINT(F("WiFi not connected. Skipping."));
+    DEBUG_PRINTLN(F("WiFi not connected. Skipping."));
     return false;
   }
   cert_initialized = true;
@@ -34,7 +34,7 @@ void check_for_updates()
 {
   if ((WiFi.status() != WL_CONNECTED))
   {
-    DEBUG_PRINT(F("WiFi not connected. Skipping."));
+    DEBUG_PRINTLN(F("WiFi not connected. Skipping."));
     return;
   }
   if (!setup_cert_store())

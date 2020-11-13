@@ -12,7 +12,7 @@
 
 #ifndef WiFiManager_h
 #define WiFiManager_h
-#define WEBSERVER_H
+//#define WEBSERVER_H
 
 #if defined(ESP8266) || defined(ESP32)
 
@@ -49,7 +49,8 @@ extern "C"
 #include "user_interface.h"
 }
 #include <ESP8266WiFi.h>
-#include <ESP8266WebServer.h>
+//#include <ESP8266WebServer.h>
+#include "ESPAsyncWebServer.h"
 
 #ifdef WM_MDNS
 #include <ESP8266mDNS.h>
@@ -213,7 +214,7 @@ public:
   void setSaveConfigCallback(std::function<void()> func);
 
   //called when settings have been changed and connection was successful
-  void setSaveParamsCallback(std::function<void()> func);
+  void setSaveParamsCallback(std::function<void(AsyncWebServerRequest*)> func);
 
   //called when settings before have been changed and connection was successful
   void setPreSaveConfigCallback(std::function<void()> func);
@@ -363,7 +364,7 @@ public:
 #if defined(ESP32) && defined(WM_WEBSERVERSHIM)
   using WM_WebServer = WebServer;
 #else
-  using WM_WebServer = ESP8266WebServer;
+  using WM_WebServer = AsyncWebServer;
 #endif
 
   std::unique_ptr<WM_WebServer> server;
@@ -490,23 +491,23 @@ private:
   void updateConxResult(uint8_t status);
 
   // webserver handlers
-  void handleRoot();
-  void handleWifi(boolean scan);
-  void handleWifiSave();
-  void handleInfo();
-  void handleReset();
-  void handleNotFound();
-  void handleExit();
-  void handleClose();
+  void handleRoot(AsyncWebServerRequest *request);
+  void handleWifi(boolean scan, AsyncWebServerRequest *request);
+  void handleWifiSave(AsyncWebServerRequest *request);
+  void handleInfo(AsyncWebServerRequest *request);
+  void handleReset(AsyncWebServerRequest *request);
+  void handleNotFound(AsyncWebServerRequest *request);
+  void handleExit(AsyncWebServerRequest *request);
+  void handleClose(AsyncWebServerRequest *request);
   // void          handleErase();
-  void handleErase(boolean opt);
-  void handleParam();
-  void handleWiFiStatus();
+  void handleErase(boolean opt, AsyncWebServerRequest *request);
+  void handleParam(AsyncWebServerRequest *request);
+  void handleWiFiStatus(AsyncWebServerRequest *request);
   void handleRequest();
-  void handleParamSave();
-  void doParamSave();
+  void handleParamSave(AsyncWebServerRequest *request);
+  void doParamSave(AsyncWebServerRequest *request);
 
-  boolean captivePortal();
+  boolean captivePortal(AsyncWebServerRequest *request);
   boolean configPortalHasTimeout();
   uint8_t processConfigPortal();
   void stopCaptivePortal();
@@ -608,7 +609,7 @@ private:
   std::function<void()> _webservercallback;
   std::function<void()> _savewificallback;
   std::function<void()> _presavecallback;
-  std::function<void()> _saveparamscallback;
+  std::function<void(AsyncWebServerRequest*)> _saveparamscallback;
   std::function<void()> _resetcallback;
 
   template <class T>

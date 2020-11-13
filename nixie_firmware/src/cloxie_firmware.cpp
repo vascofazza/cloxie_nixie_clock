@@ -57,7 +57,7 @@ void setup()
   setup_serial_parser();
   setup_configuration();
   initWiFi();
-  setup_wifi(&next_cycle);
+  setup_wifi(next_cycle);
   start_webserver();
 
   tube_driver = new TubeDriver();
@@ -66,6 +66,7 @@ void setup()
   sensor_driver = new SensorDriver(tube_driver);
 
   ota_handler.Every(GHOTA_INTERVAL, check_for_updates);
+  ota_handler.Start();
 
   cycle_handler.OneShot(0, next_cycle);
 
@@ -75,7 +76,6 @@ void setup()
 
 void next_cycle()
 {
-  tube_driver->cathode_poisoning_prevention(TRANSITION_TIME);
   cycle = (cycle + 1) % NUM_CYCLES;
 
   switch (cycle)
@@ -117,6 +117,13 @@ void next_cycle()
 void handle_loop()
 {
   static bool timer_running = false;
+  static int last_cycle = cycle;
+
+  if (cycle != last_cycle)
+  {
+    tube_driver->cathode_poisoning_prevention(TRANSITION_TIME);
+    last_cycle = cycle;
+  }
 
   if (!config.adaptive_brightness)
   {
@@ -178,6 +185,9 @@ void handle_loop()
 void loop()
 {
   static elapsedSeconds shutdown_delay;
+#ifdef DEBUG
+  static elapsedMillis deb_mils;
+#endif
 
   clock_driver->loop();
 
@@ -188,13 +198,17 @@ void loop()
 
   bool hour_check = clock_driver->is_night_hours();
 
-  //DEBUG_PRINTLN(sensor_driver->get_light_sensor_reading());
-  //DEBUG_PRINTLN(analogRead(LIGHT_SENSOR_PIN));
   if ((config.adaptive_brightness && sensor_driver->get_light_sensor_reading() < config.shutdown_threshold) || hour_check)
   {
     if (shutdown_delay > config.shutdown_delay)
     {
-      DEBUG_PRINTLN(F("Sleeping..."));
+#ifdef DEBUG
+      if (deb_mils > 1000)
+      {
+        DEBUG_PRINTLN(F("Sleeping..."));
+        deb_mils = 0;
+      }
+#endif
       tube_driver->turn_off(true);
       led_driver->turn_off(true);
       clock_driver->show_time(false);
@@ -203,8 +217,14 @@ void loop()
       yield();
       return;
     }
-    DEBUG_PRINT(F("Going to sleep in: "));
-    DEBUG_PRINTLN(config.shutdown_delay - shutdown_delay);
+#ifdef DEBUG
+    if (deb_mils > 1000)
+    {
+      DEBUG_PRINT(F("Going to sleep in: "));
+      DEBUG_PRINTLN(config.shutdown_delay - shutdown_delay);
+      deb_mils = 0;
+    }
+#endif
   }
   else
   {

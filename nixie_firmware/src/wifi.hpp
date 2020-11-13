@@ -9,9 +9,9 @@
 
 static WiFiManager wifiManager;
 
-String getParam(String);
+String getParam(AsyncWebServerRequest*, String);
 
-void saveParamsCallback();
+void saveParamsCallback(AsyncWebServerRequest*);
 
 void setup_wifi(void (*)());
 

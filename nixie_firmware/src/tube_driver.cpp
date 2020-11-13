@@ -15,13 +15,14 @@ TubeDriver::TubeDriver()
   pinMode(SHF_DATA, OUTPUT);
   pinMode(SHUTDOWN_PIN, OUTPUT);
 
+  cathode_poisoning_cycle.Every(CATHODE_POISONING_TRIGGER_TIME, std::bind(&TubeDriver::cathode_poisoning_prevention, this, CATHODE_POISONING_PREVENTION_TIME));
+
   turn_on(-1);
 }
 
 void TubeDriver::run_test()
 {
   DEBUG_PRINT(F("Running tube tests..."));
-  elapsedSeconds test_time;
 
   set_tube_brightness(PWMRANGE, PWMRANGE, PWMRANGE);
   for (int i = 0; i < 10; i++)
@@ -135,14 +136,7 @@ void TubeDriver::loop()
 {
   if (!status)
     return;
-  static elapsedSeconds running_time;
-
-  if (running_time > CATHODE_POISONING_TRIGGER_TIME)
-  {
-    DEBUG_PRINTLN("CATHODE POISONING PREVENTION");
-    cathode_poisoning_prevention(CATHODE_POISONING_PREVENTION_TIME);
-    running_time = 0;
-  }
+  cathode_poisoning_cycle.Update();
 }
 
 void TubeDriver::display_time_and_date(int h, int m, int s, bool show_zeros)
@@ -221,7 +215,7 @@ void TubeDriver::turn_off(bool fade)
     for (int i = brightness; i >= 0; i--)
     {
       set_tube_brightness(i, 0, 0);
-      delay(10);
+      delay(50);
     }
   }
   digitalWrite(STROBE, HIGH);
@@ -239,7 +233,7 @@ void TubeDriver::turn_on(int brightness)
     for (int i = 0; i <= brightness; i++)
     {
       set_tube_brightness(i, 0, 0);
-      delay(10);
+      delay(50);
     }
   }
   else

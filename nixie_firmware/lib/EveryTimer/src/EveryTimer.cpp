@@ -33,10 +33,10 @@ EveryTimer::EveryTimer()
 {
   // At the first time, no callback is set so running is unabled.
   m_running = false;
-  m_hasContext =false;
+  m_hasContext = false;
   Callback = nullptr;
   ctxCallback = nullptr;
-  
+
   // Starting dummy values
   m_milliseconds = 0;
   m_lastRunTimestamp = 0;
@@ -48,33 +48,32 @@ EveryTimer::EveryTimer()
 void EveryTimer::Update()
 {
   // If running flag is off, exit
-  if(!m_running)
+  if (!m_running)
   {
     return;
   }
-  
+
   // Read current time
   unsigned long now = millis();
-  
+
   // Call immediately the callback if start command was issued
   // or if elapsed time was greater or equal the specified calling period
-  if((m_lastRunTimestamp == 0) ||
-  ((now - m_lastRunTimestamp) >= m_milliseconds))
+  if ((now - m_lastRunTimestamp) >= m_milliseconds)
   {
     invokeCallback();
     m_lastRunTimestamp = now;
     return;
   }
-  
+
   // Handle possible overflow of the value given by millis() function
-  if(now < m_lastRunTimestamp)
+  if (now < m_lastRunTimestamp)
   {
     unsigned long max = 0;
     max--;
     // This works only if:
     // 1) m_milliseconds is at least an order of magnitude smaller than max
     // 2) current Update() method is called with a period smaller than m_milliseconds
-    if((max - m_lastRunTimestamp - now) >= m_milliseconds)
+    if ((max - m_lastRunTimestamp - now) >= m_milliseconds)
     {
       invokeCallback();
       m_lastRunTimestamp = now;
@@ -86,10 +85,10 @@ void EveryTimer::Update()
 //////////////////////////////////////////////////////////////////////////////
 // Start executing the callback every specified amount of milliseconds.
 // Return false if error
-bool EveryTimer::Every(unsigned long milliseconds, void (*callback)())
+bool EveryTimer::Every(unsigned long milliseconds, std::function<void()> callback)
 {
   // Check that callback pointer is valid
-  if(callback == nullptr)
+  if (callback == nullptr)
   {
     return false;
   }
@@ -99,7 +98,7 @@ bool EveryTimer::Every(unsigned long milliseconds, void (*callback)())
 
   // Save callback pointer
   Callback = callback;
-  
+
   // remember we choose to use callback without context
   m_hasContext = false;
 
@@ -112,16 +111,16 @@ bool EveryTimer::Every(unsigned long milliseconds, void (*callback)())
 //////////////////////////////////////////////////////////////////////////////
 // Start executing the callback every specified amount of milliseconds with context.
 // Return false if error
-bool EveryTimer::Every(unsigned long milliseconds, void (*callback)(void*), void* ctx)
+bool EveryTimer::Every(unsigned long milliseconds, std::function<void(void *)> callback, void *ctx)
 {
   // Check that callback pointer is valid
-  if(callback == nullptr)
+  if (callback == nullptr)
   {
     return false;
   }
 
   // store context
-  m_ctx=ctx;
+  m_ctx = ctx;
 
   // Set milliseconds
   m_milliseconds = milliseconds;
@@ -152,8 +151,8 @@ void EveryTimer::Start()
 {
   // Set running flag accordingly
   m_running = true;
-  
+
   // Execute the callback now
-  (*Callback)();
+  Callback();
   m_lastRunTimestamp = millis();
 }

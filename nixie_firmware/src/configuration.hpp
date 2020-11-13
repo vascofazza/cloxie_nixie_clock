@@ -28,17 +28,17 @@
 #define HOST_NAME PSTR("cloxie")
 #define WIFI_SSID PSTR("Cloxie")
 #define WIFI_PASSWORD PSTR("cloxieclock")
-#define PORTAL_TIMEOUT 600                //in seconds
-#define WIFI_RECONNECT_DELAY (600 * 1000) //in millis
-#define WIFI_RECONNECT_ATTEMPTS 6         //before a full reset
+#define PORTAL_TIMEOUT 600        //in seconds
+#define WIFI_RECONNECT_DELAY 600  //10mins
+#define WIFI_RECONNECT_ATTEMPTS 6 //before a full reset
 
 //TUBES
 #define MIN_TUBE_BRIGHTNESS 80
 #define MAX_TUBE_BRIGHNTESS 700
 #define MIN_DOT_BRIGHTNESS 100
 #define MAX_DOT_BRIGHNTESS 1000
-#define CATHODE_POISONING_PREVENTION_TIME (60 * 5 * 1000)  //5m
-#define CATHODE_POISONING_TRIGGER_TIME (60 * 60 + 30 * 60) //1h30m0s
+#define CATHODE_POISONING_PREVENTION_TIME (60 * 5 * 1000)         //5m
+#define CATHODE_POISONING_TRIGGER_TIME (60 * 60 + 30 * 60) * 1000 //1h30m0s
 
 //LEDS
 #define NUM_LEDS 6
@@ -56,7 +56,6 @@
 #define MAX_LIGHT_READING_VAL 800
 
 //MISC
-#define TEST_TIME 10
 #define DEFAULT_BRIGHTNESS PWMRANGE / 2
 #define TRANSITION_TIME (10 * 1000) //10s
 #define MAGIC_NUMBER 42

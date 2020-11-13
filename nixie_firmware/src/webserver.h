@@ -26,7 +26,6 @@ void start_webserver(void)
 {
   if (WiFi.status() != WL_CONNECTED)
   {
-    DEBUG_PRINTLN(F("WiFi failed, aborting."));
     return;
   }
 
@@ -82,6 +81,7 @@ void start_webserver(void)
 void stop_webserver()
 {
   server.end();
+  server.reset();
   server_status = false;
 }
 

@@ -40,6 +40,16 @@ float SensorDriver::get_light_sensor_reading()
 
   average_reading += config.brightness_offset;
 
+#ifdef DEBUG
+  static elapsedMillis deb_mils;
+  if (deb_mils > 1000)
+  {
+    DEBUG_PRINT(F("Light sensor averaged reading: "));
+    DEBUG_PRINTLN(average_reading);
+    deb_mils = 0;
+  }
+#endif
+
   return min((float)PWMRANGE, max(0.f, average_reading));
 }
 
