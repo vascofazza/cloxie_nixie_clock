@@ -31,7 +31,7 @@ void setup_wifi(void (*callback)(void))
   h24_field = new WiFiManagerParameter(h24_radio_str);
   wifiManager.addParameter(h24_field);
 
-  auto blink_radio_str = F("<br/><p>Blink mode:</p><input type='radio' name='blink_field' value='0' checked><label for='0'>off</label><br><input type='radio' name='blink_field' value='1'><label for='1'>static</label><br><input type='radio' name='blink_field' value='2'><label for='2'>double static</label><br><input type='radio' name='blink_field' value='3'><label for='3'>fade out</label><br>");
+  auto blink_radio_str = F("<br/><p>Blink mode:</p><input type='radio' name='blink_field' value='0'><label for='0'>off</label><br><input type='radio' name='blink_field' value='1' checked><label for='1'>static</label><br><input type='radio' name='blink_field' value='2'><label for='2'>double static</label><br><input type='radio' name='blink_field' value='3'><label for='3'>fade out</label><br>");
   blink_field = new WiFiManagerParameter(blink_radio_str);
   wifiManager.addParameter(blink_field);
 

@@ -15,7 +15,7 @@ private:
     BasicZoneProcessor zoneProcessor;
     NtpClock ntpClock;
     SystemClockLoop *systemClock;
-    int blinking;
+    bool blinking;
     bool display_time;
     bool display_date;
     bool display_timer;

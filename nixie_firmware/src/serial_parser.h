@@ -1,4 +1,4 @@
-#ifndef SERIAL_PARSER_H
+#if !defined(SERIAL_PARSER_H) && defined(DEBUG)
 #define SERIAL_PARSER_H
 
 #include <SerialCommands.h> //https://github.com/ppedro74/Arduino-SerialCommands

@@ -6,6 +6,7 @@
 #include <elapsedMillis.h>
 #include "configuration.hpp"
 #include "tube_driver.hpp"
+#include "sensors.hpp"
 
 // List of patterns to cycle through.  Each is defined as a separate function below.
 typedef void (*LedPatternList[])(CRGB *, int, int);
@@ -25,6 +26,7 @@ class LedDriver
 {
 private:
     TubeDriver *tube_driver;
+    SensorDriver *sensor_driver;
     CRGB *leds;
     void (**patterns)(CRGB*, int, int);
     int pattern;
@@ -33,11 +35,13 @@ private:
     bool status;
 
 public:
-    LedDriver(TubeDriver *, int, void (**patterns)(CRGB*, int, int), int);
+    LedDriver(TubeDriver *, SensorDriver *, int, void (**patterns)(CRGB*, int, int), int);
 
     void turn_off(bool);
 
     void turn_on(int);
+
+    bool get_status();
 
     void loop();
 

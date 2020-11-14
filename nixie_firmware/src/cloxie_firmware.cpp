@@ -14,8 +14,9 @@ ClockDriver *clock_driver;
 TubeDriver *tube_driver;
 LedDriver *led_driver;
 SensorDriver *sensor_driver;
-
+#ifdef DEBUG
 #include "serial_parser.h"
+#endif
 
 OneShotTimer cycle_handler;
 EveryTimer ota_handler;
@@ -44,58 +45,64 @@ LedPatternList timer_patterns = {sinelon};
 // juggle random
 // bpm temp
 
+void update_config_callback();
+void set_led_patterns(uint8_t);
 void next_cycle();
 
 void setup()
 {
+#ifdef DEBUG
   Serial.begin(9600);
+#endif
 
   DEBUG_PRINTLN("Cloxie Nixie Clock");
   DEBUG_PRINT("FW version: ");
   DEBUG_PRINTLN(GHOTA_CURRENT_TAG);
 
+#ifdef DEBUG
   setup_serial_parser();
+#endif
   setup_configuration();
   initWiFi();
-  setup_wifi(next_cycle);
+  setup_wifi(update_config_callback);
   start_webserver();
 
-  tube_driver = new TubeDriver();
+  sensor_driver = new SensorDriver();
+  tube_driver = new TubeDriver(sensor_driver);
+  led_driver = new LedDriver(tube_driver, sensor_driver, NUM_LEDS, clock_patterns, ARRAY_SIZE(clock_patterns));
   clock_driver = new ClockDriver(tube_driver);
-  led_driver = new LedDriver(tube_driver, NUM_LEDS, clock_patterns, ARRAY_SIZE(clock_patterns));
-  sensor_driver = new SensorDriver(tube_driver);
 
   ota_handler.Every(GHOTA_INTERVAL, check_for_updates);
-  ota_handler.Start();
+  //ota_handler.Start();
 
-  cycle_handler.OneShot(0, next_cycle);
+  led_driver->turn_on(-1);  //sensor_driver->get_light_sensor_reading());
+  tube_driver->turn_on(-1); //sensor_driver->get_light_sensor_reading());
 
-  // test the tubes
-  tube_driver->run_test();
+  set_led_patterns(cycle);
+  clock_driver->show_time(true);
+  cycle_handler.OneShot(CLOCK_CYCLE, next_cycle);
 }
 
 void next_cycle()
 {
   cycle = (cycle + 1) % NUM_CYCLES;
+  tube_driver->cathode_poisoning_prevention(TRANSITION_TIME);
 
   switch (cycle)
   {
   case CYCLE::DATE:
     DEBUG_PRINTLN(F("CYCLE DATE"));
     cycle_handler.OneShot(DATE_CYCLE, next_cycle);
-    led_driver->set_patterns(date_patterns, ARRAY_SIZE(date_patterns));
     break;
   case CYCLE::TEMPERATURE:
     DEBUG_PRINTLN(F("CYCLE TEMP"));
     cycle_handler.OneShot(TEMP_CYCLE, next_cycle);
-    led_driver->set_patterns(temp_patterns, ARRAY_SIZE(temp_patterns));
     break;
   case CYCLE::TIMER:
     DEBUG_PRINTLN(F("CYCLE TIMER"));
     if (clock_driver->is_timer_set())
     {
       cycle_handler.OneShot(TIMER_CYCLE, next_cycle);
-      led_driver->set_patterns(timer_patterns, ARRAY_SIZE(timer_patterns));
       break;
     }
   case CYCLE::CLOCK:
@@ -103,45 +110,13 @@ void next_cycle()
     DEBUG_PRINTLN(F("CYCLE CLOCK"));
     cycle = CYCLE::CLOCK;
     cycle_handler.OneShot(CLOCK_CYCLE, next_cycle);
-    if (config.led_configuration == LED_MODE::RANDOM)
-    {
-      led_driver->set_patterns(random_patterns, ARRAY_SIZE(random_patterns));
-    }
-    else
-    {
-      led_driver->set_patterns(clock_patterns, ARRAY_SIZE(clock_patterns));
-    }
   }
+  set_led_patterns(cycle);
 }
 
 void handle_loop()
 {
   static bool timer_running = false;
-  static int last_cycle = cycle;
-
-  if (cycle != last_cycle)
-  {
-    tube_driver->cathode_poisoning_prevention(TRANSITION_TIME);
-    last_cycle = cycle;
-  }
-
-  if (!config.adaptive_brightness)
-  {
-    tube_driver->set_brightness(DEFAULT_BRIGHTNESS);
-    if (config.leds)
-    {
-      led_driver->set_brightness(DEFAULT_BRIGHTNESS);
-    }
-  }
-  else
-  {
-    float light_reading = sensor_driver->get_light_sensor_reading();
-    if (config.leds)
-    {
-      led_driver->set_brightness(light_reading);
-    }
-    tube_driver->set_brightness(light_reading);
-  }
 
   if (clock_driver->is_timer_running())
   {
@@ -185,15 +160,13 @@ void handle_loop()
 void loop()
 {
   static elapsedSeconds shutdown_delay;
-#ifdef DEBUG
-  static elapsedMillis deb_mils;
-#endif
+  static bool sleeping = false;
 
   clock_driver->loop();
+  sensor_driver->loop();
 
   wifi_loop();
   webserver_loop();
-  serial_parser_loop();
   ota_handler.Update();
 
   bool hour_check = clock_driver->is_night_hours();
@@ -202,22 +175,17 @@ void loop()
   {
     if (shutdown_delay > config.shutdown_delay)
     {
-#ifdef DEBUG
-      if (deb_mils > 1000)
+      if (!sleeping)
       {
         DEBUG_PRINTLN(F("Sleeping..."));
-        deb_mils = 0;
+        tube_driver->turn_off(true);
+        led_driver->turn_off(true);
+        sleeping = true;
       }
-#endif
-      tube_driver->turn_off(true);
-      led_driver->turn_off(true);
-      clock_driver->show_time(false);
-      clock_driver->show_date(false);
-      clock_driver->show_timer(false);
-      yield();
       return;
     }
 #ifdef DEBUG
+    static elapsedMillis deb_mils;
     if (deb_mils > 1000)
     {
       DEBUG_PRINT(F("Going to sleep in: "));
@@ -228,26 +196,61 @@ void loop()
   }
   else
   {
-    if (shutdown_delay > config.shutdown_delay)
+    if (sleeping)
     {
       DEBUG_PRINTLN(F("Waking up."));
-      auto light_value = config.adaptive_brightness ? sensor_driver->get_light_sensor_reading() : DEFAULT_BRIGHTNESS;
+      auto light_value = sensor_driver->get_light_sensor_reading();
       led_driver->turn_on(light_value);
       tube_driver->turn_on(light_value);
+      sleeping = false;
     }
     shutdown_delay = 0;
   }
 
-  if (config.leds)
+  led_driver->loop();
+  tube_driver->loop();
+  handle_loop();
+
+#ifdef DEBUG
+  serial_parser_loop();
+#endif
+}
+
+void set_led_patterns(uint8_t cycle)
+{
+  switch (cycle)
   {
-    led_driver->loop();
+  case CYCLE::DATE:
+    led_driver->set_patterns(date_patterns, ARRAY_SIZE(date_patterns));
+    break;
+  case CYCLE::TEMPERATURE:
+    led_driver->set_patterns(temp_patterns, ARRAY_SIZE(temp_patterns));
+    break;
+  case CYCLE::TIMER:
+    led_driver->set_patterns(timer_patterns, ARRAY_SIZE(timer_patterns));
+    break;
+  case CYCLE::CLOCK:
+  default:
+    if (config.led_configuration == LED_MODE::RANDOM)
+    {
+      led_driver->set_patterns(random_patterns, ARRAY_SIZE(random_patterns));
+    }
+    else
+    {
+      led_driver->set_patterns(clock_patterns, ARRAY_SIZE(clock_patterns));
+    }
   }
-  else
+}
+
+void update_config_callback()
+{
+  if (config.leds && !led_driver->get_status())
+  {
+    led_driver->turn_on(sensor_driver->get_light_sensor_reading());
+  }
+  else if (!config.leds && led_driver->get_status())
   {
     led_driver->turn_off(true);
   }
-
-  tube_driver->loop();
-  handle_loop();
-  yield();
+  set_led_patterns(cycle);
 }

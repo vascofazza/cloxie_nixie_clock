@@ -1,8 +1,9 @@
 #include "tube_driver.hpp"
 
-TubeDriver::TubeDriver()
+TubeDriver::TubeDriver(SensorDriver *sensor_driver)
 {
-  status = false;
+  this->sensor_driver = sensor_driver;
+  status = true;
   brightness = 0;
   l_dot_brightness = 0;
   r_dot_brightness = 0;
@@ -14,10 +15,11 @@ TubeDriver::TubeDriver()
   pinMode(SHF_CLOCK, OUTPUT);
   pinMode(SHF_DATA, OUTPUT);
   pinMode(SHUTDOWN_PIN, OUTPUT);
-
   cathode_poisoning_cycle.Every(CATHODE_POISONING_TRIGGER_TIME, std::bind(&TubeDriver::cathode_poisoning_prevention, this, CATHODE_POISONING_PREVENTION_TIME));
 
-  turn_on(-1);
+  run_test();
+  set_tubes(0, 0, 0, 0, 0, 0);
+  turn_off(false);
 }
 
 void TubeDriver::run_test()
@@ -136,6 +138,7 @@ void TubeDriver::loop()
 {
   if (!status)
     return;
+  set_brightness(sensor_driver->get_light_sensor_reading());
   cathode_poisoning_cycle.Update();
 }
 
@@ -187,10 +190,10 @@ void TubeDriver::set_brightness(int brightness)
     return;
   this->brightness = brightness < 0 ? this->brightness : brightness;
   brightness = scale(this->brightness);
-  brightness = map(brightness, 0, PWMRANGE, MIN_TUBE_BRIGHTNESS, MAX_TUBE_BRIGHNTESS);
   int dot_brightness = map(brightness, 0, PWMRANGE, MIN_DOT_BRIGHTNESS, MAX_DOT_BRIGHNTESS);
-  int left = map(dot_brightness, 0, PWMRANGE, 0, l_dot_brightness);
-  int right = map(dot_brightness, 0, PWMRANGE, 0, r_dot_brightness);
+  int left = map(l_dot_brightness, 0, PWMRANGE, 0, dot_brightness);
+  int right = map(r_dot_brightness, 0, PWMRANGE, 0, dot_brightness);
+  brightness = map(brightness, 0, PWMRANGE, MIN_TUBE_BRIGHTNESS, MAX_TUBE_BRIGHNTESS);
   set_tube_brightness(brightness, left, right);
 }
 
@@ -226,13 +229,15 @@ void TubeDriver::turn_off(bool fade)
 
 void TubeDriver::turn_on(int brightness)
 {
+  if (status)
+    return;
   status = true;
   digitalWrite(SHUTDOWN_PIN, LOW);
   if (brightness > 0)
   {
     for (int i = 0; i <= brightness; i++)
     {
-      set_tube_brightness(i, 0, 0);
+      set_tube_brightness(i, i, i);
       delay(50);
     }
   }
@@ -266,6 +271,5 @@ void TubeDriver::cathode_poisoning_prevention(unsigned long time)
     i++;
   }
 
-  yield();
   set_brightness(-1);
 }

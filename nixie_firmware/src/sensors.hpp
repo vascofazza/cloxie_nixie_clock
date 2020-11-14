@@ -5,7 +5,6 @@
 #include <DallasTemperature.h>
 #include <elapsedMillis.h>
 #include "configuration.hpp"
-#include "tube_driver.hpp"
 
 // GPIO where the DS18B20 is connected to
 #define ONE_WIRE_BUS D2
@@ -14,13 +13,15 @@
 class SensorDriver
 {
 private:
-    TubeDriver* tube_driver;
     OneWire* onewire_instance;
     DallasTemperature* sensors;
     int light_sensor_readings[NUM_OF_READINGS];
     long light_sensor_total = 0;
+
+    void feed_readings();
+    void reset_readings();
 public:
-    SensorDriver(TubeDriver*);
+    SensorDriver();
 
     void loop();
 
@@ -28,7 +29,6 @@ public:
 
     float get_temperature_sensor_reading();
 
-    void reset_readings();
 };
 
 #endif

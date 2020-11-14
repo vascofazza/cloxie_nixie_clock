@@ -1,8 +1,9 @@
 #include "leds.hpp"
 
-LedDriver::LedDriver(TubeDriver *tube_driver, int num_leds, void (**default_pattern)(CRGB *, int, int), int patterns_num)
+LedDriver::LedDriver(TubeDriver *tube_driver, SensorDriver *sensor_driver, int num_leds, void (**default_pattern)(CRGB *, int, int), int patterns_num)
 {
   this->tube_driver = tube_driver;
+  this->sensor_driver = sensor_driver;
   leds = new CRGB[num_leds];
   FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   FastLED.setBrightness(0);
@@ -11,6 +12,7 @@ LedDriver::LedDriver(TubeDriver *tube_driver, int num_leds, void (**default_patt
   status = true;
   patterns = default_pattern;
   this->patterns_num = patterns_num;
+  turn_off(false);
 }
 
 void LedDriver::set_patterns(LedPatternList patterns, int patterns_num)
@@ -44,9 +46,21 @@ void LedDriver::turn_off(bool fade)
 
 void LedDriver::turn_on(int brightness)
 {
-  status = true;
+  if (status)
+    return;
+  if (!config.leds)
+  {
+    turn_off(false);
+    return;
+  }
+  if (!config.leds)
+  {
+    turn_off(false);
+    return;
+  }
   if (brightness > 0)
   {
+    brightness = map(brightness, 0, PWMRANGE, MIN_LED_BRIGHTNESS, MAX_LED_BRIGHNTESS);
     for (int i = 0; i <= brightness; i++)
     {
       FastLED.setBrightness(i);
@@ -57,7 +71,14 @@ void LedDriver::turn_on(int brightness)
   else
   {
     FastLED.setBrightness(this->brightness);
+    FastLED.show();
   }
+  status = true;
+}
+
+bool LedDriver::get_status()
+{
+  return status;
 }
 
 void LedDriver::loop()
@@ -68,6 +89,8 @@ void LedDriver::loop()
   static elapsedMillis hueDelay;
   static elapsedMillis patternDelay;
   static elapsedMillis renderDelay;
+
+  set_brightness(sensor_driver->get_light_sensor_reading());
 
   if (renderDelay > (1000 / FRAMES_PER_SECOND))
   {

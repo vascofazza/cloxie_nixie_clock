@@ -4,6 +4,7 @@
 #include <elapsedMillis.h>
 #include <EveryTimer.h>
 #include "configuration.hpp"
+#include "sensors.hpp"
 
 #define LEFT_DOT D0
 #define RIGHT_DOT D8
@@ -21,11 +22,12 @@ private:
     int r_dot_brightness;
     bool status;
     EveryTimer cathode_poisoning_cycle;
+    SensorDriver *sensor_driver;
 
     void set_tube_brightness(int, int, int);
 
 public:
-    TubeDriver();
+    TubeDriver(SensorDriver *);
 
     void run_test();
 
