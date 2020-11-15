@@ -16,7 +16,7 @@ class SensorDriver
 private:
     OneWire* onewire_instance;
     DallasTemperature* sensors;
-    int light_sensor_readings[NUM_OF_READINGS];
+    uint16_t light_sensor_readings[NUM_OF_READINGS];
     long light_sensor_total = 0;
     Ticker sensors_ticker;
 

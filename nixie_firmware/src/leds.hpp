@@ -10,7 +10,7 @@
 #include <Ticker.h>
 
 // List of patterns to cycle through.  Each is defined as a separate function below.
-typedef void (*LedPatternList[])(CRGB *, int, int);
+typedef void (*LedPatternList[])(CRGB *, uint8_t, int);
 
 #define DATA_PIN D7
 #define LED_TYPE WS2812B
@@ -29,26 +29,28 @@ private:
     TubeDriver *tube_driver;
     SensorDriver *sensor_driver;
     CRGB *leds;
-    void (**patterns)(CRGB*, int, int);
-    int pattern;
-    int brightness;
-    int patterns_num;
+    void (**patterns)(CRGB*, uint8_t, int);
+    uint8_t pattern;
+    int16_t brightness;
+    uint8_t patterns_num;
     bool status;
     Ticker led_ticker;
-
     void loop();
+
 public:
-    LedDriver(TubeDriver *, SensorDriver *, int, void (**patterns)(CRGB*, int, int), int);
+    LedDriver(TubeDriver *, SensorDriver *, uint8_t, void (**patterns)(CRGB*, uint8_t, int), uint8_t);
+
+    void process_pattern(int);
 
     void turn_off(bool);
 
-    void turn_on(int);
+    void turn_on(int16_t);
 
     bool get_status();
 
-    void set_brightness(int brightness);
+    void set_brightness(int16_t brightness);
 
-    void set_patterns(LedPatternList, int);
+    void set_patterns(LedPatternList, uint8_t);
 
     void nextPattern();
 };

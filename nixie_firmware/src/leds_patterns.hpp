@@ -3,12 +3,12 @@
 
 #include <FastLED.h>
 
-void solid(CRGB *leds, int num_leds, int gHue)
+void solid(CRGB *leds, uint8_t num_leds, int gHue)
 {
   fill_rainbow(leds, num_leds, gHue, 0);
 }
 
-void lava(CRGB *leds, int num_leds, int gHue)
+void lava(CRGB *leds, uint8_t num_leds, int gHue)
 {
   // random colored speckles that blink in and fade smoothly
   fadeToBlackBy(leds, num_leds, 10);
@@ -16,7 +16,7 @@ void lava(CRGB *leds, int num_leds, int gHue)
   leds[pos] = CHSV(gHue + random8(3), 255, 255);
 }
 
-void lava_beat(CRGB *leds, int num_leds, int gHue)
+void lava_beat(CRGB *leds, uint8_t num_leds, int gHue)
 {
   // a colored dot sweeping back and forth, with fading trails
   fadeToBlackBy(leds, num_leds, 5);
@@ -24,13 +24,13 @@ void lava_beat(CRGB *leds, int num_leds, int gHue)
   leds[pos] += CHSV(gHue, 255, 100);
 }
 
-void rainbow(CRGB *leds, int num_leds, int gHue)
+void rainbow(CRGB *leds, uint8_t num_leds, int gHue)
 {
   // FastLED's built-in rainbow generator
   fill_rainbow(leds, num_leds, gHue, 7);
 }
 
-void addGlitter(CRGB *leds, int num_leds, fract8 chanceOfGlitter)
+void addGlitter(CRGB *leds, uint8_t num_leds, fract8 chanceOfGlitter)
 {
   if (random8() < chanceOfGlitter)
   {
@@ -38,14 +38,14 @@ void addGlitter(CRGB *leds, int num_leds, fract8 chanceOfGlitter)
   }
 }
 
-void rainbowWithGlitter(CRGB *leds, int num_leds, int gHue)
+void rainbowWithGlitter(CRGB *leds, uint8_t num_leds, int gHue)
 {
   // built-in FastLED rainbow, plus some random sparkly glitter
   rainbow(leds, num_leds, gHue);
   addGlitter(leds, num_leds, 80);
 }
 
-void confetti(CRGB *leds, int num_leds, int gHue)
+void confetti(CRGB *leds, uint8_t num_leds, int gHue)
 {
   // random colored speckles that blink in and fade smoothly
   fadeToBlackBy(leds, num_leds, 10);
@@ -53,7 +53,7 @@ void confetti(CRGB *leds, int num_leds, int gHue)
   leds[pos] += CHSV(gHue + random8(64), 200, 255);
 }
 
-void sinelon(CRGB *leds, int num_leds, int gHue)
+void sinelon(CRGB *leds, uint8_t num_leds, int gHue)
 {
   // a colored dot sweeping back and forth, with fading trails
   fadeToBlackBy(leds, num_leds, 20);
@@ -61,7 +61,7 @@ void sinelon(CRGB *leds, int num_leds, int gHue)
   leds[pos] += CHSV(gHue, 255, 100);
 }
 
-void bpm(CRGB *leds, int num_leds, int gHue)
+void bpm(CRGB *leds, uint8_t num_leds, int gHue)
 {
   // colored stripes pulsing at a defined Beats-Per-Minute (BPM)
   uint8_t BeatsPerMinute = 62;
@@ -73,7 +73,7 @@ void bpm(CRGB *leds, int num_leds, int gHue)
   }
 }
 
-void juggle(CRGB *leds, int num_leds, int gHue)
+void juggle(CRGB *leds, uint8_t num_leds, int gHue)
 {
   // eight colored dots, weaving in and out of sync with each other
   fadeToBlackBy(leds, num_leds, 20);

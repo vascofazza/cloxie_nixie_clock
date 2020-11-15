@@ -1,6 +1,6 @@
 #include "leds.hpp"
 
-LedDriver::LedDriver(TubeDriver *tube_driver, SensorDriver *sensor_driver, int num_leds, void (**default_pattern)(CRGB *, int, int), int patterns_num)
+LedDriver::LedDriver(TubeDriver *tube_driver, SensorDriver *sensor_driver, uint8_t num_leds, void (**default_pattern)(CRGB *, uint8_t, int), uint8_t patterns_num)
 {
   this->tube_driver = tube_driver;
   this->sensor_driver = sensor_driver;
@@ -16,7 +16,7 @@ LedDriver::LedDriver(TubeDriver *tube_driver, SensorDriver *sensor_driver, int n
   led_ticker.attach_ms(1000 / FRAMES_PER_SECOND, std::bind(&LedDriver::loop, this));
 }
 
-void LedDriver::set_patterns(LedPatternList patterns, int patterns_num)
+void LedDriver::set_patterns(LedPatternList patterns, uint8_t patterns_num)
 {
   this->pattern = 0;
   this->patterns = patterns;
@@ -45,7 +45,7 @@ void LedDriver::turn_off(bool fade)
   brightness = 0;
 }
 
-void LedDriver::turn_on(int brightness)
+void LedDriver::turn_on(int16_t brightness)
 {
   if (status)
     return;
@@ -82,6 +82,19 @@ bool LedDriver::get_status()
   return status;
 }
 
+void LedDriver::process_pattern(int gHue)
+{
+  //HACK - esp8266 does not have hardware PWM.
+  tube_driver->turn_off(false);
+
+  auto current_pattern = (void (*)(CRGB *, int, int))patterns[pattern];
+  // Call the current pattern function once, updating the 'leds' array
+  current_pattern(leds, NUM_LEDS, gHue);
+  // send the 'leds' array out to the actual LED strip
+  FastLED.show();
+  tube_driver->turn_on(-1);
+}
+
 void LedDriver::loop()
 {
   if (!status)
@@ -92,15 +105,7 @@ void LedDriver::loop()
 
   set_brightness(sensor_driver->get_light_sensor_reading());
 
-  //HACK - esp8266 does not have hardware PWM.
-  tube_driver->turn_off(false);
-
-  auto current_pattern = (void (*)(CRGB *, int, int))patterns[pattern];
-  // Call the current pattern function once, updating the 'leds' array
-  current_pattern(leds, NUM_LEDS, gHue);
-  // send the 'leds' array out to the actual LED strip
-  FastLED.show();
-  tube_driver->turn_on(-1);
+  process_pattern(gHue);
 
   if (hueDelay > HUE_DELAY)
   {
@@ -127,7 +132,7 @@ void LedDriver::nextPattern()
   pattern = (pattern + 1) % patterns_num;
 }
 
-void LedDriver::set_brightness(int brightness)
+void LedDriver::set_brightness(int16_t brightness)
 {
   if (!status)
     return;

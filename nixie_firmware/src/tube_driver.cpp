@@ -48,14 +48,14 @@ void TubeDriver::run_test()
 /*
    -1 or digits > 9 turns off the nixie tube
 */
-void TubeDriver::set_tubes(int h, int hh, int m, int mm, int s, int ss)
+void TubeDriver::set_tubes(int8_t h, int8_t hh, int8_t m, int8_t mm, int8_t s, int8_t ss)
 {
-  static int prev_h = -1;
-  static int prev_hh = -1;
-  static int prev_m = -1;
-  static int prev_mm = -1;
-  static int prev_s = -1;
-  static int prev_ss = -1;
+  static int8_t prev_h = -1;
+  static int8_t prev_hh = -1;
+  static int8_t prev_m = -1;
+  static int8_t prev_mm = -1;
+  static int8_t prev_s = -1;
+  static int8_t prev_ss = -1;
 
   if (h == prev_h && hh == prev_hh && m == prev_m && mm == prev_mm && s == prev_s && ss == prev_ss)
     return;
@@ -142,17 +142,17 @@ void TubeDriver::loop()
   cathode_poisoning_cycle.Update();
 }
 
-void TubeDriver::display_time_and_date(int h, int m, int s, bool show_zeros)
+void TubeDriver::display_time_and_date(int8_t h, int8_t m, int8_t s, bool show_zeros)
 {
-  int hour1 = h / 10; //handle 10/24h and tube off on 0
-  int hour2 = h % 10;
+  int8_t hour1 = h / 10; //handle 10/24h and tube off on 0
+  int8_t hour2 = h % 10;
   if (hour1 == 0 && hour2 != 0 && !show_zeros)
     hour1 = -1;
 
-  int min1 = m / 10;
-  int min2 = m % 10;
-  int sec1 = s / 10;
-  int sec2 = s % 10;
+  int8_t min1 = m / 10;
+  int8_t min2 = m % 10;
+  int8_t sec1 = s / 10;
+  int8_t sec2 = s % 10;
 
   set_tubes(hour1, hour2, min1, min2, sec1, sec2);
 }
@@ -170,7 +170,7 @@ void TubeDriver::display_temperature(float temp)
   set_dots_brightness(0, PWMRANGE);
 }
 
-void TubeDriver::set_tube_brightness(int brightness, int l_dot_brightness, int r_dot_brightness)
+void TubeDriver::set_tube_brightness(int16_t brightness, int16_t l_dot_brightness, int16_t r_dot_brightness)
 {
   analogWrite(STROBE, PWMRANGE - brightness);
   analogWrite(LEFT_DOT, l_dot_brightness);
@@ -184,7 +184,7 @@ int scale(int val)
   return val;
 }
 
-void TubeDriver::set_brightness(int brightness)
+void TubeDriver::set_brightness(int16_t brightness)
 {
   if (!status)
     return;
@@ -197,7 +197,7 @@ void TubeDriver::set_brightness(int brightness)
   set_tube_brightness(brightness, left, right);
 }
 
-void TubeDriver::set_dots_brightness(int left, int right)
+void TubeDriver::set_dots_brightness(int16_t left, int16_t right)
 {
   l_dot_brightness = left;
   r_dot_brightness = right;
@@ -227,7 +227,7 @@ void TubeDriver::turn_off(bool fade)
   status = false;
 }
 
-void TubeDriver::turn_on(int brightness)
+void TubeDriver::turn_on(int16_t brightness)
 {
   if (status)
     return;

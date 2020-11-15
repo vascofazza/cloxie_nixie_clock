@@ -18,7 +18,7 @@ void SensorDriver::loop()
   static elapsedMillis read_interval;
 
   static uint16_t idx = 0;
-  auto last_reading = analogRead(LIGHT_SENSOR_PIN);
+  int last_reading = analogRead(LIGHT_SENSOR_PIN);
   last_reading = map(last_reading, 0, MAX_LIGHT_READING_VAL, 0, PWMRANGE);
   light_sensor_total -= light_sensor_readings[idx];
   light_sensor_total += last_reading;
@@ -52,13 +52,13 @@ float SensorDriver::get_light_sensor_reading()
 
 void SensorDriver::feed_readings()
 {
-  DEBUG_PRINT("Feeding sensor...");
+  DEBUG_PRINT(F("Feeding sensor..."));
   for (int i = 0; i < NUM_OF_READINGS; i++)
   {
     loop();
     delay(ANALOG_READ_INTERVAL);
   }
-  DEBUG_PRINTLN("Done.");
+  DEBUG_PRINTLN(F("Done."));
 }
 
 void SensorDriver::reset_readings()
