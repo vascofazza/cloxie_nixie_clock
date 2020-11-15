@@ -4,6 +4,7 @@
 #include <AceTime.h>
 #include "configuration.hpp"
 #include "tube_driver.hpp"
+#include <Ticker.h>
 
 using namespace ace_time;
 using namespace ace_time::clock;
@@ -22,6 +23,8 @@ private:
     bool timer_running;
     long timer_duration;
     elapsedMillis current_timer_value;
+    Ticker clock_ticker;
+
     void print_current_time(ace_time::ZonedDateTime);
     void print_current_date(ace_time::ZonedDateTime);
     void print_timer();

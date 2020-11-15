@@ -56,6 +56,7 @@ void SensorDriver::feed_readings()
   for (int i = 0; i < NUM_OF_READINGS; i++)
   {
     loop();
+    delay(ANALOG_READ_INTERVAL);
   }
   DEBUG_PRINTLN("Done.");
 }

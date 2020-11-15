@@ -217,7 +217,7 @@ void TubeDriver::turn_off(bool fade)
   {
     for (int i = brightness; i >= 0; i--)
     {
-      set_tube_brightness(i, 0, 0);
+      set_tube_brightness(i, i, i);
       delay(50);
     }
   }

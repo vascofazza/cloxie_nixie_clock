@@ -17,6 +17,7 @@ ClockDriver::ClockDriver(TubeDriver *tube_driver)
   timer_running = false;
   timer_duration = -1;
   current_timer_value = 0;
+  clock_ticker.attach(1.f, std::bind(&SystemClockLoop::getNow, systemClock));
 }
 
 void ClockDriver::loop()
