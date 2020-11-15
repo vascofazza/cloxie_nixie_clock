@@ -75,10 +75,12 @@ void setup()
   ota_handler.Every(GHOTA_INTERVAL, check_for_updates);
   ota_handler.Start();
 
+  // cold start
   set_led_patterns(cycle);
-  led_driver->process_pattern(0);
-  led_driver->turn_on(sensor_driver->get_light_sensor_reading());
-  tube_driver->turn_on(sensor_driver->get_light_sensor_reading());
+  for (int i = 0; i < 100; i++)
+    led_driver->process_pattern(0);
+  led_driver->turn_on(true);
+  tube_driver->turn_on(true);
 
   clock_driver->show_time(true);
   cycle_handler.OneShot(CLOCK_CYCLE, next_cycle);
@@ -199,9 +201,8 @@ void loop()
     if (sleeping)
     {
       DEBUG_PRINTLN(F("Waking up."));
-      auto light_value = sensor_driver->get_light_sensor_reading();
-      led_driver->turn_on(light_value);
-      tube_driver->turn_on(light_value);
+      led_driver->turn_on(true);
+      tube_driver->turn_on(true);
       sleeping = false;
     }
     shutdown_delay = 0;
@@ -245,11 +246,11 @@ void update_config_callback()
 {
   if (config.leds && !led_driver->get_status())
   {
-    led_driver->turn_on(sensor_driver->get_light_sensor_reading());
+    led_driver->turn_on(false);
   }
   else if (!config.leds && led_driver->get_status())
   {
-    led_driver->turn_off(true);
+    led_driver->turn_off(false);
   }
   set_led_patterns(cycle);
 }

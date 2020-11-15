@@ -47,7 +47,7 @@ public:
 
     void turn_off(bool);
 
-    void turn_on(int16_t);
+    void turn_on(bool);
 
     void cathode_poisoning_prevention(unsigned long);
 };

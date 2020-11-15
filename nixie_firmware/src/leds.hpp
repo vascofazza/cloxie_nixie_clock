@@ -44,7 +44,7 @@ public:
 
     void turn_off(bool);
 
-    void turn_on(int16_t);
+    void turn_on(bool);
 
     bool get_status();
 

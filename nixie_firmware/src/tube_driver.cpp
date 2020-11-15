@@ -227,15 +227,15 @@ void TubeDriver::turn_off(bool fade)
   status = false;
 }
 
-void TubeDriver::turn_on(int16_t brightness)
+void TubeDriver::turn_on(bool fade)
 {
   if (status)
     return;
   status = true;
   digitalWrite(SHUTDOWN_PIN, LOW);
-  if (brightness > 0)
+  if (fade)
   {
-    for (int i = 0; i <= brightness; i++)
+    for (int i = 0; i <= sensor_driver->get_light_sensor_reading(); i++)
     {
       set_tube_brightness(i, i, i);
       delay(50);
@@ -259,7 +259,6 @@ void TubeDriver::cathode_poisoning_prevention(unsigned long time)
 
   elapsedMillis timeout = 0;
 
-  //set_tube_brightness(PWMRANGE, PWMRANGE, PWMRANGE);
   int i = 10 - iterations % 10;
 
   elapsedMillis delay_mils = 0;
