@@ -10,22 +10,22 @@ SensorDriver::SensorDriver()
   // Pass our oneWire reference to Dallas Temperature sensor
   sensors = new DallasTemperature(onewire_instance);
   sensors->begin();
+  sensors_ticker.attach_ms(ANALOG_READ_INTERVAL, std::bind(&SensorDriver::loop, this));
 }
 
 void SensorDriver::loop()
 {
   static elapsedMillis read_interval;
-  if (read_interval > ANALOG_READ_INTERVAL)
-  {
-    static uint16_t idx = 0;
-    auto last_reading = analogRead(LIGHT_SENSOR_PIN);
-    last_reading = map(last_reading, 0, MAX_LIGHT_READING_VAL, 0, PWMRANGE);
-    light_sensor_total -= light_sensor_readings[idx];
-    light_sensor_total += last_reading;
-    light_sensor_readings[idx] = last_reading;
-    idx = (idx + 1) % NUM_OF_READINGS;
-    read_interval = 0;
-  }
+
+  static uint16_t idx = 0;
+  auto last_reading = analogRead(LIGHT_SENSOR_PIN);
+  last_reading = map(last_reading, 0, MAX_LIGHT_READING_VAL, 0, PWMRANGE);
+  light_sensor_total -= light_sensor_readings[idx];
+  light_sensor_total += last_reading;
+  light_sensor_readings[idx] = last_reading;
+  idx = (idx + 1) % NUM_OF_READINGS;
+  read_interval = 0;
+
 #ifdef DEBUG
   static elapsedMillis deb_mils;
   if (deb_mils > 1000)

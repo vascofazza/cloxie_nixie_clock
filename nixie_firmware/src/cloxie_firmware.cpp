@@ -32,7 +32,7 @@ enum CYCLE
   TIMER = 3,
 };
 
-int cycle = CYCLE::NONE;
+int cycle = CYCLE::CLOCK;
 
 LedPatternList clock_patterns = {lava, lava_beat};
 LedPatternList random_patterns = {rainbow, confetti, juggle, sinelon};
@@ -73,10 +73,10 @@ void setup()
   clock_driver = new ClockDriver(tube_driver);
 
   ota_handler.Every(GHOTA_INTERVAL, check_for_updates);
-  //ota_handler.Start();
+  ota_handler.Start();
 
-  led_driver->turn_on(-1);  //sensor_driver->get_light_sensor_reading());
-  tube_driver->turn_on(-1); //sensor_driver->get_light_sensor_reading());
+  led_driver->turn_on(sensor_driver->get_light_sensor_reading());
+  tube_driver->turn_on(sensor_driver->get_light_sensor_reading());
 
   set_led_patterns(cycle);
   clock_driver->show_time(true);
@@ -86,7 +86,6 @@ void setup()
 void next_cycle()
 {
   cycle = (cycle + 1) % NUM_CYCLES;
-  tube_driver->cathode_poisoning_prevention(TRANSITION_TIME);
 
   switch (cycle)
   {
@@ -112,6 +111,7 @@ void next_cycle()
     cycle_handler.OneShot(CLOCK_CYCLE, next_cycle);
   }
   set_led_patterns(cycle);
+  tube_driver->cathode_poisoning_prevention(TRANSITION_TIME);
 }
 
 void handle_loop()
@@ -163,7 +163,6 @@ void loop()
   static bool sleeping = false;
 
   clock_driver->loop();
-  sensor_driver->loop();
 
   wifi_loop();
   webserver_loop();
@@ -207,7 +206,6 @@ void loop()
     shutdown_delay = 0;
   }
 
-  led_driver->loop();
   tube_driver->loop();
   handle_loop();
 

@@ -201,7 +201,7 @@ void TubeDriver::set_dots_brightness(int left, int right)
 {
   l_dot_brightness = left;
   r_dot_brightness = right;
-  set_brightness(-1);
+  set_brightness(sensor_driver->get_light_sensor_reading());
 }
 
 void TubeDriver::shutdown()
@@ -261,13 +261,17 @@ void TubeDriver::cathode_poisoning_prevention(unsigned long time)
 
   //set_tube_brightness(PWMRANGE, PWMRANGE, PWMRANGE);
   int i = 10 - iterations % 10;
+
+  elapsedMillis delay_mils = 0;
   while (timeout < time)
   {
-    auto delay_val = map(timeout, 0, time, 10, 1000);
+    unsigned long delay_val = map(timeout, 0, time, 10, 1000);
     i = i % 10;
     set_tubes(i, i, i, i, i, i);
     set_dots_brightness((i % 2) * PWMRANGE, ((i + 1) % 2) * PWMRANGE);
-    delay(delay_val);
+    while (delay_mils < delay_val)
+      delay(1);
+    delay_mils = 0;
     i++;
   }
 

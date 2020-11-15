@@ -5,6 +5,7 @@
 #include <DallasTemperature.h>
 #include <elapsedMillis.h>
 #include "configuration.hpp"
+#include <Ticker.h>
 
 // GPIO where the DS18B20 is connected to
 #define ONE_WIRE_BUS D2
@@ -17,6 +18,7 @@ private:
     DallasTemperature* sensors;
     int light_sensor_readings[NUM_OF_READINGS];
     long light_sensor_total = 0;
+    Ticker sensors_ticker;
 
     void feed_readings();
     void reset_readings();

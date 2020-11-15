@@ -7,6 +7,7 @@
 #include "configuration.hpp"
 #include "tube_driver.hpp"
 #include "sensors.hpp"
+#include <Ticker.h>
 
 // List of patterns to cycle through.  Each is defined as a separate function below.
 typedef void (*LedPatternList[])(CRGB *, int, int);
@@ -33,7 +34,9 @@ private:
     int brightness;
     int patterns_num;
     bool status;
+    Ticker led_ticker;
 
+    void loop();
 public:
     LedDriver(TubeDriver *, SensorDriver *, int, void (**patterns)(CRGB*, int, int), int);
 
@@ -42,8 +45,6 @@ public:
     void turn_on(int);
 
     bool get_status();
-
-    void loop();
 
     void set_brightness(int brightness);
 
