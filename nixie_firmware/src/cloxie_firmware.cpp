@@ -55,8 +55,8 @@ void setup()
   Serial.begin(9600);
 #endif
 
-  DEBUG_PRINTLN("Cloxie Nixie Clock");
-  DEBUG_PRINT("FW version: ");
+  DEBUG_PRINTLN(F("Cloxie Nixie Clock"));
+  DEBUG_PRINT(F("FW version: "));
   DEBUG_PRINTLN(GHOTA_CURRENT_TAG);
 
 #ifdef DEBUG
