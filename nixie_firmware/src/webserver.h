@@ -90,7 +90,7 @@ void webserver_loop(void)
   if (shouldReboot)
   {
     DEBUG_PRINTLN(F("Rebooting..."));
-    delay(100);
+    delay(1000);
     ESP.restart();
   }
   if (!server_status)

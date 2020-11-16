@@ -181,6 +181,7 @@ void loop()
       {
         DEBUG_PRINTLN(F("Sleeping..."));
         tube_driver->turn_off(true);
+        tube_driver->shutdown();
         led_driver->turn_off(true);
         sleeping = true;
       }

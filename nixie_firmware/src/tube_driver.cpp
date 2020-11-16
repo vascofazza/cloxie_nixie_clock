@@ -14,7 +14,7 @@ TubeDriver::TubeDriver(SensorDriver *sensor_driver)
   pinMode(SHF_LATCH, OUTPUT);
   pinMode(SHF_CLOCK, OUTPUT);
   pinMode(SHF_DATA, OUTPUT);
-  pinMode(SHUTDOWN_PIN, OUTPUT);
+  pinMode(SHUTDOWN_PIN, INPUT);
   cathode_poisoning_cycle.Every(CATHODE_POISONING_TRIGGER_TIME, std::bind(&TubeDriver::cathode_poisoning_prevention, this, CATHODE_POISONING_PREVENTION_TIME));
 
   run_test();
@@ -206,6 +206,7 @@ void TubeDriver::set_dots_brightness(int16_t left, int16_t right)
 
 void TubeDriver::shutdown()
 {
+  pinMode(SHUTDOWN_PIN, OUTPUT);
   digitalWrite(SHUTDOWN_PIN, HIGH);
 }
 
@@ -232,7 +233,7 @@ void TubeDriver::turn_on(bool fade)
   if (status)
     return;
   status = true;
-  digitalWrite(SHUTDOWN_PIN, LOW);
+  pinMode(SHUTDOWN_PIN, INPUT);
   if (fade)
   {
     for (int i = 0; i <= sensor_driver->get_light_sensor_reading(); i++)
