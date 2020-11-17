@@ -5,6 +5,7 @@
 #include <EveryTimer.h>
 #include "configuration.hpp"
 #include "sensors.hpp"
+#include "utils.hpp"
 
 #define LEFT_DOT D0
 #define RIGHT_DOT D8
@@ -48,6 +49,8 @@ public:
     void turn_off(bool);
 
     void turn_on(bool);
+
+    bool get_status();
 
     void cathode_poisoning_prevention(unsigned long);
 };

@@ -121,9 +121,9 @@ void wifi_loop()
       DEBUG_PRINTLN(F("WiFi connection issue, resetting module."));
       resetWiFi();
       wifi_free_resources();
-      delay(1000);
+      activeDelay(1000);
       setup_wifi(nullptr);
-      delay(1000);
+      activeDelay(1000);
 
       if (WiFi.waitForConnectResult() == WL_CONNECTED && hasIPaddr())
       {
@@ -133,9 +133,9 @@ void wifi_loop()
       else if (reconnection_attempt-- == 0)
       {
         DEBUG_PRINTLN(F("AP Error Resetting ESP8266"));
-        delay(3000);
+        activeDelay(3000);
         ESP.reset();
-        delay(5000);
+        activeDelay(5000);
       }
       reconnectionDelay = 0;
     }

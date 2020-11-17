@@ -33,12 +33,12 @@ void TubeDriver::run_test()
     for (int b = 0; b < 1024; b += 100)
     {
       set_tube_brightness(b, b, b);
-      delay(25);
+      activeDelay(25);
     }
     for (int b = 1024; b >= 0; b -= 100)
     {
       set_tube_brightness(b, b, b);
-      delay(25);
+      activeDelay(25);
     }
   }
   set_tube_brightness(0, 0, 0);
@@ -188,13 +188,12 @@ void TubeDriver::set_brightness(int16_t brightness)
 {
   if (!status)
     return;
-  this->brightness = brightness < 0 ? this->brightness : brightness;
-  brightness = scale(this->brightness);
+  brightness = brightness < 0 ? this->brightness : scale(brightness);
   int dot_brightness = map(brightness, 0, PWMRANGE, MIN_DOT_BRIGHTNESS, MAX_DOT_BRIGHNTESS);
   int left = map(l_dot_brightness, 0, PWMRANGE, 0, dot_brightness);
   int right = map(r_dot_brightness, 0, PWMRANGE, 0, dot_brightness);
-  brightness = map(brightness, 0, PWMRANGE, MIN_TUBE_BRIGHTNESS, MAX_TUBE_BRIGHNTESS);
-  set_tube_brightness(brightness, left, right);
+  this->brightness = map(brightness, 0, PWMRANGE, MIN_TUBE_BRIGHTNESS, MAX_TUBE_BRIGHNTESS);
+  set_tube_brightness(this->brightness, left, right);
 }
 
 void TubeDriver::set_dots_brightness(int16_t left, int16_t right)
@@ -219,7 +218,7 @@ void TubeDriver::turn_off(bool fade)
     for (int i = brightness; i >= 0; i--)
     {
       set_tube_brightness(i, i, i);
-      delay(50);
+      delay(TURN_ON_OFF_TIME / brightness);
     }
   }
   digitalWrite(STROBE, HIGH);
@@ -239,13 +238,18 @@ void TubeDriver::turn_on(bool fade)
     for (int i = 0; i <= sensor_driver->get_light_sensor_reading(); i++)
     {
       set_tube_brightness(i, i, i);
-      delay(50);
+      delay(TURN_ON_OFF_TIME / sensor_driver->get_light_sensor_reading());//25);
     }
   }
   else
   {
     set_brightness(-1);
   }
+}
+
+bool TubeDriver::get_status()
+{
+  return status;
 }
 
 void TubeDriver::cathode_poisoning_prevention(unsigned long time)
@@ -261,17 +265,13 @@ void TubeDriver::cathode_poisoning_prevention(unsigned long time)
   elapsedMillis timeout = 0;
 
   int i = 10 - iterations % 10;
-
-  elapsedMillis delay_mils = 0;
   while (timeout < time)
   {
     unsigned long delay_val = map(timeout, 0, time, 10, 1000);
     i = i % 10;
     set_tubes(i, i, i, i, i, i);
     set_dots_brightness((i % 2) * PWMRANGE, ((i + 1) % 2) * PWMRANGE);
-    while (delay_mils < delay_val)
-      delay(1);
-    delay_mils = 0;
+    activeDelay(delay_val);
     i++;
   }
 

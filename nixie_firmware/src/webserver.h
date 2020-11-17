@@ -3,6 +3,7 @@
 
 #include "ESPAsyncTCP.h"
 #include "ESPAsyncWebServer.h"
+#include "utils.hpp"
 
 AsyncWebServer server(8080);
 
@@ -90,7 +91,7 @@ void webserver_loop(void)
   if (shouldReboot)
   {
     DEBUG_PRINTLN(F("Rebooting..."));
-    delay(1000);
+    activeDelay(1000);
     ESP.restart();
   }
   if (!server_status)

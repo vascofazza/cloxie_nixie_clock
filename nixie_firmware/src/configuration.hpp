@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 
-#define FIRMWARE_VERSION PSTR("0.0.5")
+#define FIRMWARE_VERSION PSTR("0.0.6")
 
 //#define DEBUG
 
@@ -58,6 +58,7 @@
 //MISC
 #define DEFAULT_BRIGHTNESS PWMRANGE / 2
 #define TRANSITION_TIME (10 * 1000) //10s
+#define TURN_ON_OFF_TIME (5 * 1000) //5s
 #define MAGIC_NUMBER 42
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
 

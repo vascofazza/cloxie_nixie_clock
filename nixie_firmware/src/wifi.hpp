@@ -6,6 +6,7 @@
 #include <WiFiManager.h>
 #include <elapsedMillis.h>
 #include "configuration.hpp"
+#include "utils.hpp"
 
 static WiFiManager wifiManager;
 

@@ -114,7 +114,7 @@ bool ClockDriver::is_night_hours()
     wake_hour += offset;
     hour = (hour + offset) % 24;
   }
-  return hour >= sleep_hour && hour <= wake_hour;
+  return hour >= sleep_hour && hour < wake_hour;
 }
 
 void ClockDriver::print_timer()

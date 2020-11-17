@@ -33,14 +33,14 @@ void LedDriver::turn_off(bool fade)
     for (int i = brightness; i >= 0; i--)
     {
       FastLED.setBrightness(i);
-      FastLED.show();
-      delay(50);
+      //FastLED.show();
+      delay(TURN_ON_OFF_TIME / (brightness + 1));
     }
   }
   else
   {
     FastLED.setBrightness(0);
-    FastLED.show();
+    //FastLED.show();
   }
   brightness = 0;
 }
@@ -65,14 +65,15 @@ void LedDriver::turn_on(bool fade)
     for (int i = 0; i <= brightness; i++)
     {
       FastLED.setBrightness(i);
-      FastLED.show();
-      delay(50);
+      //FastLED.show();
+      delay(TURN_ON_OFF_TIME / (brightness + 1));
+      brightness = map(sensor_driver->get_light_sensor_reading(), 0, PWMRANGE, MIN_LED_BRIGHTNESS, MAX_LED_BRIGHNTESS);
     }
   }
   else
   {
     FastLED.setBrightness(this->brightness);
-    FastLED.show();
+    //FastLED.show();
   }
   status = true;
 }
@@ -93,17 +94,17 @@ void LedDriver::process_pattern(int gHue)
 
 void LedDriver::loop()
 {
-  if (!status)
-    return;
   static int gHue = 0;
   static elapsedMillis hueDelay;
   static elapsedMillis patternDelay;
 
-  set_brightness(sensor_driver->get_light_sensor_reading());
   //HACK - esp8266 does not have hardware PWM.
-  tube_driver->turn_off(false);
+  bool prev_status = tube_driver->get_status();
+  if (prev_status)
+    tube_driver->turn_off(false);
   process_pattern(gHue);
-  tube_driver->turn_on(false);
+  if (prev_status)
+    tube_driver->turn_on(false);
   if (hueDelay > HUE_DELAY)
   {
     if ((config.led_configuration == LED_MODE::STATIC))
@@ -122,6 +123,10 @@ void LedDriver::loop()
     nextPattern();
     patternDelay = 0;
   }
+
+  if (!status)
+    return;
+  set_brightness(sensor_driver->get_light_sensor_reading());
 }
 
 void LedDriver::nextPattern()
