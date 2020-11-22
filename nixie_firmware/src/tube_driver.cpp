@@ -200,7 +200,6 @@ void TubeDriver::set_dots_brightness(int16_t left, int16_t right)
 {
   l_dot_brightness = left;
   r_dot_brightness = right;
-  set_brightness(sensor_driver->get_light_sensor_reading());
 }
 
 void TubeDriver::shutdown()
@@ -274,6 +273,4 @@ void TubeDriver::cathode_poisoning_prevention(unsigned long time)
     activeDelay(delay_val);
     i++;
   }
-
-  set_brightness(-1);
 }
