@@ -1,6 +1,9 @@
 #ifndef SENSORS_HPP
 #define SENSORS_HPP
 
+#define REQUIRESALARMS false
+#define REQUIRESNEW false
+
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <elapsedMillis.h>
@@ -19,6 +22,7 @@ private:
     DallasTemperature* sensors;
     uint16_t light_sensor_readings[NUM_OF_READINGS];
     long light_sensor_total = 0;
+    bool max_brightness = false;
     Ticker sensors_ticker;
 
     void feed_readings();
@@ -27,6 +31,8 @@ public:
     SensorDriver();
 
     void loop();
+
+    void set_max_brightness(bool);
 
     float get_light_sensor_reading();
 

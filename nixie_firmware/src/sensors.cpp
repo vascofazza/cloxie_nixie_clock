@@ -5,26 +5,25 @@ SensorDriver::SensorDriver()
   reset_readings();
   feed_readings();
   pinMode(LIGHT_SENSOR_PIN, INPUT);
+  max_brightness = false;
   // Setup a oneWire instance to communicate with any OneWire devices
   onewire_instance = new OneWire(ONE_WIRE_BUS);
   // Pass our oneWire reference to Dallas Temperature sensor
   sensors = new DallasTemperature(onewire_instance);
+  sensors->setResolution(9);
   sensors->begin();
   sensors_ticker.attach_ms(ANALOG_READ_INTERVAL, std::bind(&SensorDriver::loop, this));
 }
 
 void SensorDriver::loop()
 {
-  static elapsedMillis read_interval;
-
   static uint16_t idx = 0;
-  int last_reading = analogRead(LIGHT_SENSOR_PIN);
+  int last_reading = max_brightness ? PWMRANGE : analogRead(LIGHT_SENSOR_PIN);
   last_reading = map(last_reading, 0, MAX_LIGHT_READING_VAL, 0, PWMRANGE);
   light_sensor_total -= light_sensor_readings[idx];
   light_sensor_total += last_reading;
   light_sensor_readings[idx] = last_reading;
   idx = (idx + 1) % NUM_OF_READINGS;
-  read_interval = 0;
 
 #ifdef DEBUG
   static elapsedMillis deb_mils;
@@ -48,6 +47,11 @@ float SensorDriver::get_light_sensor_reading()
   float average_reading = (float)light_sensor_total / NUM_OF_READINGS;
   average_reading += config.brightness_offset;
   return min((float)PWMRANGE, max(0.f, average_reading));
+}
+
+void SensorDriver::set_max_brightness(bool val)
+{
+  this->max_brightness = val;
 }
 
 void SensorDriver::feed_readings()

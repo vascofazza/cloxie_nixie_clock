@@ -3,7 +3,8 @@
 TubeDriver::TubeDriver(SensorDriver *sensor_driver)
 {
   this->sensor_driver = sensor_driver;
-  status = true;
+  status = false;
+  int_status = false;
   brightness = 0;
   l_dot_brightness = 0;
   r_dot_brightness = 0;
@@ -20,6 +21,7 @@ TubeDriver::TubeDriver(SensorDriver *sensor_driver)
   run_test();
   set_tubes(0, 0, 0, 0, 0, 0);
   turn_off(false);
+  tube_ticker.attach_ms(BRIGTHNESS_REFRESH, std::bind(&TubeDriver::adjust_brightness, this));
 }
 
 void TubeDriver::run_test()
@@ -134,11 +136,15 @@ void TubeDriver::set_tubes(int8_t h, int8_t hh, int8_t m, int8_t mm, int8_t s, i
   digitalWrite(SHF_LATCH, HIGH);
 }
 
-void TubeDriver::loop()
+void TubeDriver::adjust_brightness()
 {
-  if (!status)
+   if (!int_status)
     return;
   set_brightness(sensor_driver->get_light_sensor_reading());
+}
+
+void TubeDriver::loop()
+{
   cathode_poisoning_cycle.Update();
 }
 
@@ -188,12 +194,12 @@ void TubeDriver::set_brightness(int16_t brightness)
 {
   if (!status)
     return;
-  brightness = brightness < 0 ? this->brightness : scale(brightness);
-  int dot_brightness = map(brightness, 0, PWMRANGE, MIN_DOT_BRIGHTNESS, MAX_DOT_BRIGHNTESS);
+  this->brightness = brightness < 0 ? this->brightness : scale(brightness);
+  int dot_brightness = map(this->brightness, 0, PWMRANGE, MIN_DOT_BRIGHTNESS, MAX_DOT_BRIGHNTESS);
   int left = map(l_dot_brightness, 0, PWMRANGE, 0, dot_brightness);
   int right = map(r_dot_brightness, 0, PWMRANGE, 0, dot_brightness);
-  this->brightness = map(brightness, 0, PWMRANGE, MIN_TUBE_BRIGHTNESS, MAX_TUBE_BRIGHNTESS);
-  set_tube_brightness(this->brightness, left, right);
+  brightness = map(this->brightness, 0, PWMRANGE, MIN_TUBE_BRIGHTNESS, MAX_TUBE_BRIGHNTESS);
+  set_tube_brightness(brightness, left, right);
 }
 
 void TubeDriver::set_dots_brightness(int16_t left, int16_t right)
@@ -214,11 +220,13 @@ void TubeDriver::turn_off(bool fade)
     return;
   if (fade)
   {
+    int_status = false;
     for (int i = brightness; i >= 0; i--)
     {
       set_tube_brightness(i, i, i);
       delay(TURN_ON_OFF_TIME / brightness);
     }
+    int_status = true;
   }
   digitalWrite(STROBE, HIGH);
   digitalWrite(LEFT_DOT, LOW);
@@ -234,11 +242,13 @@ void TubeDriver::turn_on(bool fade)
   pinMode(SHUTDOWN_PIN, INPUT);
   if (fade)
   {
+    int_status = false;
     for (int i = 0; i <= sensor_driver->get_light_sensor_reading(); i++)
     {
       set_tube_brightness(i, i, i);
-      delay(TURN_ON_OFF_TIME / sensor_driver->get_light_sensor_reading());//25);
+      delay(TURN_ON_OFF_TIME / sensor_driver->get_light_sensor_reading()); //25);
     }
+    int_status = true;
   }
   else
   {
@@ -253,6 +263,8 @@ bool TubeDriver::get_status()
 
 void TubeDriver::cathode_poisoning_prevention(unsigned long time)
 {
+  // if depoisoning is in progress, lets max out the brightness
+  sensor_driver->set_max_brightness(true);
   unsigned long tot = 0;
   int iterations = 0;
   while (tot < time)
@@ -273,4 +285,5 @@ void TubeDriver::cathode_poisoning_prevention(unsigned long time)
     activeDelay(delay_val);
     i++;
   }
+  sensor_driver->set_max_brightness(false);
 }

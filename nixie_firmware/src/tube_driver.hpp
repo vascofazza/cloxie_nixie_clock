@@ -6,6 +6,7 @@
 #include "configuration.hpp"
 #include "sensors.hpp"
 #include "utils.hpp"
+#include <Ticker.h>
 
 #define LEFT_DOT D0
 #define RIGHT_DOT D8
@@ -22,9 +23,11 @@ private:
     int16_t l_dot_brightness;
     int16_t r_dot_brightness;
     bool status;
+    bool int_status;
+    Ticker tube_ticker;
     EveryTimer cathode_poisoning_cycle;
     SensorDriver *sensor_driver;
-
+    void adjust_brightness();
     void set_tube_brightness(int16_t, int16_t, int16_t);
 
 public:

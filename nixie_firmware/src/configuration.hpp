@@ -6,7 +6,7 @@
 
 #define FIRMWARE_VERSION PSTR("0.0.6")
 
-//#define DEBUG
+#define DEBUG
 
 #ifdef DEBUG
 #define DEBUG_PRINT(x) Serial.print(x)
@@ -19,7 +19,7 @@
 #endif
 
 //CLOCK
-#define CLOCK_CYCLE (1800 * 1000) //30m
+#define CLOCK_CYCLE 60000 //(1800 * 1000) //30m
 #define DATE_CYCLE (60 * 1000)    //60s
 #define TEMP_CYCLE (60 * 1000)    //60s
 #define TIMER_CYCLE (60 * 1000)   //60s
@@ -37,12 +37,13 @@
 #define MAX_TUBE_BRIGHNTESS 700
 #define MIN_DOT_BRIGHTNESS 100
 #define MAX_DOT_BRIGHNTESS 1000
+#define BRIGTHNESS_REFRESH 100
 #define CATHODE_POISONING_PREVENTION_TIME (60 * 5 * 1000)         //5m
 #define CATHODE_POISONING_TRIGGER_TIME (60 * 60 + 30 * 60) * 1000 //1h30m0s
 
 //LEDS
 #define NUM_LEDS 6
-#define FRAMES_PER_SECOND 24
+#define FRAMES_PER_SECOND 30
 #define PATTERN_DELAY 600000
 #define HUE_DELAY 250
 #define MIN_LED_BRIGHTNESS 15
@@ -52,7 +53,7 @@
 //SENSORS
 #define NUM_OF_READINGS 100
 #define ANALOG_READ_INTERVAL 50
-#define TEMP_READ_INTERVAL 5000
+#define TEMP_READ_INTERVAL 1000
 #define MAX_LIGHT_READING_VAL 800
 
 //MISC
