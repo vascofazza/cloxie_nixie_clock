@@ -1204,7 +1204,7 @@ void WiFiManager::handleWifi(boolean scan, AsyncWebServerRequest *request)
   String page = getHTTPHead(FPSTR(S_titlewifi)); // @token titlewifi
   if (scan)
   {
-    DEBUG_WM(DEBUG_DEV,F("refresh flag:"),request->hasArg(String(F("refresh")).c_str()));
+    DEBUG_WM(DEBUG_DEV, F("refresh flag:"), request->hasArg(String(F("refresh")).c_str()));
     WiFi_scanNetworks(request->hasArg(F("refresh")), false); //wifiscan, force if arg refresh
     page += getScanItemOut();
   }
@@ -1845,6 +1845,16 @@ void WiFiManager::handleInfo(AsyncWebServerRequest *request)
   request->send(200, FPSTR(HTTP_HEAD_CT), page);
 
   DEBUG_WM(DEBUG_DEV, F("Sent info page"));
+}
+
+String WiFiManager::getUpTime()
+{
+  String p = String(F("{1} Days {2} Hours {3} Minutes {4} Seconds"));
+  p.replace(FPSTR(T_1), (String)(millis() / 1000 / 3600 / 24));
+  p.replace(FPSTR(T_2), (String)((millis() / 1000 / 3600) % 24));
+  p.replace(FPSTR(T_3), (String)((millis() / 1000 / 60) % 60));
+  p.replace(FPSTR(T_4), (String)((millis() / 1000) % 60));
+  return p;
 }
 
 String WiFiManager::getInfoData(String id)
@@ -2554,7 +2564,7 @@ void WiFiManager::setAPCallback(std::function<void(WiFiManager *)> func)
   _apcallback = func;
 }
 
-void WiFiManager::setGetParameterCallback(std::function<void(AsyncWebServerRequest*)> func)
+void WiFiManager::setGetParameterCallback(std::function<void(AsyncWebServerRequest *)> func)
 {
   _handleParamJson = func;
 }

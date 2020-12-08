@@ -172,6 +172,8 @@ void getParamsCallback(AsyncWebServerRequest *request)
   root[F("led_configuration")] = config.led_configuration;
   root[F("sleep_hour")] = config.sleep_hour;
   root[F("wake_hour")] = config.wake_hour;
+  root[F("uptime")] = wifiManager.getUpTime();
+  root[F("fw_ver")] = String(FIRMWARE_VERSION);
 
   response->setLength();
   request->send(response);

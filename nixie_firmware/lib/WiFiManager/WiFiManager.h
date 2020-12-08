@@ -199,6 +199,8 @@ public:
   // returns the Parameters Count
   int getParametersCount();
 
+  String getUpTime();
+
   // SET CALLBACKS
 
   void setGetParameterCallback(std::function<void(AsyncWebServerRequest*)> func);
