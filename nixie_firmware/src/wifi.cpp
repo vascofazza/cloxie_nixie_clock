@@ -47,7 +47,7 @@ void setup_wifi(void (*callback)(void))
   leds = new WiFiManagerParameter(leds_str);
   wifiManager.addParameter(leds);
 
-  auto leds_mode_str = F("<br/><p>Leds:</p><input type='radio' name='leds_mode_field' value='0' checked><label for='0'>static</label><br><input type='radio' name='leds_mode_field' value='1'><label for='1'>rotating</label><br><input type='radio' name='leds_mode_field' value='2'><label for='2'>random</label><br>");
+  auto leds_mode_str = F("<br/><p>Leds mode:</p><input type='radio' name='leds_mode_field' value='0' checked><label for='0'>static</label><br><input type='radio' name='leds_mode_field' value='1'><label for='1'>rotating</label><br><input type='radio' name='leds_mode_field' value='2'><label for='2'>random</label><br>");
   leds_mode = new WiFiManagerParameter(leds_mode_str);
   wifiManager.addParameter(leds_mode);
 
@@ -70,6 +70,7 @@ void setup_wifi(void (*callback)(void))
   wifiManager.addParameter(google_token);
 
   wifiManager.setSaveParamsCallback(saveParamsCallback);
+  wifiManager.setGetParameterCallback(getParamsCallback);
 
   std::vector<const char *> menu = {"wifi", "info", "param", "sep", "restart"};
   wifiManager.setMenu(menu);
@@ -152,6 +153,28 @@ void wifi_loop()
     wifiManager.startWebPortal();
   }
   MDNS.update();
+}
+
+void getParamsCallback(AsyncWebServerRequest *request)
+{
+  AsyncJsonResponse *response = new AsyncJsonResponse();
+  //response->addHeader("Server", "ESP Async Web Server");
+  JsonObject root = response->getRoot();
+  root[F("timezone")] = config.timezone;
+  root[F("h24")] = (int)config.h24;
+  root[F("blink_mode")] = config.blink_mode;
+  root[F("celsius")] = (int)config.celsius;
+  root[F("adaptive_brightness")] = (int)config.adaptive_brightness;
+  root[F("brightness_offset")] = config.brightness_offset;
+  root[F("shutdown_delay")] = config.shutdown_delay;
+  root[F("shutdown_threshold")] = config.shutdown_threshold;
+  root[F("leds")] = (int)config.leds;
+  root[F("led_configuration")] = config.led_configuration;
+  root[F("sleep_hour")] = config.sleep_hour;
+  root[F("wake_hour")] = config.wake_hour;
+
+  response->setLength();
+  request->send(response);
 }
 
 void saveParamsCallback(AsyncWebServerRequest *request)

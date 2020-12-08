@@ -55,7 +55,7 @@ public:
 
     bool is_night_hours();
 
-    void set_alarm(long offset);
+    void set_alarm(long epoch);
 };
 
 typedef void (*BlinkPatternList[])(TubeDriver *, bool, elapsedMillis *);

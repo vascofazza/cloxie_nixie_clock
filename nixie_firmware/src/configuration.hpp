@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 
-#define FIRMWARE_VERSION PSTR("0.0.6")
+#define FIRMWARE_VERSION PSTR("1.0.0")
 
 #define DEBUG
 
@@ -19,7 +19,7 @@
 #endif
 
 //CLOCK
-#define CLOCK_CYCLE 60000 //(1800 * 1000) //30m
+#define CLOCK_CYCLE (1800 * 1000) //30m
 #define DATE_CYCLE (60 * 1000)    //60s
 #define TEMP_CYCLE (60 * 1000)    //60s
 #define TIMER_CYCLE (60 * 1000)   //60s

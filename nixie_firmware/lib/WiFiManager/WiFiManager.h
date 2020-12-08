@@ -201,6 +201,7 @@ public:
 
   // SET CALLBACKS
 
+  void setGetParameterCallback(std::function<void(AsyncWebServerRequest*)> func);
   //called after AP mode and config portal has started
   void setAPCallback(std::function<void(WiFiManager *)> func);
 
@@ -610,6 +611,7 @@ private:
   std::function<void()> _savewificallback;
   std::function<void()> _presavecallback;
   std::function<void(AsyncWebServerRequest*)> _saveparamscallback;
+  std::function<void(AsyncWebServerRequest*)> _handleParamJson;
   std::function<void()> _resetcallback;
 
   template <class T>

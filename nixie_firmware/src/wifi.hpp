@@ -7,10 +7,14 @@
 #include <elapsedMillis.h>
 #include "configuration.hpp"
 #include "utils.hpp"
+#include "AsyncJson.h"
+#include "ArduinoJson.h"
 
 static WiFiManager wifiManager;
 
 String getParam(AsyncWebServerRequest*, String);
+
+void getParamsCallback(AsyncWebServerRequest*);
 
 void saveParamsCallback(AsyncWebServerRequest*);
 

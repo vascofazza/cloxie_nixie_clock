@@ -125,6 +125,7 @@ void handle_loop()
   {
     cycle_handler.Stop();
     cycle = CYCLE::TIMER;
+    set_led_patterns(cycle);
     timer_running = true;
   }
   else if (timer_running)

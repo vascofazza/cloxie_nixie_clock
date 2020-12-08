@@ -651,6 +651,7 @@ void WiFiManager::setupConfigPortal()
   server->on(String(FPSTR(R_wifisave)).c_str(), std::bind(&WiFiManager::handleWifiSave, this, std::placeholders::_1));
   server->on(String(FPSTR(R_info)).c_str(), std::bind(&WiFiManager::handleInfo, this, std::placeholders::_1));
   server->on(String(FPSTR(R_param)).c_str(), std::bind(&WiFiManager::handleParam, this, std::placeholders::_1));
+  server->on(String(FPSTR(R_param_json)).c_str(), std::bind(WiFiManager::_handleParamJson, std::placeholders::_1));
   server->on(String(FPSTR(R_paramsave)).c_str(), std::bind(&WiFiManager::handleParamSave, this, std::placeholders::_1));
   server->on(String(FPSTR(R_restart)).c_str(), std::bind(&WiFiManager::handleReset, this, std::placeholders::_1));
   server->on(String(FPSTR(R_exit)).c_str(), std::bind(&WiFiManager::handleExit, this, std::placeholders::_1));
@@ -2551,6 +2552,11 @@ void WiFiManager::setBreakAfterConfig(boolean shouldBreak)
 void WiFiManager::setAPCallback(std::function<void(WiFiManager *)> func)
 {
   _apcallback = func;
+}
+
+void WiFiManager::setGetParameterCallback(std::function<void(AsyncWebServerRequest*)> func)
+{
+  _handleParamJson = func;
 }
 
 /**

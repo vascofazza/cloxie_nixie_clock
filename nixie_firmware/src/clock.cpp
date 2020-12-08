@@ -208,3 +208,10 @@ bool ClockDriver::is_timer_running()
 {
   return timer_running;
 }
+
+void ClockDriver::set_alarm(long epoch)
+{
+  acetime_t now = systemClock->getNow();
+  auto target = epoch - now;
+  start_timer(target);
+}
