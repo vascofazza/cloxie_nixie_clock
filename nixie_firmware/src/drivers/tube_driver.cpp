@@ -224,7 +224,7 @@ void TubeDriver::turn_off(bool fade)
     for (int i = brightness; i >= 0; i--)
     {
       set_tube_brightness(i, i, i);
-      activeDelay(TURN_ON_OFF_TIME / brightness * 1000);
+      delay(TURN_ON_OFF_TIME / (brightness + 1));
     }
     int_status = true;
   }

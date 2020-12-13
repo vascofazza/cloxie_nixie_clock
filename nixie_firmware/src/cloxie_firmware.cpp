@@ -175,8 +175,8 @@ void loop()
 
   clock_driver->loop();
 
-  wifi_loop();
   ota_handler.Update();
+  wifi_loop();
 
   bool hour_check = clock_driver->is_night_hours();
 

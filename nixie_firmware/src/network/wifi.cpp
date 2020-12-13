@@ -267,9 +267,11 @@ void reset_wifi_settings()
 void wifi_free_resources()
 {
   wifiManager.stopWebPortal();
+  //wifiManager.stopConfigPortal();
+  activeDelay(5000);
   wifiManager.free_params();
   //free(google_token);
-  free(timezone_field);
+  /* free(timezone_field);
   free(h24_field);
   free(blink_field);
   free(temp_field);
@@ -280,7 +282,7 @@ void wifi_free_resources()
   free(leds);
   free(leds_mode);
   free(date);
-  free(temp_field);
+  free(temp_field); */
 }
 
 void postSaveFunction()
