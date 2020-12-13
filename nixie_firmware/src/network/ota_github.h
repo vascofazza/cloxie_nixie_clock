@@ -48,7 +48,7 @@ void check_for_updates()
   {
     DEBUG_PRINT(F("Upgrade found at: "));
     DEBUG_PRINTLN(API.getUpgradeURL());
-    if (first_boot)
+    if (!first_boot)
       ESP.reset();
     if (API.doUpgrade())
     {
