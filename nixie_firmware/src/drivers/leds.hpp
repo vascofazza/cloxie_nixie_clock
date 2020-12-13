@@ -4,11 +4,11 @@
 #define FASTLED_ALLOW_INTERRUPTS 0
 #include <FastLED.h>
 #include <elapsedMillis.h>
-#include "configuration.hpp"
+#include <Ticker.h>
 #include "tube_driver.hpp"
 #include "sensors.hpp"
-#include <Ticker.h>
-#include "utils.hpp"
+#include "../configuration.hpp"
+#include "../utils.hpp"
 
 // List of patterns to cycle through.  Each is defined as a separate function below.
 typedef void (*LedPatternList[])(CRGB *, uint8_t, int);

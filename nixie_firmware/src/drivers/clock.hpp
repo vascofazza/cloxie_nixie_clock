@@ -2,7 +2,7 @@
 #define CLOCK_HPP
 
 #include <AceTime.h>
-#include "configuration.hpp"
+#include "../configuration.hpp"
 #include "tube_driver.hpp"
 #include <Ticker.h>
 

@@ -7,9 +7,9 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <elapsedMillis.h>
-#include "configuration.hpp"
 #include <Ticker.h>
-#include "utils.hpp"
+#include "../configuration.hpp"
+#include "../utils.hpp"
 
 // GPIO where the DS18B20 is connected to
 #define ONE_WIRE_BUS D2

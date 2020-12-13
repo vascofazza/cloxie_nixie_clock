@@ -27,8 +27,8 @@ void printParams()
   DEBUG_PRINTLN(config.h24);
   DEBUG_PRINT(F("\tC°/F°: "));
   DEBUG_PRINTLN(config.celsius);
-  DEBUG_PRINT(F("\tGoogle Token: "));
-  DEBUG_PRINTLN(config.google_token);
+  //DEBUG_PRINT(F("\tGoogle Token: "));
+  //DEBUG_PRINTLN(config.google_token);
   DEBUG_PRINT(F("\tAdaptive Brightness: "));
   DEBUG_PRINTLN(config.adaptive_brightness);
   DEBUG_PRINT(F("\tBrightness Offset: "));

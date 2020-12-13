@@ -1,8 +1,7 @@
 #include <ESP_OTA_GitHub.h>
 #include <CertStoreBearSSL.h>
-#include "configuration.hpp"
 #include "wifi.hpp"
-#include "webserver.h"
+#include "../configuration.hpp"
 
 BearSSL::CertStore certStore;
 bool cert_initialized = false;
@@ -45,7 +44,6 @@ void check_for_updates()
   ESPOTAGitHub API(&certStore, GHOTA_USER, GHOTA_REPO, GHOTA_CURRENT_TAG, GHOTA_BIN_FILE, GHOTA_ACCEPT_PRERELEASE);
   DEBUG_PRINTLN(F("Checking for update..."));
   wifi_free_resources();
-  stop_webserver();
   if (API.checkUpgrade())
   {
     DEBUG_PRINT(F("Upgrade found at: "));
@@ -66,5 +64,4 @@ void check_for_updates()
     DEBUG_PRINTLN(API.getLastError());
   }
   setup_wifi(nullptr);
-  start_webserver();
 }

@@ -108,12 +108,14 @@ void setup_wifi(void (*callback)(void))
   {
     DEBUG_PRINTLN(F("Starting config portal."));
   }
+  setup_ota_webserver(wifiManager.server.get());
   MDNS.begin(HOST_NAME);
   MDNS.addService(PSTR("http"), PSTR("tcp"), 80);
 }
 
 void wifi_loop()
 {
+  ota_webserver_loop();
   static elapsedSeconds reconnectionDelay; //declare global if you don't want it reset every time loop runs
   static int reconnection_attempt = WIFI_RECONNECT_ATTEMPTS;
   if ((WiFi.status() != WL_CONNECTED || !hasIPaddr()) && !wifiManager.isConfigPortalActive())

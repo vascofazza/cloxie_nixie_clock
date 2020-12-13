@@ -2,7 +2,7 @@
 #define SERIAL_PARSER_H
 
 #include <SerialCommands.h> //https://github.com/ppedro74/Arduino-SerialCommands
-#include "wifi.hpp"
+#include "network/wifi.hpp"
 
 static char serial_command_buffer_[32];
 static SerialCommands serial_commands_(&Serial, serial_command_buffer_, sizeof(serial_command_buffer_), "\r\n", " ");

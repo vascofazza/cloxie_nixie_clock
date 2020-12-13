@@ -1,14 +1,13 @@
 #include <Arduino.h>
 #include <OneShotTimer.h>
 #include "configuration.hpp"
-#include "tube_driver.hpp"
-#include "clock.hpp"
-#include "leds_patterns.hpp"
-#include "leds.hpp"
-#include "wifi.hpp"
-#include "webserver.h"
-#include "sensors.hpp"
-#include "ota.h"
+#include "drivers/tube_driver.hpp"
+#include "drivers/clock.hpp"
+#include "drivers/leds_patterns.hpp"
+#include "drivers/leds.hpp"
+#include "drivers/sensors.hpp"
+#include "network/wifi.hpp"
+#include "network/ota_github.h"
 
 ClockDriver *clock_driver;
 TubeDriver *tube_driver;
@@ -65,7 +64,6 @@ void setup()
   setup_configuration();
   initWiFi();
   setup_wifi(update_config_callback);
-  start_webserver();
 
   sensor_driver = new SensorDriver();
   tube_driver = new TubeDriver(sensor_driver);
@@ -179,7 +177,6 @@ void loop()
   clock_driver->loop();
 
   wifi_loop();
-  webserver_loop();
   ota_handler.Update();
 
   bool hour_check = clock_driver->is_night_hours();

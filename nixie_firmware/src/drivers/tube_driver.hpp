@@ -3,10 +3,10 @@
 
 #include <elapsedMillis.h>
 #include <EveryTimer.h>
-#include "configuration.hpp"
-#include "sensors.hpp"
-#include "utils.hpp"
 #include <Ticker.h>
+#include "sensors.hpp"
+#include "../configuration.hpp"
+#include "../utils.hpp"
 
 #define LEFT_DOT D0
 #define RIGHT_DOT D8
