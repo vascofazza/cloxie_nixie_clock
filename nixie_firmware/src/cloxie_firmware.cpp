@@ -88,18 +88,25 @@ void setup()
 
 void next_cycle()
 {
+  int old_cycle = cycle;
   cycle = (cycle + 1) % NUM_CYCLES;
 
   switch (cycle)
   {
   case CYCLE::DATE:
-    DEBUG_PRINTLN(F("CYCLE DATE"));
-    cycle_handler.OneShot(DATE_CYCLE, next_cycle);
-    break;
+    if (config.date)
+    {
+      DEBUG_PRINTLN(F("CYCLE DATE"));
+      cycle_handler.OneShot(DATE_CYCLE, next_cycle);
+      break;
+    }
   case CYCLE::TEMPERATURE:
-    DEBUG_PRINTLN(F("CYCLE TEMP"));
-    cycle_handler.OneShot(TEMP_CYCLE, next_cycle);
-    break;
+    if (config.termometer)
+    {
+      DEBUG_PRINTLN(F("CYCLE TEMP"));
+      cycle_handler.OneShot(TEMP_CYCLE, next_cycle);
+      break;
+    }
   case CYCLE::TIMER:
     DEBUG_PRINTLN(F("CYCLE TIMER"));
     if (clock_driver->is_timer_set())
@@ -113,8 +120,11 @@ void next_cycle()
     cycle = CYCLE::CLOCK;
     cycle_handler.OneShot(CLOCK_CYCLE, next_cycle);
   }
-  set_led_patterns(cycle);
-  tube_driver->cathode_poisoning_prevention(TRANSITION_TIME);
+  if (old_cycle != cycle)
+  {
+    set_led_patterns(cycle);
+    tube_driver->cathode_poisoning_prevention(TRANSITION_TIME);
+  }
 }
 
 void handle_loop()

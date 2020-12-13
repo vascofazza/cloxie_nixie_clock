@@ -1,6 +1,6 @@
 #include "wifi.hpp"
 
-WiFiManagerParameter *google_token;
+//WiFiManagerParameter *google_token;
 WiFiManagerParameter *timezone_field;
 WiFiManagerParameter *h24_field;
 WiFiManagerParameter *blink_field;
@@ -13,6 +13,8 @@ WiFiManagerParameter *leds;
 WiFiManagerParameter *leds_mode;
 WiFiManagerParameter *sleep_hour;
 WiFiManagerParameter *wake_hour;
+WiFiManagerParameter *termometer;
+WiFiManagerParameter *date;
 
 void (*custom_callback)(void) = nullptr;
 
@@ -43,6 +45,14 @@ void setup_wifi(void (*callback)(void))
   adaptive_field = new WiFiManagerParameter(adaptive_radio_str);
   wifiManager.addParameter(adaptive_field);
 
+  auto termometer_str = F("<br/><p>Termometer:</p><input type='radio' name='termometer_field' value='1' checked><label for='1'>ON</label><br><input type='radio' name='termometer_field' value='0'><label for='0'>OFF</label><br>");
+  termometer = new WiFiManagerParameter(termometer_str);
+  wifiManager.addParameter(termometer);
+
+  auto date_str = F("<br/><p>Date:</p><input type='radio' name='date_field' value='1' checked><label for='1'>ON</label><br><input type='radio' name='date_field' value='0'><label for='0'>OFF</label><br>");
+  date = new WiFiManagerParameter(date_str);
+  wifiManager.addParameter(date);
+
   auto leds_str = F("<br/><p>Leds:</p><input type='radio' name='leds_field' value='1' checked><label for='1'>ON</label><br><input type='radio' name='leds_field' value='0'><label for='0'>OFF</label><br>");
   leds = new WiFiManagerParameter(leds_str);
   wifiManager.addParameter(leds);
@@ -66,8 +76,8 @@ void setup_wifi(void (*callback)(void))
   shutdown_delay = new WiFiManagerParameter(F("shutdown_delay"), F("shutdown_delay"), String(config.shutdown_delay).c_str(), 10);
   wifiManager.addParameter(shutdown_delay);
 
-  google_token = new WiFiManagerParameter(F("google_token"), F("google_token"), config.google_token, 40);
-  wifiManager.addParameter(google_token);
+  //google_token = new WiFiManagerParameter(F("google_token"), F("google_token"), config.google_token, 40);
+  //wifiManager.addParameter(google_token);
 
   wifiManager.setSaveParamsCallback(saveParamsCallback);
   wifiManager.setGetParameterCallback(getParamsCallback);
@@ -158,7 +168,6 @@ void wifi_loop()
 void getParamsCallback(AsyncWebServerRequest *request)
 {
   AsyncJsonResponse *response = new AsyncJsonResponse();
-  //response->addHeader("Server", "ESP Async Web Server");
   JsonObject root = response->getRoot();
   root[F("timezone")] = config.timezone;
   root[F("h24")] = (int)config.h24;
@@ -172,6 +181,8 @@ void getParamsCallback(AsyncWebServerRequest *request)
   root[F("led_configuration")] = config.led_configuration;
   root[F("sleep_hour")] = config.sleep_hour;
   root[F("wake_hour")] = config.wake_hour;
+  root[F("termometer")] = (int)config.termometer;
+  root[F("date")] = (int)config.date;
   root[F("uptime")] = wifiManager.getUpTime();
   root[F("fw_ver")] = String(FIRMWARE_VERSION);
 
@@ -181,8 +192,8 @@ void getParamsCallback(AsyncWebServerRequest *request)
 
 void saveParamsCallback(AsyncWebServerRequest *request)
 {
-  DEBUG_PRINT(F("PARAM google_token = "));
-  DEBUG_PRINTLN(google_token->getValue());
+  //DEBUG_PRINT(F("PARAM google_token = "));
+  //DEBUG_PRINTLN(google_token->getValue());
   DEBUG_PRINT(F("PARAM timezone_field = "));
   DEBUG_PRINTLN(getParam(request, F("timezone_field")));
   DEBUG_PRINT(F("PARAM h24_field = "));
@@ -207,8 +218,12 @@ void saveParamsCallback(AsyncWebServerRequest *request)
   DEBUG_PRINTLN(getParam(request, F("leds_field")));
   DEBUG_PRINT(F("PARAM leds_mode = "));
   DEBUG_PRINTLN(getParam(request, F("leds_mode_field")));
+  DEBUG_PRINT(F("PARAM termometer_field = "));
+  DEBUG_PRINTLN(getParam(request, F("termometer_field")));
+  DEBUG_PRINT(F("PARAM date_field = "));
+  DEBUG_PRINTLN(getParam(request, F("date_field")));
 
-  strcpy(config.google_token, google_token->getValue());
+  //strcpy(config.google_token, google_token->getValue());
   config.timezone = getParam(request, F("timezone_field")).toInt();
   config.h24 = (bool)getParam(request, F("h24_field")).toInt();
   config.blink_mode = getParam(request, F("blink_field")).toInt();
@@ -221,6 +236,8 @@ void saveParamsCallback(AsyncWebServerRequest *request)
   config.led_configuration = getParam(request, F("leds_mode_field")).toInt();
   config.sleep_hour = String(sleep_hour->getValue()).toInt();
   config.wake_hour = String(wake_hour->getValue()).toInt();
+  config.termometer = (bool)getParam(request, F("termometer_field")).toInt();
+  config.date = (bool)getParam(request, F("date_field")).toInt();
   save_configuration();
   if (custom_callback != nullptr)
   {
@@ -248,7 +265,8 @@ void reset_wifi_settings()
 void wifi_free_resources()
 {
   wifiManager.stopWebPortal();
-  free(google_token);
+  wifiManager.~WiFiManager();
+  //free(google_token);
   free(timezone_field);
   free(h24_field);
   free(blink_field);
@@ -259,6 +277,8 @@ void wifi_free_resources()
   free(shutdown_delay);
   free(leds);
   free(leds_mode);
+  free(date);
+  free(temp_field);
 }
 
 void postSaveFunction()

@@ -5,7 +5,7 @@ Config config{
     true,
     true,
     true,
-    "",
+    //"",
     1,
     true,
     0,
@@ -14,6 +14,8 @@ Config config{
     1,
     0,
     7,
+    true,
+    true,
     };
 
 void printParams()
