@@ -69,7 +69,7 @@
 #define GHOTA_CURRENT_TAG FIRMWARE_VERSION
 #define GHOTA_BIN_FILE PSTR("cloxie_d1_mini.bin")
 #define GHOTA_ACCEPT_PRERELEASE 0
-#define GHOTA_INTERVAL 60000 //(3600 * 6 * 1000) //6h
+#define GHOTA_INTERVAL (3600 * 6 * 1000) //6h
 
 struct Config
 {

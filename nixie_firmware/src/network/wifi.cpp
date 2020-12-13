@@ -20,6 +20,7 @@ void (*custom_callback)(void) = nullptr;
 
 void setup_wifi(void (*callback)(void))
 {
+  wifiManager.WiFiManagerInit();
   wifiManager.setFirmwareVersion(FIRMWARE_VERSION);
   if (callback != nullptr)
   {
@@ -61,10 +62,10 @@ void setup_wifi(void (*callback)(void))
   leds_mode = new WiFiManagerParameter(leds_mode_str);
   wifiManager.addParameter(leds_mode);
 
-  brightness_offset = new WiFiManagerParameter(F("brightness_offset"), F("brightness_offset"), String(config.brightness_offset).c_str(), 10);
+  brightness_offset = new WiFiManagerParameter(F("brightness_offset"), F("brightness_offset"), String(config.brightness_offset).c_str(), 4);
   wifiManager.addParameter(brightness_offset);
 
-  shutdown_threshold = new WiFiManagerParameter(F("shutdown_threshold"), F("shutdown_threshold"), String(config.shutdown_threshold).c_str(), 10);
+  shutdown_threshold = new WiFiManagerParameter(F("shutdown_threshold"), F("shutdown_threshold"), String(config.shutdown_threshold).c_str(), 4);
   wifiManager.addParameter(shutdown_threshold);
 
   sleep_hour = new WiFiManagerParameter(F("sleep_hour"), F("sleep_hour"), String(config.sleep_hour).c_str(), 3);
@@ -73,7 +74,7 @@ void setup_wifi(void (*callback)(void))
   wake_hour = new WiFiManagerParameter(F("wake_hour"), F("wake_hour"), String(config.wake_hour).c_str(), 3);
   wifiManager.addParameter(wake_hour);
 
-  shutdown_delay = new WiFiManagerParameter(F("shutdown_delay"), F("shutdown_delay"), String(config.shutdown_delay).c_str(), 10);
+  shutdown_delay = new WiFiManagerParameter(F("shutdown_delay"), F("shutdown_delay"), String(config.shutdown_delay).c_str(), 7);
   wifiManager.addParameter(shutdown_delay);
 
   //google_token = new WiFiManagerParameter(F("google_token"), F("google_token"), config.google_token, 40);

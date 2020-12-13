@@ -138,7 +138,7 @@ void TubeDriver::set_tubes(int8_t h, int8_t hh, int8_t m, int8_t mm, int8_t s, i
 
 void TubeDriver::adjust_brightness()
 {
-   if (!int_status)
+  if (!int_status)
     return;
   set_brightness(sensor_driver->get_light_sensor_reading());
 }
@@ -243,10 +243,10 @@ void TubeDriver::turn_on(bool fade)
   if (fade)
   {
     int_status = false;
-    for (int i = 0; i <= sensor_driver->get_light_sensor_reading(); i++)
+    for (int i = 0; i <= scale(max(sensor_driver->get_light_sensor_reading(), (float)MIN_TUBE_BRIGHTNESS)); i++)
     {
       set_tube_brightness(i, i, i);
-      delay(TURN_ON_OFF_TIME / sensor_driver->get_light_sensor_reading()); //25);
+      delay(TURN_ON_OFF_TIME / sensor_driver->get_light_sensor_reading());
     }
     int_status = true;
   }
