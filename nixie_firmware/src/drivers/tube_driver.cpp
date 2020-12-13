@@ -194,11 +194,11 @@ void TubeDriver::set_brightness(int16_t brightness)
 {
   if (!status)
     return;
-  this->brightness = brightness < 0 ? this->brightness : scale(brightness);
-  int dot_brightness = map(this->brightness, 0, PWMRANGE, MIN_DOT_BRIGHTNESS, MAX_DOT_BRIGHNTESS);
+  this->brightness = brightness < MIN_TUBE_BRIGHTNESS ? this->brightness : scale(brightness);
+  int dot_brightness = map(this->brightness, MIN_TUBE_BRIGHTNESS, PWMRANGE, 0, MAX_DOT_BRIGHNTESS);
   int left = map(l_dot_brightness, 0, PWMRANGE, 0, dot_brightness);
   int right = map(r_dot_brightness, 0, PWMRANGE, 0, dot_brightness);
-  brightness = map(this->brightness, 0, PWMRANGE, MIN_TUBE_BRIGHTNESS, MAX_TUBE_BRIGHNTESS);
+  brightness = map(this->brightness, MIN_TUBE_BRIGHTNESS, PWMRANGE, MIN_TUBE_BRIGHTNESS, MAX_TUBE_BRIGHNTESS);
   set_tube_brightness(brightness, left, right);
 }
 

@@ -268,7 +268,7 @@ void wifi_free_resources()
 {
   wifiManager.stopWebPortal();
   //wifiManager.stopConfigPortal();
-  activeDelay(5000);
+  activeDelay(1000);
   wifiManager.free_params();
   //free(google_token);
   /* free(timezone_field);
