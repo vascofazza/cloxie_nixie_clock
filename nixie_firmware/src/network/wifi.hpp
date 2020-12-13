@@ -25,8 +25,6 @@ void wifi_loop();
 
 void reset_wifi_settings();
 
-void wifi_free_resources();
-
 void resetWiFi();
 
 void initWiFi();

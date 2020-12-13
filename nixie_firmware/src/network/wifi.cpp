@@ -133,7 +133,6 @@ void wifi_loop()
     {
       DEBUG_PRINTLN(F("WiFi connection issue, resetting module."));
       resetWiFi();
-      wifi_free_resources();
       activeDelay(1000);
       setup_wifi(nullptr);
       activeDelay(1000);
@@ -263,27 +262,6 @@ void reset_wifi_settings()
 {
   wifiManager.resetSettings();
   ESP.reset();
-}
-
-void wifi_free_resources()
-{
-  wifiManager.stopWebPortal();
-  //wifiManager.stopConfigPortal();
-  activeDelay(1000);
-  wifiManager.free_params();
-  //free(google_token);
-  /* free(timezone_field);
-  free(h24_field);
-  free(blink_field);
-  free(temp_field);
-  free(adaptive_field);
-  free(brightness_offset);
-  free(shutdown_threshold);
-  free(shutdown_delay);
-  free(leds);
-  free(leds_mode);
-  free(date);
-  free(temp_field); */
 }
 
 void postSaveFunction()

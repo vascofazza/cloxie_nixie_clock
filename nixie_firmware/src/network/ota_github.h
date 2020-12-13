@@ -5,6 +5,7 @@
 
 BearSSL::CertStore certStore;
 bool cert_initialized = false;
+bool first_boot = true;
 
 bool setup_cert_store()
 {
@@ -43,11 +44,12 @@ void check_for_updates()
   }
   ESPOTAGitHub API(&certStore, GHOTA_USER, GHOTA_REPO, GHOTA_CURRENT_TAG, GHOTA_BIN_FILE, GHOTA_ACCEPT_PRERELEASE);
   DEBUG_PRINTLN(F("Checking for update..."));
-  wifi_free_resources();
   if (API.checkUpgrade())
   {
     DEBUG_PRINT(F("Upgrade found at: "));
     DEBUG_PRINTLN(API.getUpgradeURL());
+    if (first_boot)
+      ESP.reset();
     if (API.doUpgrade())
     {
       DEBUG_PRINTLN(F("Upgrade complete.")); //This should never be seen as the device should restart on successful upgrade.
@@ -63,5 +65,5 @@ void check_for_updates()
     DEBUG_PRINT(F("Not proceeding to upgrade: "));
     DEBUG_PRINTLN(API.getLastError());
   }
-  setup_wifi(nullptr);
+  first_boot = false;
 }
