@@ -108,7 +108,6 @@ void setup_wifi(void (*callback)(void))
   {
     DEBUG_PRINTLN(F("Starting config portal."));
   }
-  setup_ota_webserver(wifiManager.server.get());
   MDNS.begin(HOST_NAME);
   MDNS.addService(PSTR("http"), PSTR("tcp"), 80);
 }
@@ -163,6 +162,7 @@ void wifi_loop()
   {
     DEBUG_PRINTLN(F("Starting Portal"));
     wifiManager.startWebPortal();
+    setup_ota_webserver(wifiManager.server.get());
   }
   MDNS.update();
 }
@@ -267,7 +267,7 @@ void reset_wifi_settings()
 void wifi_free_resources()
 {
   wifiManager.stopWebPortal();
-  wifiManager.~WiFiManager();
+  wifiManager.free_params();
   //free(google_token);
   free(timezone_field);
   free(h24_field);

@@ -5,12 +5,12 @@ static bool shouldReboot = false;
 
 void setup_ota_webserver(AsyncWebServer *server)
 {
-    // Simple Firmware Update Form
-    server->on(PSTR("/update"), HTTP_GET, [](AsyncWebServerRequest *request) {
-        request->send(200, PSTR("text/html"), PSTR("<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>"));
-    });
-    server->on(
-        PSTR("/update"), HTTP_POST, [](AsyncWebServerRequest *request) {
+  // Simple Firmware Update Form
+  server->on(PSTR("/update"), HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(200, PSTR("text/html"), PSTR("<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>"));
+  });
+  server->on(
+      PSTR("/update"), HTTP_POST, [](AsyncWebServerRequest *request) {
     shouldReboot = !Update.hasError();
     AsyncWebServerResponse *response = request->beginResponse(200, PSTR("text/plain"), shouldReboot?PSTR("OK"):PSTR("FAIL"));
     response->addHeader(PSTR("Connection"), PSTR("close"));
@@ -34,17 +34,14 @@ void setup_ota_webserver(AsyncWebServer *server)
         Update.printError(Serial);
       }
     } });
-
-    // attach filesystem root at URL /fs
-    server->serveStatic(PSTR("/fs"), SPIFFS, PSTR("/"));
 }
 
 void ota_webserver_loop(void)
 {
-    if (shouldReboot)
-    {
-        DEBUG_PRINTLN(F("Rebooting..."));
-        activeDelay(1000);
-        ESP.restart();
-    }
+  if (shouldReboot)
+  {
+    DEBUG_PRINTLN(F("Rebooting..."));
+    activeDelay(1000);
+    ESP.restart();
+  }
 }

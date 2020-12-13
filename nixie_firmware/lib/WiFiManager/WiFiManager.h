@@ -362,6 +362,8 @@ public:
 
   bool isWebPortalActive();
 
+  void free_params();
+
   std::unique_ptr<DNSServer> dnsServer;
 
 #if defined(ESP32) && defined(WM_WEBSERVERSHIM)

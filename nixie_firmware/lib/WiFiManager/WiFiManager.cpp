@@ -264,6 +264,11 @@ void WiFiManager::WiFiManagerInit()
 // destructor
 WiFiManager::~WiFiManager()
 {
+    free_params();
+}
+
+void WiFiManager::free_params()
+{
   _end();
   // parameters
   // @todo below belongs to wifimanagerparameter
@@ -272,6 +277,7 @@ WiFiManager::~WiFiManager()
     DEBUG_WM(DEBUG_DEV, F("freeing allocated params!"));
     free(_params);
     _params = NULL;
+    _paramsCount = 0;
   }
 
 // @todo remove event
@@ -1573,6 +1579,7 @@ String WiFiManager::getParamOut()
       // if no ID use customhtml for item, else generate from param string
       if (_params[i]->getID() != NULL)
       {
+        DEBUG_WM(_params[i]->getID());
         if (tok_I)
           pitem.replace(FPSTR(T_I), (String)FPSTR(S_parampre) + (String)i); // T_I id number
         if (tok_i)

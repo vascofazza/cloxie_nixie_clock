@@ -24,7 +24,6 @@ EveryTimer ota_handler;
 
 enum CYCLE
 {
-  NONE = -1,
   CLOCK = 0,
   DATE = 1,
   TEMPERATURE = 2,
