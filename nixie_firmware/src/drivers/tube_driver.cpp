@@ -5,7 +5,7 @@ TubeDriver::TubeDriver(SensorDriver *sensor_driver)
   this->sensor_driver = sensor_driver;
   status = false;
   int_status = false;
-  brightness = 0;
+  brightness = MIN_TUBE_BRIGHTNESS;
   l_dot_brightness = 0;
   r_dot_brightness = 0;
 
@@ -195,7 +195,7 @@ void TubeDriver::set_brightness(int16_t brightness)
   if (!status)
     return;
   this->brightness = brightness < MIN_TUBE_BRIGHTNESS ? this->brightness : scale(brightness);
-  int dot_brightness = map(this->brightness, MIN_TUBE_BRIGHTNESS, PWMRANGE, 0, MAX_DOT_BRIGHNTESS);
+  int dot_brightness = map(this->brightness, 0, PWMRANGE, 0, MAX_DOT_BRIGHNTESS);
   int left = map(l_dot_brightness, 0, PWMRANGE, 0, dot_brightness);
   int right = map(r_dot_brightness, 0, PWMRANGE, 0, dot_brightness);
   brightness = map(this->brightness, MIN_TUBE_BRIGHTNESS, PWMRANGE, MIN_TUBE_BRIGHTNESS, MAX_TUBE_BRIGHNTESS);

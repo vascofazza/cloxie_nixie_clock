@@ -64,5 +64,4 @@ void check_for_updates()
     DEBUG_PRINTLN(API.getLastError());
   }
   setup_wifi(nullptr);
-  activeDelay(1000);
 }
