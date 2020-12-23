@@ -8,6 +8,7 @@
 #include "AsyncJson.h"
 #include "ArduinoJson.h"
 #include "ota_webserver.hpp"
+#include "../drivers/clock.hpp"
 #include "../configuration.hpp"
 #include "../utils.hpp"
 
@@ -19,7 +20,7 @@ void getParamsCallback(AsyncWebServerRequest*);
 
 void saveParamsCallback(AsyncWebServerRequest*);
 
-void setup_wifi(void (*)());
+void setup_wifi(ClockDriver*, void (*)());
 
 void wifi_loop();
 
@@ -32,5 +33,11 @@ void initWiFi();
 bool hasIPaddr();
 
 void postSaveFunction();
+
+void start_timer(ClockDriver*, AsyncWebServerRequest*);
+
+void pause_timer(ClockDriver*, AsyncWebServerRequest*);
+
+void stop_timer(ClockDriver*, AsyncWebServerRequest*);
 
 #endif

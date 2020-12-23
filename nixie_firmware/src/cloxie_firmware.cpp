@@ -62,12 +62,13 @@ void setup()
 #endif
   setup_configuration();
   initWiFi();
-  setup_wifi(update_config_callback);
 
   sensor_driver = new SensorDriver();
   tube_driver = new TubeDriver(sensor_driver);
   led_driver = new LedDriver(tube_driver, sensor_driver, NUM_LEDS, clock_patterns, ARRAY_SIZE(clock_patterns));
   clock_driver = new ClockDriver(tube_driver);
+
+  setup_wifi(clock_driver, update_config_callback);
 
   ota_handler.Every(GHOTA_INTERVAL, check_for_updates);
   ota_handler.Start();

@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 
-#define FIRMWARE_VERSION PSTR("1.1.1")
+#define FIRMWARE_VERSION PSTR("1.1.2")
 
 //#define DEBUG
 
@@ -88,6 +88,7 @@ struct Config
   int wake_hour;
   bool termometer;
   bool date;
+  unsigned int depoisoning;
 };
 
 extern Config config;

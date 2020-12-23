@@ -16,6 +16,7 @@ Config config{
     7,
     true,
     true,
+    CATHODE_POISONING_TRIGGER_TIME
     };
 
 void printParams()
@@ -27,8 +28,6 @@ void printParams()
   DEBUG_PRINTLN(config.h24);
   DEBUG_PRINT(F("\tC°/F°: "));
   DEBUG_PRINTLN(config.celsius);
-  //DEBUG_PRINT(F("\tGoogle Token: "));
-  //DEBUG_PRINTLN(config.google_token);
   DEBUG_PRINT(F("\tAdaptive Brightness: "));
   DEBUG_PRINTLN(config.adaptive_brightness);
   DEBUG_PRINT(F("\tBrightness Offset: "));
@@ -47,6 +46,8 @@ void printParams()
   DEBUG_PRINTLN(config.leds);
   DEBUG_PRINT(F("\tLed Configuration: "));
   DEBUG_PRINTLN(config.led_configuration);
+  DEBUG_PRINT(F("\tDepoisoning interval: "));
+  DEBUG_PRINTLN(config.depoisoning);
 }
 
 void check_params()
@@ -59,6 +60,7 @@ void check_params()
   config.blink_mode = config.blink_mode > 3 || config.blink_mode < 0 ? 0 : config.blink_mode;
   config.sleep_hour = config.sleep_hour > 23 || config.sleep_hour < 0 ? 0 : config.sleep_hour;
   config.wake_hour = config.wake_hour > 23 || config.wake_hour < 0 ? 7 : config.wake_hour;
+  config.depoisoning = config.depoisoning < 60000 ? CATHODE_POISONING_TRIGGER_TIME : config.depoisoning;
 }
 
 void setup_configuration()

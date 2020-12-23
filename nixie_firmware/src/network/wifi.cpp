@@ -1,6 +1,5 @@
 #include "wifi.hpp"
 
-//WiFiManagerParameter *google_token;
 WiFiManagerParameter *timezone_field;
 WiFiManagerParameter *h24_field;
 WiFiManagerParameter *blink_field;
@@ -15,11 +14,15 @@ WiFiManagerParameter *sleep_hour;
 WiFiManagerParameter *wake_hour;
 WiFiManagerParameter *termometer;
 WiFiManagerParameter *date;
+WiFiManagerParameter *depoisoning;
 
 void (*custom_callback)(void) = nullptr;
 
-void setup_wifi(void (*callback)(void))
+static ClockDriver *_clock_driver = nullptr;
+
+void setup_wifi(ClockDriver *clock, void (*callback)(void))
 {
+  _clock_driver = clock;
   wifiManager.WiFiManagerInit();
   wifiManager.setFirmwareVersion(FIRMWARE_VERSION);
   if (callback != nullptr)
@@ -77,8 +80,8 @@ void setup_wifi(void (*callback)(void))
   shutdown_delay = new WiFiManagerParameter(F("shutdown_delay"), F("shutdown_delay"), String(config.shutdown_delay).c_str(), 7);
   wifiManager.addParameter(shutdown_delay);
 
-  //google_token = new WiFiManagerParameter(F("google_token"), F("google_token"), config.google_token, 40);
-  //wifiManager.addParameter(google_token);
+  depoisoning = new WiFiManagerParameter(F("depoisoning_field"), F("depoisoning_field"), String(config.depoisoning).c_str(), 7);
+  wifiManager.addParameter(depoisoning);
 
   wifiManager.setSaveParamsCallback(saveParamsCallback);
   wifiManager.setGetParameterCallback(getParamsCallback);
@@ -134,8 +137,6 @@ void wifi_loop()
       DEBUG_PRINTLN(F("WiFi connection issue, resetting module."));
       resetWiFi();
       activeDelay(1000);
-      setup_wifi(nullptr);
-      activeDelay(1000);
 
       if (WiFi.waitForConnectResult() == WL_CONNECTED && hasIPaddr())
       {
@@ -163,6 +164,9 @@ void wifi_loop()
     DEBUG_PRINTLN(F("Starting Portal"));
     wifiManager.startWebPortal();
     setup_ota_webserver(wifiManager.server.get());
+    wifiManager.server.get()->on("/timer_start", std::bind(&start_timer, _clock_driver, std::placeholders::_1));
+    wifiManager.server.get()->on("/timer_pause", std::bind(pause_timer, _clock_driver, std::placeholders::_1));
+    wifiManager.server.get()->on("/timer_stop", std::bind(stop_timer, _clock_driver, std::placeholders::_1));
   }
   MDNS.update();
 }
@@ -185,6 +189,7 @@ void getParamsCallback(AsyncWebServerRequest *request)
   root[F("wake_hour")] = config.wake_hour;
   root[F("termometer")] = (int)config.termometer;
   root[F("date")] = (int)config.date;
+  root[F("depoisoning_field")] = config.depoisoning;
   root[F("uptime")] = wifiManager.getUpTime();
   root[F("fw_ver")] = String(FIRMWARE_VERSION);
 
@@ -194,8 +199,6 @@ void getParamsCallback(AsyncWebServerRequest *request)
 
 void saveParamsCallback(AsyncWebServerRequest *request)
 {
-  //DEBUG_PRINT(F("PARAM google_token = "));
-  //DEBUG_PRINTLN(google_token->getValue());
   DEBUG_PRINT(F("PARAM timezone_field = "));
   DEBUG_PRINTLN(getParam(request, F("timezone_field")));
   DEBUG_PRINT(F("PARAM h24_field = "));
@@ -224,6 +227,8 @@ void saveParamsCallback(AsyncWebServerRequest *request)
   DEBUG_PRINTLN(getParam(request, F("termometer_field")));
   DEBUG_PRINT(F("PARAM date_field = "));
   DEBUG_PRINTLN(getParam(request, F("date_field")));
+  DEBUG_PRINT(F("PARAM depoisoning_field = "));
+  DEBUG_PRINTLN(depoisoning->getValue());
 
   //strcpy(config.google_token, google_token->getValue());
   config.timezone = getParam(request, F("timezone_field")).toInt();
@@ -240,6 +245,7 @@ void saveParamsCallback(AsyncWebServerRequest *request)
   config.wake_hour = String(wake_hour->getValue()).toInt();
   config.termometer = (bool)getParam(request, F("termometer_field")).toInt();
   config.date = (bool)getParam(request, F("date_field")).toInt();
+  config.depoisoning = String(depoisoning->getValue()).toInt();
   save_configuration();
   if (custom_callback != nullptr)
   {
@@ -309,4 +315,34 @@ bool hasIPaddr()
     }
   }
   return configured;
+}
+
+void start_timer(ClockDriver *clock, AsyncWebServerRequest *request)
+{
+  auto arg_name = "interval";
+  if (request->hasArg(arg_name))
+  {
+    String value = request->arg(arg_name);
+    clock->start_timer(value.toInt() * 1000);
+  }
+
+  AsyncWebServerResponse *response = request->beginResponse(200, PSTR("text/plain"), PSTR("OK"));
+  response->addHeader(PSTR("Connection"), PSTR("close"));
+  request->send(response);
+}
+
+void stop_timer(ClockDriver *clock, AsyncWebServerRequest *request)
+{
+  clock->reset_timer();
+  AsyncWebServerResponse *response = request->beginResponse(200, PSTR("text/plain"), PSTR("OK"));
+  response->addHeader(PSTR("Connection"), PSTR("close"));
+  request->send(response);
+}
+
+void pause_timer(ClockDriver *clock, AsyncWebServerRequest *request)
+{
+  clock->stop_timer();
+  AsyncWebServerResponse *response = request->beginResponse(200, PSTR("text/plain"), PSTR("OK"));
+  response->addHeader(PSTR("Connection"), PSTR("close"));
+  request->send(response);
 }
