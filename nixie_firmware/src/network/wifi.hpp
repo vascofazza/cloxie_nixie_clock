@@ -14,13 +14,13 @@
 
 static WiFiManager wifiManager;
 
-String getParam(AsyncWebServerRequest*, String);
+String getParam(AsyncWebServerRequest *, String);
 
-void getParamsCallback(AsyncWebServerRequest*);
+void getParamsCallback(AsyncWebServerRequest *);
 
-void saveParamsCallback(AsyncWebServerRequest*);
+void saveParamsCallback(AsyncWebServerRequest *);
 
-void setup_wifi(ClockDriver*, void (*)());
+void setup_wifi(ClockDriver *, void (*)());
 
 void wifi_loop();
 
@@ -34,10 +34,16 @@ bool hasIPaddr();
 
 void postSaveFunction();
 
-void start_timer(ClockDriver*, AsyncWebServerRequest*);
+void start_timer(ClockDriver *, AsyncWebServerRequest *);
 
-void pause_timer(ClockDriver*, AsyncWebServerRequest*);
+void pause_timer(ClockDriver *, AsyncWebServerRequest *);
 
-void stop_timer(ClockDriver*, AsyncWebServerRequest*);
+void stop_timer(ClockDriver *, AsyncWebServerRequest *);
+
+void start_stopwatch(ClockDriver *, AsyncWebServerRequest *);
+
+void pause_stopwatch(ClockDriver *, AsyncWebServerRequest *);
+
+void stop_stopwatch(ClockDriver *, AsyncWebServerRequest *);
 
 #endif

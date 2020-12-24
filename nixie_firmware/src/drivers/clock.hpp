@@ -20,14 +20,18 @@ private:
     bool display_time;
     bool display_date;
     bool display_timer;
+    bool display_stopwatch;
     bool timer_running;
+    bool stopwatch_running;
     long timer_duration;
+    long stopwatch_value;
+    long current_stopwatch_value;
     elapsedMillis current_timer_value;
     Ticker clock_ticker;
 
     void print_current_time(ace_time::ZonedDateTime);
     void print_current_date(ace_time::ZonedDateTime);
-    void print_timer();
+    void print_timer_stopwatch();
     void blink_dots(void (*)(TubeDriver *, bool, elapsedMillis *));
 
 public:
@@ -43,15 +47,27 @@ public:
 
     void show_timer(bool);
 
+    void show_stopwatch(bool);
+
     void start_timer(long duration);
 
     void stop_timer();
 
     void reset_timer();
 
+    void start_stopwatch();
+
+    void stop_stopwatch();
+
+    void reset_stopwatch();
+
     bool is_timer_set();
 
+    bool is_stopwatch_set();
+
     bool is_timer_running();
+
+    bool is_stopwatch_running();
 
     bool is_night_hours();
 

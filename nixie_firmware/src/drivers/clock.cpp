@@ -9,14 +9,18 @@ ClockDriver::ClockDriver(TubeDriver *tube_driver)
   display_time = false;
   display_date = false;
   display_timer = false;
+  display_stopwatch = false;
   ntpClock.setup();
   systemClock = new SystemClockLoop((Clock *)&ntpClock /*reference*/, nullptr /*backup*/);
   systemClock->setup();
   systemClock->setNow(0);
   blinking = false;
   timer_running = false;
+  stopwatch_running = false;
   timer_duration = -1;
   current_timer_value = 0;
+  current_stopwatch_value = 0;
+  stopwatch_value = 0;
   clock_ticker.attach(1.f, std::bind(&SystemClockLoop::getNow, systemClock));
 }
 
@@ -28,13 +32,13 @@ void ClockDriver::loop()
 
   ace_time::ZonedDateTime current_time = get_current_time();
 
-  if (display_timer)
+  if (display_timer || display_stopwatch)
   {
-    if (timer_running)
+    if (timer_running || stopwatch_running)
     {
       blink_dots(double_static_blink);
     }
-    else if (is_timer_set())
+    else if (is_timer_set() || is_stopwatch_set())
     {
       blink_dots(static_blink);
     }
@@ -42,7 +46,7 @@ void ClockDriver::loop()
     {
       blink_dots(static_on);
     }
-    print_timer();
+    print_timer_stopwatch();
   }
   else if (display_time)
   {
@@ -117,11 +121,27 @@ bool ClockDriver::is_night_hours()
   return hour >= sleep_hour && hour < wake_hour;
 }
 
-void ClockDriver::print_timer()
+void ClockDriver::print_timer_stopwatch()
 {
-  long val = timer_running ? timer_duration - (long)current_timer_value : timer_duration;
-  if (val <= 0)
-    reset_timer();
+  long val = 0;
+  if (display_timer)
+  {
+    val = timer_running ? timer_duration - (long)current_timer_value : timer_duration;
+    if (val <= 0)
+      reset_timer();
+  }
+  else if (display_stopwatch)
+  {
+    if (stopwatch_running)
+    {
+      auto mills = millis();
+      current_stopwatch_value += mills - stopwatch_value;
+      stopwatch_value = mills;
+    }
+    val = current_stopwatch_value;
+    if (val >= 59 + 60 * 60 + 23 * 3600 * 1000)
+      reset_stopwatch();
+  }
 
   unsigned long durCS = (val % 1000) / 10;    //Cent-seconds
   unsigned long durSS = (val / 1000) % 60;    //Seconds
@@ -146,6 +166,7 @@ void ClockDriver::show_time(bool show)
   {
     show_date(false);
     show_timer(false);
+    show_stopwatch(false);
   }
 }
 
@@ -156,6 +177,7 @@ void ClockDriver::show_date(bool show)
   {
     show_time(false);
     show_timer(false);
+    show_stopwatch(false);
   }
 }
 
@@ -165,6 +187,18 @@ void ClockDriver::show_timer(bool show)
   if (show)
   {
     show_time(false);
+    show_date(false);
+    show_stopwatch(false);
+  }
+}
+
+void ClockDriver::show_stopwatch(bool show)
+{
+  display_stopwatch = show;
+  if (show)
+  {
+    show_time(false);
+    show_timer(false);
     show_date(false);
   }
 }
@@ -199,14 +233,46 @@ void ClockDriver::reset_timer()
   timer_duration = -1;
 }
 
+void ClockDriver::start_stopwatch()
+{
+  if (!is_stopwatch_set())
+  {
+    current_stopwatch_value = 0;
+  }
+  stopwatch_value = millis();
+  stopwatch_running = true;
+}
+
+void ClockDriver::stop_stopwatch()
+{
+  stopwatch_running = false;
+}
+
+void ClockDriver::reset_stopwatch()
+{
+  stopwatch_running = false;
+  stopwatch_value = -1;
+  current_stopwatch_value = 0;
+}
+
 bool ClockDriver::is_timer_set()
 {
   return timer_duration > 0;
 }
 
+bool ClockDriver::is_stopwatch_set()
+{
+  return current_stopwatch_value > 0;
+}
+
 bool ClockDriver::is_timer_running()
 {
   return timer_running;
+}
+
+bool ClockDriver::is_stopwatch_running()
+{
+  return stopwatch_running;
 }
 
 void ClockDriver::set_alarm(long epoch)

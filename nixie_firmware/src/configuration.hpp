@@ -23,6 +23,7 @@
 #define DATE_CYCLE (60 * 1000)    //60s
 #define TEMP_CYCLE (60 * 1000)    //60s
 #define TIMER_CYCLE (60 * 1000)   //60s
+#define STOPWATCH_CYCLE (60 * 1000)   //60s
 
 //WIFI
 #define HOST_NAME PSTR("cloxie")
@@ -89,6 +90,7 @@ struct Config
   bool termometer;
   bool date;
   unsigned int depoisoning;
+  unsigned int clock_cycle;
 };
 
 extern Config config;

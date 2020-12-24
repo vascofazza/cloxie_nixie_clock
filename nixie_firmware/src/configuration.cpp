@@ -16,7 +16,8 @@ Config config{
     7,
     true,
     true,
-    CATHODE_POISONING_TRIGGER_TIME
+    CATHODE_POISONING_TRIGGER_TIME,
+    CLOCK_CYCLE
     };
 
 void printParams()
@@ -48,6 +49,8 @@ void printParams()
   DEBUG_PRINTLN(config.led_configuration);
   DEBUG_PRINT(F("\tDepoisoning interval: "));
   DEBUG_PRINTLN(config.depoisoning);
+  DEBUG_PRINT(F("\tClock cycle interval: "));
+  DEBUG_PRINTLN(config.clock_cycle);
 }
 
 void check_params()
@@ -61,6 +64,7 @@ void check_params()
   config.sleep_hour = config.sleep_hour > 23 || config.sleep_hour < 0 ? 0 : config.sleep_hour;
   config.wake_hour = config.wake_hour > 23 || config.wake_hour < 0 ? 7 : config.wake_hour;
   config.depoisoning = config.depoisoning < 60000 ? CATHODE_POISONING_TRIGGER_TIME : config.depoisoning;
+  config.clock_cycle = config.clock_cycle < 60000 ? CLOCK_CYCLE : config.clock_cycle;
 }
 
 void setup_configuration()

@@ -20,7 +20,7 @@ SensorDriver *sensor_driver;
 OneShotTimer cycle_handler;
 EveryTimer ota_handler;
 
-#define NUM_CYCLES 4
+#define NUM_CYCLES 5
 
 enum CYCLE
 {
@@ -28,6 +28,7 @@ enum CYCLE
   DATE = 1,
   TEMPERATURE = 2,
   TIMER = 3,
+  STOPWATCH = 4,
 };
 
 int8_t cycle = CYCLE::CLOCK;
@@ -81,7 +82,7 @@ void setup()
   tube_driver->turn_on(true);
 
   clock_driver->show_time(true);
-  cycle_handler.OneShot(CLOCK_CYCLE, next_cycle);
+  cycle_handler.OneShot(config.clock_cycle, next_cycle);
 }
 
 void next_cycle()
@@ -92,6 +93,7 @@ void next_cycle()
   switch (cycle)
   {
   case CYCLE::DATE:
+    cycle = CYCLE::DATE;
     if (config.date)
     {
       DEBUG_PRINTLN(F("CYCLE DATE"));
@@ -99,6 +101,7 @@ void next_cycle()
       break;
     }
   case CYCLE::TEMPERATURE:
+    cycle = CYCLE::TEMPERATURE;
     if (config.termometer)
     {
       DEBUG_PRINTLN(F("CYCLE TEMP"));
@@ -106,17 +109,26 @@ void next_cycle()
       break;
     }
   case CYCLE::TIMER:
-    DEBUG_PRINTLN(F("CYCLE TIMER"));
+    cycle = CYCLE::TIMER;
     if (clock_driver->is_timer_set())
     {
+      DEBUG_PRINTLN(F("CYCLE TIMER"));
       cycle_handler.OneShot(TIMER_CYCLE, next_cycle);
+      break;
+    }
+  case CYCLE::STOPWATCH:
+    cycle = CYCLE::STOPWATCH;
+    if (clock_driver->is_stopwatch_set())
+    {
+      DEBUG_PRINTLN(F("CYCLE STOPWATCH"));
+      cycle_handler.OneShot(STOPWATCH_CYCLE, next_cycle);
       break;
     }
   case CYCLE::CLOCK:
   default:
     DEBUG_PRINTLN(F("CYCLE CLOCK"));
     cycle = CYCLE::CLOCK;
-    cycle_handler.OneShot(CLOCK_CYCLE, next_cycle);
+    cycle_handler.OneShot(config.clock_cycle, next_cycle);
   }
   if (old_cycle != cycle)
   {
@@ -129,17 +141,17 @@ void handle_loop()
 {
   static bool timer_running = false;
 
-  if (clock_driver->is_timer_running())
+  if (clock_driver->is_timer_running() || clock_driver->is_stopwatch_running())
   {
     cycle_handler.Stop();
-    cycle = CYCLE::TIMER;
+    cycle = clock_driver->is_timer_running() ? CYCLE::TIMER : CYCLE::STOPWATCH;
     set_led_patterns(cycle);
     timer_running = true;
   }
   else if (timer_running)
   {
     timer_running = false;
-    cycle_handler.OneShot(TIMER_CYCLE, next_cycle);
+    cycle_handler.OneShot(clock_driver->is_timer_running() ? TIMER_CYCLE : STOPWATCH_CYCLE, next_cycle);
   }
   else
   {
@@ -165,6 +177,9 @@ void handle_loop()
   }
   case CYCLE::TIMER:
     clock_driver->show_timer(true);
+    break;
+  case CYCLE::STOPWATCH:
+    clock_driver->show_stopwatch(true);
     break;
   }
 }
@@ -235,6 +250,7 @@ void set_led_patterns(uint8_t cycle)
   case CYCLE::TEMPERATURE:
     led_driver->set_patterns(temp_patterns, ARRAY_SIZE(temp_patterns));
     break;
+  case CYCLE::STOPWATCH:
   case CYCLE::TIMER:
     led_driver->set_patterns(timer_patterns, ARRAY_SIZE(timer_patterns));
     break;
@@ -260,6 +276,10 @@ void update_config_callback()
   else if (!config.leds && led_driver->get_status())
   {
     led_driver->turn_off(false);
+  }
+  if (cycle == CYCLE::CLOCK)
+  {
+    cycle_handler.OneShot(config.clock_cycle, next_cycle);
   }
   set_led_patterns(cycle);
 }
