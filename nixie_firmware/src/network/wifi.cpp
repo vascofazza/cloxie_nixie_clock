@@ -339,48 +339,35 @@ void start_timer(ClockDriver *clock, AsyncWebServerRequest *request)
     String value = request->arg(arg_name);
     clock->start_timer(value.toInt() * 1000);
   }
-
-  AsyncWebServerResponse *response = request->beginResponse(200, PSTR("text/plain"), PSTR("OK"));
-  response->addHeader(PSTR("Connection"), PSTR("close"));
-  request->send(response);
+  send_response(request);
 }
 
 void stop_timer(ClockDriver *clock, AsyncWebServerRequest *request)
 {
   clock->reset_timer();
-  AsyncWebServerResponse *response = request->beginResponse(200, PSTR("text/plain"), PSTR("OK"));
-  response->addHeader(PSTR("Connection"), PSTR("close"));
-  request->send(response);
+  send_response(request);
 }
 
 void pause_timer(ClockDriver *clock, AsyncWebServerRequest *request)
 {
   clock->stop_timer();
-  AsyncWebServerResponse *response = request->beginResponse(200, PSTR("text/plain"), PSTR("OK"));
-  response->addHeader(PSTR("Connection"), PSTR("close"));
-  request->send(response);
+  send_response(request);
 }
 
 void start_stopwatch(ClockDriver *clock, AsyncWebServerRequest *request)
 {
   clock->start_stopwatch();
-  AsyncWebServerResponse *response = request->beginResponse(200, PSTR("text/plain"), PSTR("OK"));
-  response->addHeader(PSTR("Connection"), PSTR("close"));
-  request->send(response);
+  send_response(request);
 }
 
 void pause_stopwatch(ClockDriver *clock, AsyncWebServerRequest *request)
 {
   clock->stop_stopwatch();
-  AsyncWebServerResponse *response = request->beginResponse(200, PSTR("text/plain"), PSTR("OK"));
-  response->addHeader(PSTR("Connection"), PSTR("close"));
-  request->send(response);
+  send_response(request);
 }
 
 void stop_stopwatch(ClockDriver *clock, AsyncWebServerRequest *request)
 {
   clock->reset_stopwatch();
-  AsyncWebServerResponse *response = request->beginResponse(200, PSTR("text/plain"), PSTR("OK"));
-  response->addHeader(PSTR("Connection"), PSTR("close"));
-  request->send(response);
+  send_response(request);
 }

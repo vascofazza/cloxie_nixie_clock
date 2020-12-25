@@ -6,3 +6,10 @@ void activeDelay(unsigned long mills)
     while (elapsed < mills)
         delay(0);
 }
+
+void send_response(AsyncWebServerRequest *request)
+{
+    AsyncWebServerResponse *response = request->beginResponse(200, PSTR("text/plain"), PSTR("OK"));
+    response->addHeader(PSTR("Connection"), PSTR("close"));
+    request->send(response);
+}
