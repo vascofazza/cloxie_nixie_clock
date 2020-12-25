@@ -9,6 +9,8 @@ The circuit and custom PCB are designed around the popular IN-14 Nixie tubes.
 
 You can find the schematics here: https://github.com/vascofazza/cloxie_nixie_clock/blob/main/nixie_board/schematics.pdf
 
+Watch the clock in action: https://www.youtube.com/watch?v=ZD35oEGX9IY
+
 ## Features
 
 - NTP time sync over Wi-Fi
