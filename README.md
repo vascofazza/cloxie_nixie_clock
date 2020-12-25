@@ -21,8 +21,6 @@ Watch the clock in action: https://www.youtube.com/watch?v=ZD35oEGX9IY
 - Configurable via a dedicated Android App (available here: https://github.com/vascofazza/Cloxie-connect)
 - Optional temperature sensor
 - Alarm/Timer/StopWatch functionalities
-- My girlfriend thinks it's cool
-
  
 
 ![cloxie nixie clock](img/cloxie.jpg)
