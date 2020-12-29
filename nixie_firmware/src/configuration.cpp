@@ -63,7 +63,6 @@ void check_params()
   config.blink_mode = config.blink_mode > 3 || config.blink_mode < 0 ? 0 : config.blink_mode;
   config.sleep_hour = config.sleep_hour > 23 || config.sleep_hour < 0 ? 0 : config.sleep_hour;
   config.wake_hour = config.wake_hour > 23 || config.wake_hour < 0 ? 7 : config.wake_hour;
-  config.depoisoning = config.depoisoning < 60000 ? CATHODE_POISONING_TRIGGER_TIME : config.depoisoning;
   config.clock_cycle = config.clock_cycle < 60000 ? CLOCK_CYCLE : config.clock_cycle;
 }
 

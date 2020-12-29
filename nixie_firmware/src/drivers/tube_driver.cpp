@@ -16,8 +16,10 @@ TubeDriver::TubeDriver(SensorDriver *sensor_driver)
   pinMode(SHF_CLOCK, OUTPUT);
   pinMode(SHF_DATA, OUTPUT);
   pinMode(SHUTDOWN_PIN, INPUT);
-  cathode_poisoning_cycle.Every(config.depoisoning, std::bind(&TubeDriver::cathode_poisoning_prevention, this, CATHODE_POISONING_PREVENTION_TIME));
-
+  if (config.depoisoning > 0)
+  {
+    cathode_poisoning_cycle.Every(config.depoisoning, std::bind(&TubeDriver::cathode_poisoning_prevention, this, CATHODE_POISONING_PREVENTION_TIME));
+  }
   run_test();
   set_tubes(0, 0, 0, 0, 0, 0);
   turn_off(false);
