@@ -144,7 +144,12 @@ void TubeDriver::adjust_brightness()
 
 void TubeDriver::loop()
 {
-  cathode_poisoning_cycle.Update();
+  if (config.depoisoning > 0)
+    cathode_poisoning_cycle.Update();
+  else
+  {
+    cathode_poisoning_cycle.Stop();
+  }
 }
 
 void TubeDriver::display_time_and_date(int8_t h, int8_t m, int8_t s, bool show_zeros)

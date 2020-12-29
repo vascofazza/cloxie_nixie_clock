@@ -232,8 +232,7 @@ void loop()
     shutdown_delay = 0;
   }
 
-  if (config.depoisoning > 0)
-    tube_driver->loop();
+  tube_driver->loop();
   handle_loop();
 
 #ifdef DEBUG
