@@ -32,6 +32,7 @@ enum CYCLE
 };
 
 int8_t cycle = CYCLE::CLOCK;
+bool sleeping = false;
 
 LedPatternList clock_patterns = {lava, lava_beat};
 LedPatternList random_patterns = {rainbow, confetti, juggle, sinelon};
@@ -187,7 +188,6 @@ void handle_loop()
 void loop()
 {
   static elapsedSeconds shutdown_delay;
-  static bool sleeping = false;
 
   clock_driver->loop();
 
@@ -269,7 +269,7 @@ void set_led_patterns(uint8_t cycle)
 
 void update_config_callback()
 {
-  if (config.leds && !led_driver->get_status())
+  if (config.leds && !led_driver->get_status() && !sleeping)
   {
     led_driver->turn_on(false);
   }

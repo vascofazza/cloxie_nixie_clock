@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 
-#define FIRMWARE_VERSION PSTR("1.1.3.1")
+#define FIRMWARE_VERSION PSTR("1.1.3.2")
 
 //#define DEBUG
 
