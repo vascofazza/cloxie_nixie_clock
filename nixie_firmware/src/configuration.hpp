@@ -6,7 +6,7 @@
 
 #define FIRMWARE_VERSION PSTR("1.1.3.3")
 
-//#define DEBUG
+#define DEBUG
 
 #ifdef DEBUG
 #define DEBUG_PRINT(x) Serial.print(x)
