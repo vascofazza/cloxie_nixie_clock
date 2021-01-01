@@ -1856,7 +1856,7 @@ void WiFiManager::handleInfo(AsyncWebServerRequest *request)
 
 String WiFiManager::getUpTime()
 {
-  String p = String(F("{1} Days {2} Hours {3} Minutes {4} Seconds"));
+  String p = String(F("{1}:{2}:{3}:{4}"));
   p.replace(FPSTR(T_1), (String)(millis() / 1000 / 3600 / 24));
   p.replace(FPSTR(T_2), (String)((millis() / 1000 / 3600) % 24));
   p.replace(FPSTR(T_3), (String)((millis() / 1000 / 60) % 60));
@@ -1866,7 +1866,6 @@ String WiFiManager::getUpTime()
 
 String WiFiManager::getInfoData(String id)
 {
-
   String p;
   // @todo add WM versioning
   if (id == F("esphead"))

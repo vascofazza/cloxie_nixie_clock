@@ -101,7 +101,7 @@ void ClockDriver::print_current_date(ace_time::ZonedDateTime current_time)
   auto month = current_time.month();
   auto year = current_time.yearTiny();
 
-  tube_driver->display_time_and_date(day, month, year, false);
+  tube_driver->display_time_and_date(day, month, year, true);
   tube_driver->set_dots_brightness(PWMRANGE, PWMRANGE);
 }
 

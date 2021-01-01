@@ -243,7 +243,6 @@ void saveParamsCallback(AsyncWebServerRequest *request)
   DEBUG_PRINT(F("PARAM clock_cycle = "));
   DEBUG_PRINTLN(clock_cycle->getValue());
 
-  //strcpy(config.google_token, google_token->getValue());
   config.timezone = getParam(request, F("timezone_field")).toInt();
   config.h24 = (bool)getParam(request, F("h24_field")).toInt();
   config.blink_mode = getParam(request, F("blink_field")).toInt();

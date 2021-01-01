@@ -78,7 +78,6 @@ struct Config
   bool h24;
   bool leds;
   bool celsius;
-  //char google_token[30];
   int led_configuration;
   bool adaptive_brightness;
   int brightness_offset;       // light sensor offset
