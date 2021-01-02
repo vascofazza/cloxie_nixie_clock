@@ -31,7 +31,8 @@ void setup_wifi(ClockDriver *clock, void (*callback)(void))
     custom_callback = callback;
   }
 
-  timezone_field = new WiFiManagerParameter(F("<br/><input id='timezone_field' name='timezone_field' maxlength='4' value='0' <a href=\"get_timezones \">TimeZone</a>>"));// F("<br/><label for='timezone_field'>TimeZone: </label><select name='timezone_field'><option value='163'>GMT</option><option value='164'>GMT+1</option><option value='165'>GMT+10</option><option value='166'>GMT+11</option><option value='167'>GMT+12</option><option value='168'>GMT+2</option><option value='169'>GMT+3</option><option value='170'>GMT+4</option><option value='171'>GMT+5</option><option value='172'>GMT+6</option><option value='173'>GMT+7</option><option value='174'>GMT+8</option><option value='175'>GMT+9</option><option value='176'>GMT-1</option><option value='177'>GMT-10</option><option value='178'>GMT-11</option><option value='179'>GMT-12</option><option value='180'>GMT-13</option><option value='181'>GMT-14</option><option value='182'>GMT-2</option><option value='183'>GMT-3</option><option value='184'>GMT-4</option><option value='185'>GMT-5</option><option value='186'>GMT-6</option><option value='187'>GMT-7</option><option value='188'>GMT-8</option><option value='189'>GMT-9</option><option value='190'>UTC</option></select>")); // custom html input
+  auto timezone_str = F("<br/><a href=\"/timezones\">TimeZone</a> (click for the full list)<input id='timezone_field' name='timezone_field' maxlength='20' value=''>");
+  timezone_field = new WiFiManagerParameter(timezone_str, 30);
   wifiManager.addParameter(timezone_field);
 
   auto h24_radio_str = F("<br/><p>Time display mode:</p><input type='radio' name='h24_field' value='1' checked><label for='1'>24H</label><br><input type='radio' name='h24_field' value='0'><label for='0'>12H</label><br>");
@@ -122,15 +123,15 @@ void setup_wifi(ClockDriver *clock, void (*callback)(void))
 
 void setup_additional_hooks()
 {
-  wifiManager.server.get()->on("/timer_start", std::bind(&start_timer, _clock_driver, std::placeholders::_1));
-  wifiManager.server.get()->on("/timer_pause", std::bind(&pause_timer, _clock_driver, std::placeholders::_1));
-  wifiManager.server.get()->on("/timer_stop", std::bind(&stop_timer, _clock_driver, std::placeholders::_1));
+  wifiManager.server.get()->on(PSTR("/timer_start"), std::bind(&start_timer, _clock_driver, std::placeholders::_1));
+  wifiManager.server.get()->on(PSTR("/timer_pause"), std::bind(&pause_timer, _clock_driver, std::placeholders::_1));
+  wifiManager.server.get()->on(PSTR("/timer_stop"), std::bind(&stop_timer, _clock_driver, std::placeholders::_1));
 
-  wifiManager.server.get()->on("/stopwatch_start", std::bind(&start_stopwatch, _clock_driver, std::placeholders::_1));
-  wifiManager.server.get()->on("/stopwatch_pause", std::bind(&pause_stopwatch, _clock_driver, std::placeholders::_1));
-  wifiManager.server.get()->on("/stopwatch_stop", std::bind(&stop_stopwatch, _clock_driver, std::placeholders::_1));
+  wifiManager.server.get()->on(PSTR("/stopwatch_start"), std::bind(&start_stopwatch, _clock_driver, std::placeholders::_1));
+  wifiManager.server.get()->on(PSTR("/stopwatch_pause"), std::bind(&pause_stopwatch, _clock_driver, std::placeholders::_1));
+  wifiManager.server.get()->on(PSTR("/stopwatch_stop"), std::bind(&stop_stopwatch, _clock_driver, std::placeholders::_1));
 
-  wifiManager.server.get()->on("/timezones", std::bind(&get_timezones, std::placeholders::_1));
+  wifiManager.server.get()->on(PSTR("/timezones"), std::bind(&get_timezones, std::placeholders::_1));
 }
 
 void wifi_loop()
@@ -192,7 +193,7 @@ void getParamsCallback(AsyncWebServerRequest *request)
 {
   AsyncJsonResponse *response = new AsyncJsonResponse();
   JsonObject root = response->getRoot();
-  root[F("timezone")] = config.timezone;
+  root[F("timezone")] = String(config.timezone_name);
   root[F("h24")] = (int)config.h24;
   root[F("blink_mode")] = config.blink_mode;
   root[F("celsius")] = (int)config.celsius;
@@ -250,7 +251,14 @@ void saveParamsCallback(AsyncWebServerRequest *request)
   DEBUG_PRINT(F("PARAM clock_cycle = "));
   DEBUG_PRINTLN(clock_cycle->getValue());
 
-  config.timezone = getParam(request, F("timezone_field")).toInt();
+  int timezone_id = get_timezone_id(getParam(request, F("timezone_field")).c_str());
+  if (timezone_id > 0)
+  {
+    DEBUG_PRINTLN(F("Changing timezone"));
+    strcpy(config.timezone_name, getParam(request, F("timezone_field")).c_str());
+    DEBUG_PRINTLN(config.timezone_name);
+    config.timezone = timezone_id;
+  }
   config.h24 = (bool)getParam(request, F("h24_field")).toInt();
   config.blink_mode = getParam(request, F("blink_field")).toInt();
   config.celsius = (bool)getParam(request, F("temp_field")).toInt();

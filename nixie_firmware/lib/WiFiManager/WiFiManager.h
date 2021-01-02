@@ -114,6 +114,7 @@ public:
     */
   WiFiManagerParameter();
   WiFiManagerParameter(const __FlashStringHelper *custom);
+  WiFiManagerParameter(const __FlashStringHelper *custom, int length);
   WiFiManagerParameter(const __FlashStringHelper *id, const __FlashStringHelper *label);
   WiFiManagerParameter(const __FlashStringHelper *id, const __FlashStringHelper *label, const char *defaultValue, int length);
   WiFiManagerParameter(const __FlashStringHelper *id, const __FlashStringHelper *label, const char *defaultValue, int length, const __FlashStringHelper *custom);

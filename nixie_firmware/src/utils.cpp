@@ -24,7 +24,23 @@ void get_timezones(AsyncWebServerRequest *request)
     {
         auto name = zonedb::kZoneRegistry[i]->name;
         DEBUG_PRINTLN(name);
-        response->printf("%d\t%s\n", i, name);
+        response->printf("%s\n", name);
+        system_soft_wdt_feed();
     }
     request->send(response);
+}
+
+int get_timezone_id(const char *timezone)
+{
+    String s_timezone = String(timezone);
+    auto size = zonedb::kZoneRegistrySize;
+    for (int i = 0; i < size; i++)
+    {
+        auto name = zonedb::kZoneRegistry[i]->name;;
+        String s_name = String(name);
+        if (s_timezone.equals(s_name))
+            return i;
+        system_soft_wdt_feed();
+    }
+    return -1;
 }

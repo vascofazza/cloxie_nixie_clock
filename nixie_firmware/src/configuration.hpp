@@ -3,10 +3,11 @@
 
 #include <Arduino.h>
 #include <EEPROM.h>
+#include "utils.hpp"
 
-#define FIRMWARE_VERSION PSTR("1.1.3.3")
+#define FIRMWARE_VERSION PSTR("1.1.4")
 
-#define DEBUG
+//#define DEBUG
 
 #ifdef DEBUG
 #define DEBUG_PRINT(x) Serial.print(x)
@@ -75,6 +76,7 @@
 struct Config
 {
   int timezone;
+  char timezone_name[30];
   bool h24;
   bool leds;
   bool celsius;

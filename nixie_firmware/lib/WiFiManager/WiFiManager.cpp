@@ -39,6 +39,16 @@ WiFiManagerParameter::WiFiManagerParameter(const __FlashStringHelper *custom)
   _customHTML = custom;
 }
 
+WiFiManagerParameter::WiFiManagerParameter(const __FlashStringHelper *custom, int length)
+{
+  _id = NULL;
+  _label = NULL;
+  _length = length;
+  _value = NULL;
+  _labelPlacement = WFM_LABEL_BEFORE;
+  _customHTML = custom;
+}
+
 WiFiManagerParameter::WiFiManagerParameter(const __FlashStringHelper *id, const __FlashStringHelper *label)
 {
   init(id, label, "", 0, F(""), WFM_LABEL_BEFORE);

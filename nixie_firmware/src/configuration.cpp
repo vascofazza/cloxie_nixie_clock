@@ -1,24 +1,23 @@
 #include "configuration.hpp"
 
 Config config{
-    163,
+    -1,
+    "CET",
     true,
     true,
     true,
-    //"",
     1,
     true,
     0,
     10,
-    60 * 30, // 30mins shutdown delay
+    60 * 30,
     1,
     0,
     7,
     true,
     true,
     CATHODE_POISONING_TRIGGER_TIME,
-    CLOCK_CYCLE
-    };
+    CLOCK_CYCLE};
 
 void printParams()
 {
@@ -55,7 +54,12 @@ void printParams()
 
 void check_params()
 {
-  config.timezone = config.timezone > 267 || config.timezone < 0 ? 0 : config.timezone;
+  config.timezone = config.timezone > 300 || config.timezone < 0 ? -1 : config.timezone;
+  if (config.timezone < 0)
+  {
+    int timezone_id = get_timezone_id(config.timezone_name);
+    config.timezone = timezone_id < 0? 0 : timezone_id;
+  }
   config.brightness_offset = config.brightness_offset > PWMRANGE || config.brightness_offset < -PWMRANGE ? 0 : config.brightness_offset;
   config.shutdown_threshold = config.shutdown_threshold > PWMRANGE || config.shutdown_threshold < 0 ? 0 : config.shutdown_threshold;
   config.shutdown_delay = config.shutdown_delay > (7 * 3600) ? (60 * 30) : config.shutdown_delay;

@@ -16,4 +16,6 @@ void send_response(AsyncWebServerRequest*);
 
 void get_timezones(AsyncWebServerRequest*);
 
+int get_timezone_id(const char*);
+
 #endif
