@@ -2,7 +2,6 @@
 
 Config config{
     -1,
-    "CET",
     true,
     true,
     true,
@@ -17,7 +16,9 @@ Config config{
     true,
     true,
     CATHODE_POISONING_TRIGGER_TIME,
-    CLOCK_CYCLE};
+    CLOCK_CYCLE,
+    "CET"
+    };
 
 void printParams()
 {
@@ -68,6 +69,7 @@ void check_params()
   config.sleep_hour = config.sleep_hour > 23 || config.sleep_hour < 0 ? 0 : config.sleep_hour;
   config.wake_hour = config.wake_hour > 23 || config.wake_hour < 0 ? 7 : config.wake_hour;
   config.clock_cycle = config.clock_cycle < 60000 ? CLOCK_CYCLE : config.clock_cycle;
+  config.depoisoning = config.depoisoning <= CATHODE_POISONING_PREVENTION_TIME ? 0 : config.depoisoning;
 }
 
 void setup_configuration()

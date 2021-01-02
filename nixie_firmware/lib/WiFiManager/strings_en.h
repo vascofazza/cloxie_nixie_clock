@@ -75,6 +75,7 @@ const char HTTP_STYLE[]            PROGMEM = "<style>"
 "input,button,.msg{border-radius:.3rem;width: 100%}"
 "button,input[type='button'],input[type='submit']{cursor:pointer;border:0;background-color:#1fa3ec;color:#fff;line-height:2.4rem;font-size:1.2rem;width:100%}"
 "input[type='file']{border:1px solid #1fa3ec}"
+"input[type=radio],input.radio {float: left;clear: none;margin: 2px 0 0 2px;width: auto;}"
 ".wrap {text-align:left;display:inline-block;min-width:260px;max-width:500px}"
 // links
 "a{color:#000;font-weight:700;text-decoration:none}a:hover{color:#1fa3ec;text-decoration:underline}"

@@ -76,7 +76,6 @@
 struct Config
 {
   int timezone;
-  char timezone_name[30];
   bool h24;
   bool leds;
   bool celsius;
@@ -92,6 +91,7 @@ struct Config
   bool date;
   unsigned int depoisoning;
   unsigned int clock_cycle;
+  char timezone_name[30];
 };
 
 extern Config config;

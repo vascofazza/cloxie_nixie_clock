@@ -43,11 +43,11 @@ void setup_wifi(ClockDriver *clock, void (*callback)(void))
   blink_field = new WiFiManagerParameter(blink_radio_str);
   wifiManager.addParameter(blink_field);
 
-  auto temp_radio_str = F("<br/><label for='temp_field'>Temperature scale:</label><input type='radio' name='temp_field' value='1' checked>C°<br><input type='radio' name='temp_field' value='0'>F°<br>");
+  auto temp_radio_str = F("<br/><p>Temperature scale:</p><input type='radio' name='temp_field' value='1' checked> C°<br><input type='radio' name='temp_field' value='0'> F°<br>");
   temp_field = new WiFiManagerParameter(temp_radio_str);
   wifiManager.addParameter(temp_field);
 
-  auto adaptive_radio_str = F("<br/><label for='adaptive_field'>Adaptive Brightness:</label><input type='radio' name='adaptive_field' value='1' checked>ON<br><input type='radio' name='adaptive_field' value='0'>OFF<br>");
+  auto adaptive_radio_str = F("<br/><p>Adaptive Brightness:</p><input type='radio' name='adaptive_field' value='1' checked> ON<br><input type='radio' name='adaptive_field' value='0'> OFF<br>");
   adaptive_field = new WiFiManagerParameter(adaptive_radio_str);
   wifiManager.addParameter(adaptive_field);
 
@@ -63,29 +63,29 @@ void setup_wifi(ClockDriver *clock, void (*callback)(void))
   leds = new WiFiManagerParameter(leds_str);
   wifiManager.addParameter(leds);
 
-  auto leds_mode_str = F("<br/><p>Leds mode:</p><input type='radio' name='leds_mode_field' value='0' checked><label for='0'>static</label><br><input type='radio' name='leds_mode_field' value='1'><label for='1'>rotating</label><br><input type='radio' name='leds_mode_field' value='2'><label for='2'>random</label><br>");
+  auto leds_mode_str = F("<br/><p>Leds mode:</p><input type='radio' name='leds_mode_field' value='0' checked><label for='0'>static</label><br><input type='radio' name='leds_mode_field' value='1'><label for='1'>rotating</label><br><input type='radio' name='leds_mode_field' value='2'><label for='2'>random</label><br><br>");
   leds_mode = new WiFiManagerParameter(leds_mode_str);
   wifiManager.addParameter(leds_mode);
 
-  brightness_offset = new WiFiManagerParameter(F("brightness_offset"), F("brightness_offset"), String(config.brightness_offset).c_str(), 4);
+  brightness_offset = new WiFiManagerParameter(F("brightness_offset"), F("Brightness offset"), String(config.brightness_offset).c_str(), 4);
   wifiManager.addParameter(brightness_offset);
 
-  shutdown_threshold = new WiFiManagerParameter(F("shutdown_threshold"), F("shutdown_threshold"), String(config.shutdown_threshold).c_str(), 4);
+  shutdown_threshold = new WiFiManagerParameter(F("shutdown_threshold"), F("Shutdown threshold"), String(config.shutdown_threshold).c_str(), 4);
   wifiManager.addParameter(shutdown_threshold);
 
-  sleep_hour = new WiFiManagerParameter(F("sleep_hour"), F("sleep_hour"), String(config.sleep_hour).c_str(), 3);
+  sleep_hour = new WiFiManagerParameter(F("sleep_hour"), F("Sleep hour"), String(config.sleep_hour).c_str(), 3);
   wifiManager.addParameter(sleep_hour);
 
-  wake_hour = new WiFiManagerParameter(F("wake_hour"), F("wake_hour"), String(config.wake_hour).c_str(), 3);
+  wake_hour = new WiFiManagerParameter(F("wake_hour"), F("Wake hour"), String(config.wake_hour).c_str(), 3);
   wifiManager.addParameter(wake_hour);
 
-  shutdown_delay = new WiFiManagerParameter(F("shutdown_delay"), F("shutdown_delay"), String(config.shutdown_delay).c_str(), 7);
+  shutdown_delay = new WiFiManagerParameter(F("shutdown_delay"), F("Shutdown delay"), String(config.shutdown_delay).c_str(), 7);
   wifiManager.addParameter(shutdown_delay);
 
-  depoisoning = new WiFiManagerParameter(F("depoisoning_field"), F("depoisoning_field"), String(config.depoisoning / 60000).c_str(), 7);
+  depoisoning = new WiFiManagerParameter(F("depoisoning_field"), F("Depoisoning trigger time"), String(config.depoisoning / 60000).c_str(), 7);
   wifiManager.addParameter(depoisoning);
 
-  clock_cycle = new WiFiManagerParameter(F("clock_cycle"), F("clock_cycle"), String(config.clock_cycle / 60000).c_str(), 7);
+  clock_cycle = new WiFiManagerParameter(F("clock_cycle"), F("Clock cycle time"), String(config.clock_cycle / 60000).c_str(), 7);
   wifiManager.addParameter(clock_cycle);
 
   wifiManager.setSaveParamsCallback(saveParamsCallback);
