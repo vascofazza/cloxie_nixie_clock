@@ -36,7 +36,7 @@ int get_timezone_id(const char *timezone)
     auto size = zonedb::kZoneRegistrySize;
     for (int i = 0; i < size; i++)
     {
-        auto name = zonedb::kZoneRegistry[i]->name;;
+        auto name = zonedb::kZoneRegistry[i]->name;
         String s_name = String(name);
         if (s_timezone.equals(s_name))
             return i;
