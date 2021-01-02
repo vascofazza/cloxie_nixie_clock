@@ -56,7 +56,7 @@ void printParams()
 void check_params()
 {
   config.timezone = config.timezone > 300 || config.timezone < 0 ? -1 : config.timezone;
-  if (config.timezone < 0 || strcmp(config.timezone_name, zonedb::kZoneRegistry[config.timezone]->name) != 0)
+  if (config.timezone < 0 || !String(config.timezone_name).equals(String(zonedb::kZoneRegistry[config.timezone]->name)))
   {
     int timezone_id = get_timezone_id(config.timezone_name);
     config.timezone = timezone_id < 0? 0 : timezone_id;
