@@ -19,9 +19,11 @@ WiFiManagerParameter *clock_cycle;
 
 void (*custom_callback)(void) = nullptr;
 
+void (*calibration_callback)(AsyncWebServerRequest*) = nullptr;
+
 static ClockDriver *_clock_driver = nullptr;
 
-void setup_wifi(ClockDriver *clock, void (*callback)(void))
+void setup_wifi(ClockDriver *clock, void (*callback)(void), void (*calib_callback)(AsyncWebServerRequest*))
 {
   _clock_driver = clock;
   wifiManager.WiFiManagerInit();
@@ -29,6 +31,11 @@ void setup_wifi(ClockDriver *clock, void (*callback)(void))
   if (callback != nullptr)
   {
     custom_callback = callback;
+  }
+
+  if (calib_callback != nullptr)
+  {
+    calibration_callback = calib_callback;
   }
 
   auto timezone_str = F("<br/><a href=\"/timezones\">TimeZone</a> (click for the full list)<input id='timezone_field' name='timezone_field' maxlength='20' value=''>");
@@ -135,7 +142,8 @@ void setup_additional_hooks()
   wifiManager.server.get()->on(PSTR("/stopwatch_pause"), std::bind(&pause_stopwatch, _clock_driver, std::placeholders::_1));
   wifiManager.server.get()->on(PSTR("/stopwatch_stop"), std::bind(&stop_stopwatch, _clock_driver, std::placeholders::_1));
 
-  wifiManager.server.get()->on(PSTR("/timezones"), std::bind(&get_timezones, std::placeholders::_1));
+  wifiManager.server.get()->on(PSTR("/timezones"), &get_timezones);
+  wifiManager.server.get()->on(PSTR("/calibrate"), calibration_callback);
 }
 
 bool isConnected()

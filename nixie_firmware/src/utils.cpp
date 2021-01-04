@@ -4,7 +4,10 @@ void activeDelay(unsigned long mills)
 {
     elapsedMillis elapsed = 0;
     while (elapsed < mills)
+    {
         delay(0);
+        system_soft_wdt_feed();
+    }
 }
 
 void send_response(AsyncWebServerRequest *request)

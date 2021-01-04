@@ -20,7 +20,7 @@ void getParamsCallback(AsyncWebServerRequest *);
 
 void saveParamsCallback(AsyncWebServerRequest *);
 
-void setup_wifi(ClockDriver *, void (*)());
+void setup_wifi(ClockDriver *, void (*)(), void (*)(AsyncWebServerRequest*));
 
 void wifi_loop();
 

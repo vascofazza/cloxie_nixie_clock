@@ -31,7 +31,7 @@ private:
     SensorDriver *sensor_driver;
     CRGB *leds;
     void (**patterns)(CRGB*, uint8_t, int);
-    uint8_t pattern;
+    uint8_t *pattern;
     int16_t brightness;
     uint8_t patterns_num;
     bool status;
@@ -39,7 +39,7 @@ private:
     void loop();
 
 public:
-    LedDriver(TubeDriver *, SensorDriver *, uint8_t, void (**patterns)(CRGB*, uint8_t, int), uint8_t);
+    LedDriver(TubeDriver *, SensorDriver *, uint8_t, void (**patterns)(CRGB*, uint8_t, int), uint8_t*, uint8_t);
 
     void process_pattern(int);
 
@@ -51,7 +51,7 @@ public:
 
     void set_brightness(int16_t brightness);
 
-    void set_patterns(LedPatternList, uint8_t);
+    void set_patterns(LedPatternList, uint8_t, uint8_t*);
 
     void nextPattern();
 };

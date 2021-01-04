@@ -42,6 +42,8 @@ LedPatternList temp_patterns = {pulse};
 LedPatternList timer_patterns = {sinelon};
 LedPatternList notify_patterns = {pulse};
 
+uint8_t pattern_status[6] = {0};
+
 // rainbow, confetti clock
 // sinelon supercar timer
 // rainbowWithGlitter date
@@ -51,6 +53,7 @@ LedPatternList notify_patterns = {pulse};
 void update_config_callback();
 void set_led_patterns(uint8_t);
 void next_cycle();
+void light_sensor_self_calibration(AsyncWebServerRequest*);
 
 void setup()
 {
@@ -70,10 +73,10 @@ void setup()
 
   sensor_driver = new SensorDriver();
   tube_driver = new TubeDriver(sensor_driver);
-  led_driver = new LedDriver(tube_driver, sensor_driver, NUM_LEDS, clock_patterns, ARRAY_SIZE(clock_patterns));
+  led_driver = new LedDriver(tube_driver, sensor_driver, NUM_LEDS, clock_patterns, &(pattern_status[0]), ARRAY_SIZE(clock_patterns));
   clock_driver = new ClockDriver(tube_driver);
 
-  setup_wifi(clock_driver, update_config_callback);
+  setup_wifi(clock_driver, update_config_callback, light_sensor_self_calibration);
 
   if (isConnected())
   {
@@ -268,27 +271,27 @@ void set_led_patterns(uint8_t cycle)
   switch (cycle)
   {
   case CYCLE::NONE:
-    led_driver->set_patterns(notify_patterns, ARRAY_SIZE(date_patterns));
+    led_driver->set_patterns(notify_patterns, ARRAY_SIZE(date_patterns), &(pattern_status[cycle]));
     break;
   case CYCLE::DATE:
-    led_driver->set_patterns(date_patterns, ARRAY_SIZE(date_patterns));
+    led_driver->set_patterns(date_patterns, ARRAY_SIZE(date_patterns), &(pattern_status[cycle]));
     break;
   case CYCLE::TEMPERATURE:
-    led_driver->set_patterns(temp_patterns, ARRAY_SIZE(temp_patterns));
+    led_driver->set_patterns(temp_patterns, ARRAY_SIZE(temp_patterns), &(pattern_status[cycle]));
     break;
   case CYCLE::STOPWATCH:
   case CYCLE::TIMER:
-    led_driver->set_patterns(timer_patterns, ARRAY_SIZE(timer_patterns));
+    led_driver->set_patterns(timer_patterns, ARRAY_SIZE(timer_patterns), &(pattern_status[cycle]));
     break;
   case CYCLE::CLOCK:
   default:
     if (config.led_configuration == LED_MODE::RANDOM)
     {
-      led_driver->set_patterns(random_patterns, ARRAY_SIZE(random_patterns));
+      led_driver->set_patterns(random_patterns, ARRAY_SIZE(random_patterns), &(pattern_status[cycle]));
     }
     else
     {
-      led_driver->set_patterns(clock_patterns, ARRAY_SIZE(clock_patterns));
+      led_driver->set_patterns(clock_patterns, ARRAY_SIZE(clock_patterns), &(pattern_status[cycle]));
     }
   }
 }
@@ -308,4 +311,28 @@ void update_config_callback()
     cycle_handler.OneShot(config.clock_cycle, next_cycle);
   }
   set_led_patterns(cycle);
+}
+
+void light_sensor_self_calibration(AsyncWebServerRequest* request)
+{
+  DEBUG_PRINTLN("Calibrating...");
+  config.brightness_offset = 0;
+  config.shutdown_threshold = 0;
+  send_response(request);
+  //set offset
+  tube_driver->turn_off(false);
+  led_driver->turn_off(false);
+  activeDelay(10000);
+
+  config.brightness_offset = -(int)sensor_driver->get_light_sensor_reading();
+  DEBUG_PRINT("brightness_offset: ");
+  DEBUG_PRINTLN(config.brightness_offset);
+
+  tube_driver->turn_on(false);
+  led_driver->turn_on(false);
+  activeDelay(10000);
+
+  config.shutdown_threshold = (int)sensor_driver->get_light_sensor_reading() + 5;
+  DEBUG_PRINT("shutdown_threshold: ");
+  DEBUG_PRINTLN(config.shutdown_threshold);
 }

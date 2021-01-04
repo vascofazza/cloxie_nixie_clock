@@ -1,13 +1,13 @@
 #include "leds.hpp"
 
-LedDriver::LedDriver(TubeDriver *tube_driver, SensorDriver *sensor_driver, uint8_t num_leds, void (**default_pattern)(CRGB *, uint8_t, int), uint8_t patterns_num)
+LedDriver::LedDriver(TubeDriver *tube_driver, SensorDriver *sensor_driver, uint8_t num_leds, void (**default_pattern)(CRGB *, uint8_t, int), uint8_t *pattern_status, uint8_t patterns_num)
 {
   this->tube_driver = tube_driver;
   this->sensor_driver = sensor_driver;
   leds = new CRGB[num_leds];
   FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   FastLED.setBrightness(0);
-  pattern = 0;
+  pattern = pattern_status;
   brightness = 0;
   status = true;
   patterns = default_pattern;
@@ -16,11 +16,11 @@ LedDriver::LedDriver(TubeDriver *tube_driver, SensorDriver *sensor_driver, uint8
   led_ticker.attach_ms(1000 / FRAMES_PER_SECOND, std::bind(&LedDriver::loop, this));
 }
 
-void LedDriver::set_patterns(LedPatternList patterns, uint8_t patterns_num)
+void LedDriver::set_patterns(LedPatternList patterns, uint8_t patterns_num, uint8_t *pattern)
 {
   if (patterns == this->patterns)
     return;
-  this->pattern = 0;
+  this->pattern = pattern;
   this->patterns = patterns;
   this->patterns_num = patterns_num;
 }
@@ -87,7 +87,7 @@ bool LedDriver::get_status()
 
 void LedDriver::process_pattern(int gHue)
 {
-  auto current_pattern = (void (*)(CRGB *, int, int))patterns[pattern];
+  auto current_pattern = (void (*)(CRGB *, int, int))patterns[*pattern];
   // Call the current pattern function once, updating the 'leds' array
   current_pattern(leds, NUM_LEDS, gHue);
   // send the 'leds' array out to the actual LED strip
@@ -133,7 +133,7 @@ void LedDriver::loop()
 
 void LedDriver::nextPattern()
 {
-  pattern = (pattern + 1) % patterns_num;
+  *pattern = (*pattern + 1) % patterns_num;
 }
 
 void LedDriver::set_brightness(int16_t brightness)
