@@ -16,7 +16,9 @@
 #ifndef WIFI_MANAGER_OVERRIDE_STRINGS
 // !!! THIS DOES NOT WORK, you cannot define in a sketch, if anyone one knows how to order includes to be able to do this help!
 
-const char HTTP_HEAD_START[]       PROGMEM = "<!DOCTYPE html><html lang='en'><head><meta name='format-detection' content='telephone=no'><meta charset='UTF-8'><meta  name='viewport' content='width=device-width,initial-scale=1,user-scalable=no'/><title>{v}</title>";
+const char HTTP_HEAD_START[]       PROGMEM = "<!DOCTYPE html><html lang='en'><head>"
+"<link rel='icon' href='data:image/png;base64,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' type='image/x-png' />"
+"<meta name='format-detection' content='telephone=no'><meta charset='UTF-8'><meta  name='viewport' content='width=device-width,initial-scale=1,user-scalable=no'/><title>{v}</title>";
 const char HTTP_SCRIPT[]           PROGMEM = "<script>function c(l){"
 "document.getElementById('s').value=l.innerText||l.textContent;"
 "p = l.nextElementSibling.classList.contains('l');"
@@ -36,6 +38,7 @@ const char * const HTTP_PORTAL_MENU[] PROGMEM = {
 "<form action='/restart' method='get'><button>Restart</button></form><br/>\n",// MENU_RESTART
 "<form action='/exit'    method='get'><button>Exit</button></form><br/>\n",  // MENU_EXIT
 "<form action='/erase'   method='get'><button class='D'>Erase</button></form><br/>\n", // MENU_ERASE
+"<form action='/update'   method='get'><button>Update</button></form><br/>\n", // MENU_UPDATE
 "<hr><br/>" // MENU_SEP
 };
 
@@ -228,8 +231,8 @@ const char D_HR[]                 PROGMEM = "--------------------";
 // -----------------------------------------------------------------------------------------------
 // DO NOT EDIT BELOW THIS LINE
 
-const uint8_t _nummenutokens = 9;
-const char * const _menutokens[9] PROGMEM = {
+const uint8_t _nummenutokens = 10;
+const char * const _menutokens[10] PROGMEM = {
     "wifi",
     "wifinoscan",
     "info",
@@ -238,6 +241,7 @@ const char * const _menutokens[9] PROGMEM = {
     "restart",
     "exit",
     "erase",
+    "update",
     "sep"
 };
 
@@ -254,6 +258,7 @@ const char R_exit[]               PROGMEM = "/exit";
 const char R_close[]              PROGMEM = "/close";
 const char R_erase[]              PROGMEM = "/erase"; 
 const char R_status[]             PROGMEM = "/status";
+const char R_update[]             PROGMEM = "/update";
 
 
 //Strings
