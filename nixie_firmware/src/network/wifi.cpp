@@ -91,7 +91,7 @@ void setup_wifi(ClockDriver *clock, void (*callback)(void))
   wifiManager.setSaveParamsCallback(saveParamsCallback);
   wifiManager.setGetParameterCallback(getParamsCallback);
 
-  std::vector<const char *> menu = {"wifi", "info", "param", "sep", "restart"};
+  std::vector<const char *> menu = {"wifi", "info", "param", "sep", "update", "restart"};
   wifiManager.setMenu(menu);
 
 #ifdef DEBUG
@@ -138,12 +138,17 @@ void setup_additional_hooks()
   wifiManager.server.get()->on(PSTR("/timezones"), std::bind(&get_timezones, std::placeholders::_1));
 }
 
+bool isConnected()
+{
+  return WiFi.status() != WL_CONNECTED || !hasIPaddr();
+}
+
 void wifi_loop()
 {
   ota_webserver_loop();
   static elapsedSeconds reconnectionDelay; //declare global if you don't want it reset every time loop runs
   static int reconnection_attempt = WIFI_RECONNECT_ATTEMPTS;
-  if (WiFi.status() != WL_CONNECTED || !hasIPaddr())
+  if (isConnected())
   {
 #ifdef DEBUG
     static elapsedMillis deb_mils;

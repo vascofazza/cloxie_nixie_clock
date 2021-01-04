@@ -32,6 +32,8 @@ void initWiFi();
 
 bool hasIPaddr();
 
+bool isConnected();
+
 void postSaveFunction();
 
 void setup_additional_hooks();
