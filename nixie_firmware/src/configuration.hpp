@@ -5,7 +5,7 @@
 #include <EEPROM.h>
 #include "utils.hpp"
 
-#define FIRMWARE_VERSION PSTR("1.2.0")
+#define FIRMWARE_VERSION PSTR("1.3.0")
 
 //#define DEBUG
 
@@ -31,7 +31,7 @@
 #define WIFI_SSID PSTR("Cloxie")
 #define WIFI_PASSWORD PSTR("cloxieclock")
 #define PORTAL_TIMEOUT 600        //in seconds
-#define WIFI_RECONNECT_DELAY 600  //10mins
+#define WIFI_RECONNECT_DELAY 300  //5 mins
 #define WIFI_RECONNECT_ATTEMPTS 6 //before a full reset
 
 //TUBES

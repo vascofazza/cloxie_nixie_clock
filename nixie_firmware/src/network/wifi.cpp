@@ -79,13 +79,13 @@ void setup_wifi(ClockDriver *clock, void (*callback)(void))
   wake_hour = new WiFiManagerParameter(F("wake_hour"), F("Wake hour"), String(config.wake_hour).c_str(), 3);
   wifiManager.addParameter(wake_hour);
 
-  shutdown_delay = new WiFiManagerParameter(F("shutdown_delay"), F("Shutdown delay"), String(config.shutdown_delay).c_str(), 7);
+  shutdown_delay = new WiFiManagerParameter(F("shutdown_delay"), F("Shutdown delay (s)"), String(config.shutdown_delay).c_str(), 7);
   wifiManager.addParameter(shutdown_delay);
 
-  depoisoning = new WiFiManagerParameter(F("depoisoning_field"), F("Depoisoning trigger time"), String(config.depoisoning / 60000).c_str(), 7);
+  depoisoning = new WiFiManagerParameter(F("depoisoning_field"), F("Depoisoning trigger time (m)"), String(config.depoisoning / 60000).c_str(), 7);
   wifiManager.addParameter(depoisoning);
 
-  clock_cycle = new WiFiManagerParameter(F("clock_cycle"), F("Clock cycle time"), String(config.clock_cycle / 60000).c_str(), 7);
+  clock_cycle = new WiFiManagerParameter(F("clock_cycle"), F("Clock cycle time (m)"), String(config.clock_cycle / 60000).c_str(), 7);
   wifiManager.addParameter(clock_cycle);
 
   wifiManager.setSaveParamsCallback(saveParamsCallback);
@@ -110,6 +110,8 @@ void setup_wifi(ClockDriver *clock, void (*callback)(void))
 
   wifiManager.setSaveConfigCallback(postSaveFunction);
 
+  wifiManager.setWebServerCallback(setup_additional_hooks);
+
   //tries to connect to last known settings
   //if it does not connect it starts an access point and goes into a blocking loop awaiting configuration
   DEBUG_PRINTLN(F("Connecting to AP"));
@@ -123,6 +125,8 @@ void setup_wifi(ClockDriver *clock, void (*callback)(void))
 
 void setup_additional_hooks()
 {
+  setup_ota_webserver(wifiManager.server.get());
+
   wifiManager.server.get()->on(PSTR("/timer_start"), std::bind(&start_timer, _clock_driver, std::placeholders::_1));
   wifiManager.server.get()->on(PSTR("/timer_pause"), std::bind(&pause_timer, _clock_driver, std::placeholders::_1));
   wifiManager.server.get()->on(PSTR("/timer_stop"), std::bind(&stop_timer, _clock_driver, std::placeholders::_1));
@@ -139,7 +143,7 @@ void wifi_loop()
   ota_webserver_loop();
   static elapsedSeconds reconnectionDelay; //declare global if you don't want it reset every time loop runs
   static int reconnection_attempt = WIFI_RECONNECT_ATTEMPTS;
-  if ((WiFi.status() != WL_CONNECTED || !hasIPaddr()) && !wifiManager.isConfigPortalActive())
+  if (WiFi.status() != WL_CONNECTED || !hasIPaddr())
   {
 #ifdef DEBUG
     static elapsedMillis deb_mils;
@@ -153,12 +157,13 @@ void wifi_loop()
     if (reconnectionDelay > WIFI_RECONNECT_DELAY)
     {
       DEBUG_PRINTLN(F("WiFi connection issue, resetting module."));
-      resetWiFi();
-      activeDelay(1000);
-      wifiManager.stopWebPortal();
-      wifiManager.stopConfigPortal();
+      if (!wifiManager.isConfigPortalActive())
+      {
+        resetWiFi();
+        activeDelay(1000);
+      }
 
-      if (WiFi.waitForConnectResult() == WL_CONNECTED && hasIPaddr())
+      if (wifiManager.autoConnect(false) == WL_CONNECTED && hasIPaddr())
       {
         DEBUG_PRINTLN(F("WiFi connection restored."));
         reconnection_attempt = WIFI_RECONNECT_ATTEMPTS;
@@ -174,6 +179,14 @@ void wifi_loop()
     }
   }
 
+  // connection was restored after starting config portal upon reboot
+  if (WiFi.status() == WL_CONNECTED && wifiManager.isConfigPortalActive())
+  {
+    DEBUG_PRINTLN(F("Connection restored, stopping Config Portal."));
+    wifiManager.stopConfigPortal();
+    wifiManager.startWebPortal();
+  }
+
   //handle disconnection - reboot and AP setup
   if (wifiManager.isConfigPortalActive() || wifiManager.isWebPortalActive())
   {
@@ -183,8 +196,6 @@ void wifi_loop()
   {
     DEBUG_PRINTLN(F("Starting Portal"));
     wifiManager.startWebPortal();
-    setup_ota_webserver(wifiManager.server.get());
-    setup_additional_hooks();
   }
   MDNS.update();
 }

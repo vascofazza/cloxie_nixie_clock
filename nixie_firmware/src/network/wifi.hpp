@@ -34,6 +34,8 @@ bool hasIPaddr();
 
 void postSaveFunction();
 
+void setup_additional_hooks();
+
 void start_timer(ClockDriver *, AsyncWebServerRequest *);
 
 void pause_timer(ClockDriver *, AsyncWebServerRequest *);

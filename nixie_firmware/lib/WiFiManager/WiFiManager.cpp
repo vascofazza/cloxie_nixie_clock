@@ -274,7 +274,7 @@ void WiFiManager::WiFiManagerInit()
 // destructor
 WiFiManager::~WiFiManager()
 {
-    free_params();
+  free_params();
 }
 
 void WiFiManager::free_params()
@@ -321,10 +321,10 @@ void WiFiManager::_end()
 
 // AUTOCONNECT
 
-boolean WiFiManager::autoConnect()
+boolean WiFiManager::autoConnect(bool start_config_portal)
 {
-  String ssid = getDefaultAPName();
-  return autoConnect(ssid.c_str(), NULL);
+  const char *ssid = start_config_portal ? getDefaultAPName().c_str() : NULL;
+  return autoConnect(ssid, NULL);
 }
 
 /**
@@ -414,8 +414,12 @@ boolean WiFiManager::autoConnect(char const *apName, char const *apPassword)
     DEBUG_WM(F("No Credentials are Saved, skipping connect"));
 
   // not connected start configportal
-  bool res = startConfigPortal(apName, apPassword);
-  return res;
+  if (apName != NULL)
+  {
+    bool res = startConfigPortal(apName, apPassword);
+    return res;
+  }
+  return false;
 }
 
 bool WiFiManager::setupHostname(bool restart)
