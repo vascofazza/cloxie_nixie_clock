@@ -34,6 +34,7 @@ enum CYCLE
 
 int8_t cycle = CYCLE::CLOCK;
 bool sleeping = false;
+bool calibration = false;
 
 LedPatternList clock_patterns = {lava, lava_beat};
 LedPatternList random_patterns = {rainbow, confetti, juggle, pacifica, pride};
@@ -53,7 +54,8 @@ uint8_t pattern_status[6] = {0};
 void update_config_callback();
 void set_led_patterns(uint8_t);
 void next_cycle();
-void light_sensor_self_calibration(AsyncWebServerRequest*);
+void light_sensor_self_calibration(AsyncWebServerRequest *);
+void calibration_procedure();
 
 void setup()
 {
@@ -258,6 +260,12 @@ void loop()
     shutdown_delay = 0;
   }
 
+  if (calibration)
+  {
+    calibration_procedure();
+    calibration = false;
+  }
+
   tube_driver->loop();
   handle_loop();
 
@@ -313,12 +321,11 @@ void update_config_callback()
   set_led_patterns(cycle);
 }
 
-void light_sensor_self_calibration(AsyncWebServerRequest* request)
+void calibration_procedure()
 {
   DEBUG_PRINTLN("Calibrating...");
   config.brightness_offset = 0;
   config.shutdown_threshold = 0;
-  send_response(request);
   //set offset
   tube_driver->turn_off(false);
   led_driver->turn_off(false);
@@ -330,9 +337,17 @@ void light_sensor_self_calibration(AsyncWebServerRequest* request)
 
   tube_driver->turn_on(false);
   led_driver->turn_on(false);
+  tube_driver->set_brightness(MIN_TUBE_BRIGHTNESS);
+  led_driver->set_brightness(0);
   activeDelay(10000);
 
   config.shutdown_threshold = (int)sensor_driver->get_light_sensor_reading() + 5;
   DEBUG_PRINT("shutdown_threshold: ");
   DEBUG_PRINTLN(config.shutdown_threshold);
+}
+
+void light_sensor_self_calibration(AsyncWebServerRequest *request)
+{
+  send_response(request);
+  calibration = true;
 }
