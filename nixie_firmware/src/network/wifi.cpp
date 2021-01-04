@@ -140,7 +140,7 @@ void setup_additional_hooks()
 
 bool isConnected()
 {
-  return WiFi.status() != WL_CONNECTED || !hasIPaddr();
+  return !(WiFi.status() != WL_CONNECTED || !hasIPaddr());
 }
 
 void wifi_loop()
@@ -148,7 +148,7 @@ void wifi_loop()
   ota_webserver_loop();
   static elapsedSeconds reconnectionDelay; //declare global if you don't want it reset every time loop runs
   static int reconnection_attempt = WIFI_RECONNECT_ATTEMPTS;
-  if (isConnected())
+  if (!isConnected())
   {
 #ifdef DEBUG
     static elapsedMillis deb_mils;

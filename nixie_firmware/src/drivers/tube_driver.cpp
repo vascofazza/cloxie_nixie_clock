@@ -20,6 +20,7 @@ TubeDriver::TubeDriver(SensorDriver *sensor_driver)
   run_test();
   set_tubes(0, 0, 0, 0, 0, 0);
   turn_off(false);
+  shutdown();
   tube_ticker.attach_ms(BRIGTHNESS_REFRESH, std::bind(&TubeDriver::adjust_brightness, this));
 }
 

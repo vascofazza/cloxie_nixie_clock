@@ -20,25 +20,28 @@ SensorDriver *sensor_driver;
 OneShotTimer cycle_handler;
 EveryTimer ota_handler;
 
-#define NUM_CYCLES 5
+#define NUM_CYCLES 6
 
 enum CYCLE
 {
-  CLOCK = 0,
-  DATE = 1,
-  TEMPERATURE = 2,
-  TIMER = 3,
-  STOPWATCH = 4,
+  NONE = 0,
+  CLOCK = 1,
+  DATE = 2,
+  TEMPERATURE = 3,
+  TIMER = 4,
+  STOPWATCH = 5,
 };
 
 int8_t cycle = CYCLE::CLOCK;
 bool sleeping = false;
 
 LedPatternList clock_patterns = {lava, lava_beat};
-LedPatternList random_patterns = {rainbow, confetti, juggle, sinelon};
+LedPatternList random_patterns = {rainbow, confetti, juggle, pacifica, pride};
 LedPatternList date_patterns = {rainbowWithGlitter};
-LedPatternList temp_patterns = {bpm};
+LedPatternList temp_patterns = {pulse};
 LedPatternList timer_patterns = {sinelon};
+LedPatternList notify_patterns = {pulse};
+
 // rainbow, confetti clock
 // sinelon supercar timer
 // rainbowWithGlitter date
@@ -72,8 +75,15 @@ void setup()
 
   setup_wifi(clock_driver, update_config_callback);
 
-  ota_handler.Every(GHOTA_INTERVAL, check_for_updates);
-  ota_handler.Start();
+  if (isConnected())
+  {
+    clock_driver->show_time(true);
+    cycle_handler.OneShot(config.clock_cycle, next_cycle);
+  }
+  else
+  {
+    cycle = CYCLE::NONE;
+  }
 
   // cold start
   set_led_patterns(cycle);
@@ -82,8 +92,8 @@ void setup()
   led_driver->turn_on(true);
   tube_driver->turn_on(true);
 
-  clock_driver->show_time(true);
-  cycle_handler.OneShot(config.clock_cycle, next_cycle);
+  ota_handler.Every(GHOTA_INTERVAL, check_for_updates);
+  ota_handler.Start();
 }
 
 void next_cycle()
@@ -125,6 +135,7 @@ void next_cycle()
       cycle_handler.OneShot(STOPWATCH_CYCLE, next_cycle);
       break;
     }
+  case CYCLE::NONE:
   case CYCLE::CLOCK:
   default:
     DEBUG_PRINTLN(F("CYCLE CLOCK"));
@@ -141,6 +152,17 @@ void next_cycle()
 void handle_loop()
 {
   static bool timer_running = false;
+
+  if (!isConnected())
+  {
+    cycle_handler.Stop();
+    cycle = CYCLE::NONE;
+    set_led_patterns(cycle);
+  }
+  else if (cycle == CYCLE::NONE)
+  {
+    next_cycle();
+  }
 
   if (clock_driver->is_timer_running() || clock_driver->is_stopwatch_running())
   {
@@ -161,6 +183,7 @@ void handle_loop()
 
   switch (cycle)
   {
+  case CYCLE::NONE:
   case CYCLE::CLOCK:
     clock_driver->show_time(true);
     break;
@@ -244,6 +267,9 @@ void set_led_patterns(uint8_t cycle)
 {
   switch (cycle)
   {
+  case CYCLE::NONE:
+    led_driver->set_patterns(notify_patterns, ARRAY_SIZE(date_patterns));
+    break;
   case CYCLE::DATE:
     led_driver->set_patterns(date_patterns, ARRAY_SIZE(date_patterns));
     break;

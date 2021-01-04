@@ -18,6 +18,8 @@ LedDriver::LedDriver(TubeDriver *tube_driver, SensorDriver *sensor_driver, uint8
 
 void LedDriver::set_patterns(LedPatternList patterns, uint8_t patterns_num)
 {
+  if (patterns == this->patterns)
+    return;
   this->pattern = 0;
   this->patterns = patterns;
   this->patterns_num = patterns_num;
