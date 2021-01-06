@@ -197,6 +197,8 @@ void wifi_loop()
   {
     DEBUG_PRINTLN(F("Connection restored, stopping Config Portal."));
     wifiManager.stopConfigPortal();
+    wifiManager.server.get()->end();
+    wifiManager.server.get()->begin();
     wifiManager.startWebPortal();
   }
 

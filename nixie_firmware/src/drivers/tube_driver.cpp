@@ -127,6 +127,8 @@ void TubeDriver::set_tubes(int8_t h, int8_t hh, int8_t m, int8_t mm, int8_t s, i
   //prepare the data payload
   unsigned int payload = (ss & 0xF) | ((s & 0xF) << 4) | ((mm & 0xF) << 8) | ((m & 0xF) << 12) | ((hh & 0xF) << 16) | ((h & 0xF) << 20);
   // the LEDs don't change while you're sending in bits:
+
+  noInterrupts();
   digitalWrite(SHF_LATCH, LOW);
   // shift out the bits:
   shiftOut(SHF_DATA, SHF_CLOCK, LSBFIRST, payload);
@@ -134,6 +136,7 @@ void TubeDriver::set_tubes(int8_t h, int8_t hh, int8_t m, int8_t mm, int8_t s, i
   shiftOut(SHF_DATA, SHF_CLOCK, LSBFIRST, payload >> 16);
   //take the latch pin high so the LEDs will light up:
   digitalWrite(SHF_LATCH, HIGH);
+  interrupts();
 }
 
 void TubeDriver::adjust_brightness()
