@@ -30,6 +30,7 @@ enum CYCLE
   TEMPERATURE = 3,
   TIMER = 4,
   STOPWATCH = 5,
+  Count = 6
 };
 
 int8_t cycle = CYCLE::CLOCK;
@@ -40,10 +41,11 @@ LedPatternList clock_patterns = {lava, lava_beat};
 LedPatternList random_patterns = {lava, rainbow, confetti, juggle, lava_beat, pacifica, pride};
 LedPatternList date_patterns = {rainbowWithGlitter};
 LedPatternList temp_patterns = {pulse};
-LedPatternList timer_patterns = {sinelon};
+LedPatternList timer_on_patterns = {sinelon};
+LedPatternList timer_off_patterns = {lava_beat};
 LedPatternList notify_patterns = {pulse};
 
-uint8_t pattern_status[6] = {0};
+uint8_t pattern_status[CYCLE::Count] = {0};
 
 // rainbow, confetti clock
 // sinelon supercar timer
@@ -291,9 +293,9 @@ void set_led_patterns(uint8_t cycle)
   case CYCLE::STOPWATCH:
   case CYCLE::TIMER:
     if (clock_driver->is_timer_running() || clock_driver->is_stopwatch_running())
-      led_driver->set_patterns(timer_patterns, ARRAY_SIZE(timer_patterns), &(pattern_status[cycle]));
+      led_driver->set_patterns(timer_on_patterns, ARRAY_SIZE(timer_on_patterns), &(pattern_status[cycle]));
     else
-      led_driver->set_patterns(notify_patterns, ARRAY_SIZE(timer_patterns), &(pattern_status[cycle]));
+      led_driver->set_patterns(timer_off_patterns, ARRAY_SIZE(timer_off_patterns), &(pattern_status[cycle]));
     break;
   case CYCLE::CLOCK:
   default:
