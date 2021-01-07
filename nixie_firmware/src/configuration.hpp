@@ -5,7 +5,7 @@
 #include <EEPROM.h>
 #include "utils.hpp"
 
-#define FIRMWARE_VERSION PSTR("1.4.1")
+#define FIRMWARE_VERSION PSTR("1.4.2")
 
 //#define DEBUG
 
@@ -45,7 +45,7 @@
 //LEDS
 #define NUM_LEDS 6
 #define FRAMES_PER_SECOND 30
-#define PATTERN_DELAY 600000
+#define PATTERN_DELAY 600000 //10 mins
 #define HUE_DELAY 250
 #define MIN_LED_BRIGHTNESS 15
 #define MAX_LED_BRIGHNTESS 100

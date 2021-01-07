@@ -60,8 +60,8 @@ void confetti(CRGB *leds, uint8_t num_leds, int gHue)
 void sinelon(CRGB *leds, uint8_t num_leds, int gHue)
 {
   // a colored dot sweeping back and forth, with fading trails
-  fadeToBlackBy(leds, num_leds, 20);
-  int pos = beatsin16(13, 0, num_leds - 1);
+  fadeToBlackBy(leds, num_leds, 15);
+  int pos = beatsin16(30, 0, num_leds - 1);
   leds[pos] += CHSV(gHue, 255, 100);
 }
 
@@ -134,12 +134,11 @@ void pride(CRGB *leds, uint8_t num_leds, int gHue)
 void pulse(CRGB *leds, uint8_t num_leds, int gHue)
 {
   // colored stripes pulsing at a defined Beats-Per-Minute (BPM)
-  uint8_t BeatsPerMinute = 60;
-  CRGBPalette16 palette = PartyColors_p;
+  uint8_t BeatsPerMinute = 30;
   uint8_t beat = beatsin8(BeatsPerMinute, 64, 255);
   for (int i = 0; i < num_leds; i++)
-  { //9948
-    leds[i] = ColorFromPalette(palette, gHue, beat);
+  {
+    leds[i] = CHSV(gHue, 255, beat);
   }
 }
 

@@ -23,6 +23,9 @@ void LedDriver::set_patterns(LedPatternList patterns, uint8_t patterns_num, uint
   this->pattern = pattern;
   this->patterns = patterns;
   this->patterns_num = patterns_num;
+
+  if (*(this->pattern) >= patterns_num)
+    *(this->pattern) = 0;
 }
 
 void LedDriver::turn_off(bool fade)

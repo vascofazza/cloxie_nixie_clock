@@ -37,7 +37,7 @@ bool sleeping = false;
 bool calibration = false;
 
 LedPatternList clock_patterns = {lava, lava_beat};
-LedPatternList random_patterns = {rainbow, confetti, juggle, pacifica, pride};
+LedPatternList random_patterns = {lava, rainbow, confetti, juggle, lava_beat, pacifica, pride};
 LedPatternList date_patterns = {rainbowWithGlitter};
 LedPatternList temp_patterns = {pulse};
 LedPatternList timer_patterns = {sinelon};
@@ -180,6 +180,7 @@ void handle_loop()
   {
     timer_running = false;
     cycle_handler.OneShot(clock_driver->is_timer_running() ? TIMER_CYCLE : STOPWATCH_CYCLE, next_cycle);
+    set_led_patterns(cycle);
   }
   else
   {
@@ -289,7 +290,10 @@ void set_led_patterns(uint8_t cycle)
     break;
   case CYCLE::STOPWATCH:
   case CYCLE::TIMER:
-    led_driver->set_patterns(timer_patterns, ARRAY_SIZE(timer_patterns), &(pattern_status[cycle]));
+    if (clock_driver->is_timer_running() || clock_driver->is_stopwatch_running())
+      led_driver->set_patterns(timer_patterns, ARRAY_SIZE(timer_patterns), &(pattern_status[cycle]));
+    else
+      led_driver->set_patterns(notify_patterns, ARRAY_SIZE(timer_patterns), &(pattern_status[cycle]));
     break;
   case CYCLE::CLOCK:
   default:
