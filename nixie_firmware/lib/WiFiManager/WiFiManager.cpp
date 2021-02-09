@@ -1252,7 +1252,7 @@ void WiFiManager::handleWifi(boolean scan, AsyncWebServerRequest *request)
   if (_paramsInWifi && _paramsCount > 0)
   {
     page += FPSTR(HTTP_FORM_PARAM_HEAD);
-    page += getParamOut();
+    //page += getParamOut();
   }
   page += FPSTR(HTTP_FORM_END);
   page += FPSTR(HTTP_SCAN_LINK);
@@ -1274,27 +1274,35 @@ void WiFiManager::handleWifi(boolean scan, AsyncWebServerRequest *request)
  */
 void WiFiManager::handleParam(AsyncWebServerRequest *request)
 {
+
+  AsyncResponseStream *response = request->beginResponseStream(FPSTR(HTTP_HEAD_CT));
+  response->setCode(200);
+    
   DEBUG_WM(DEBUG_VERBOSE, F("<- HTTP Param"));
   handleRequest();
-  String page = getHTTPHead(FPSTR(S_titleparam)); // @token titlewifi
+  String head = getHTTPHead(FPSTR(S_titleparam)); // @token titlewifi
+  response->write(head.c_str());
+  head.~String();
 
-  String pitem = "";
-
-  pitem = FPSTR(HTTP_FORM_START);
+  String pitem = FPSTR(HTTP_FORM_START);
   pitem.replace(FPSTR(T_v), F("paramsave"));
-  page += pitem;
+  response->write(pitem.c_str());
+  pitem.~String();
+  //page += pitem;
 
-  page += getParamOut();
-  page += FPSTR(HTTP_FORM_END);
+  getParamOut(response);
+  response->printf_P("%s", FPSTR(HTTP_FORM_END));
   if (_showBack)
-    page += FPSTR(HTTP_BACKBTN);
-  reportStatus(page);
-  page += FPSTR(HTTP_END);
+    response->printf_P("%s", FPSTR(HTTP_BACKBTN));
+  String status = "";
+  reportStatus(status);
+  response->write(status.c_str());
+  response->printf_P("%s", FPSTR(HTTP_END));
 
-  request->send(200, FPSTR(HTTP_HEAD_CT), page);
+  //request->send(200, FPSTR(HTTP_HEAD_CT), page);
   //server->sendHeader(FPSTR(HTTP_HEAD_CL), String(page.length()));
   //server->send(200, FPSTR(HTTP_HEAD_CT), page);
-
+  request->send(response);
   DEBUG_WM(DEBUG_DEV, F("Sent param page"));
 }
 
@@ -1542,10 +1550,8 @@ String WiFiManager::getStaticOut()
   return page;
 }
 
-String WiFiManager::getParamOut()
+void WiFiManager::getParamOut(AsyncResponseStream *response)
 {
-  String page;
-
   if (_paramsCount > 0)
   {
 
@@ -1617,11 +1623,10 @@ String WiFiManager::getParamOut()
         pitem = _params[i]->getCustomHTML();
       }
 
-      page += pitem;
+      response->write(pitem.c_str());
+      system_soft_wdt_feed();
     }
   }
-
-  return page;
 }
 
 void WiFiManager::handleWiFiStatus(AsyncWebServerRequest *request)

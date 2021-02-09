@@ -542,7 +542,7 @@ private:
 #endif
 
   // output helpers
-  String getParamOut();
+  void getParamOut(AsyncResponseStream *response);
   String getIpForm(String id, String title, String value);
   String getScanItemOut();
   String getStaticOut();
