@@ -66,13 +66,13 @@ void LedDriver::turn_on(bool fade)
   }
   if (fade)
   {
-    brightness = map(sensor_driver->get_light_sensor_reading(), 0, PWMRANGE, MIN_LED_BRIGHTNESS, MAX_LED_BRIGHNTESS);
+    brightness = map(sensor_driver->get_light_sensor_reading(), 0, PWMRANGE, config.min_led_brightness, config.max_led_brightness);
     for (int i = 0; i <= brightness; i++)
     {
       FastLED.setBrightness(i);
       //FastLED.show();
       delay(TURN_ON_OFF_TIME / (brightness + 1));
-      brightness = map(sensor_driver->get_light_sensor_reading(), 0, PWMRANGE, MIN_LED_BRIGHTNESS, MAX_LED_BRIGHNTESS);
+      brightness = map(sensor_driver->get_light_sensor_reading(), 0, PWMRANGE, config.min_led_brightness, config.max_led_brightness);
     }
   }
   else
@@ -144,7 +144,7 @@ void LedDriver::set_brightness(int16_t brightness)
   if (!status)
     return;
 
-  brightness = map(brightness, 0, PWMRANGE, MIN_LED_BRIGHTNESS, MAX_LED_BRIGHNTESS);
+  brightness = map(brightness, 0, PWMRANGE, config.min_led_brightness, config.max_led_brightness);
 
 #ifdef DEBUG
   static elapsedMillis deb_mils;

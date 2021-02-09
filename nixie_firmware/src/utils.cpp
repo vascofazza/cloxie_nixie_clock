@@ -5,6 +5,7 @@ void activeDelay(unsigned long mills)
     elapsedMillis elapsed = 0;
     while (elapsed < mills)
     {
+        system_soft_wdt_feed();
         delay(0);
     }
 }

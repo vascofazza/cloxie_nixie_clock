@@ -93,7 +93,7 @@ void setup_wifi(ClockDriver *clock, void (*callback)(void), void (*next_cycle_ca
   wifiManager.addParameter(shutdown_threshold);
 
   led_threshold = new WiFiManagerParameter(F("led_threshold"), F("Led Shutdown threshold"), String(config.led_off_threshold).c_str(), 4);
-  wifiManager.addParameter(shutdown_threshold);
+  wifiManager.addParameter(led_threshold);
 
   sleep_hour = new WiFiManagerParameter(F("sleep_hour"), F("Sleep hour"), String(config.sleep_hour).c_str(), 3);
   wifiManager.addParameter(sleep_hour);
@@ -341,7 +341,7 @@ void saveParamsCallback(AsyncWebServerRequest *request)
   config.brightness_offset = String(brightness_offset->getValue()).toInt();
   config.shutdown_delay = (unsigned int)String(shutdown_delay->getValue()).toInt();
   config.shutdown_threshold = String(shutdown_threshold->getValue()).toInt();
-  config.led_off_threshold = String(led_threshold->getValue()).toInt();
+  config.led_off_threshold = (unsigned int)String(led_threshold->getValue()).toInt();
   config.leds = (bool)getParam(request, F("leds_field")).toInt();
   config.led_configuration = getParam(request, F("leds_mode_field")).toInt();
   config.sleep_hour = String(sleep_hour->getValue()).toInt();
@@ -350,11 +350,11 @@ void saveParamsCallback(AsyncWebServerRequest *request)
   config.date = (bool)getParam(request, F("date_field")).toInt();
   config.depoisoning = String(depoisoning->getValue()).toInt() * 60 * 1000;  //minutes to millis
   config.clock_cycle = String(clock_cycle->getValue()).toInt() * 60 * 1000;  //minutes to millis
-  config.slot_duration = String(transition_time->getValue()).toInt() * 1000; //seconds to millis
-  config.min_led_brightness = String(min_led_brightness->getValue()).toInt();
-  config.max_led_brightness = String(max_led_brightness->getValue()).toInt();
-  config.min_tube_brightness = String(min_tube_brightness->getValue()).toInt();
-  config.max_tube_brightness = String(max_tube_brightness->getValue()).toInt();
+  config.slot_duration = (unsigned int)String(transition_time->getValue()).toInt() * 1000; //seconds to millis
+  config.min_led_brightness = (unsigned int)String(min_led_brightness->getValue()).toInt();
+  config.max_led_brightness = (unsigned int)String(max_led_brightness->getValue()).toInt();
+  config.min_tube_brightness = (unsigned int)String(min_tube_brightness->getValue()).toInt();
+  config.max_tube_brightness = (unsigned int)String(max_tube_brightness->getValue()).toInt();
   save_configuration();
   if (custom_callback != nullptr)
   {

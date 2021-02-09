@@ -1274,14 +1274,14 @@ void WiFiManager::handleWifi(boolean scan, AsyncWebServerRequest *request)
  */
 void WiFiManager::handleParam(AsyncWebServerRequest *request)
 {
-
-  AsyncResponseStream *response = request->beginResponseStream(FPSTR(HTTP_HEAD_CT));
+  AsyncResponseStream *response = request->beginResponseStream(FPSTR(HTTP_HEAD_CT), 512u);
   response->setCode(200);
-    
+
   DEBUG_WM(DEBUG_VERBOSE, F("<- HTTP Param"));
   handleRequest();
   String head = getHTTPHead(FPSTR(S_titleparam)); // @token titlewifi
   response->write(head.c_str());
+  response->flush();
   head.~String();
 
   String pitem = FPSTR(HTTP_FORM_START);
@@ -1302,6 +1302,7 @@ void WiFiManager::handleParam(AsyncWebServerRequest *request)
   //request->send(200, FPSTR(HTTP_HEAD_CT), page);
   //server->sendHeader(FPSTR(HTTP_HEAD_CL), String(page.length()));
   //server->send(200, FPSTR(HTTP_HEAD_CT), page);
+  response->flush();
   request->send(response);
   DEBUG_WM(DEBUG_DEV, F("Sent param page"));
 }
@@ -1624,6 +1625,7 @@ void WiFiManager::getParamOut(AsyncResponseStream *response)
       }
 
       response->write(pitem.c_str());
+      response->flush();
       system_soft_wdt_feed();
     }
   }

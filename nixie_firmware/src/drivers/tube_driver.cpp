@@ -5,7 +5,7 @@ TubeDriver::TubeDriver(SensorDriver *sensor_driver)
   this->sensor_driver = sensor_driver;
   status = false;
   int_status = false;
-  brightness = MIN_TUBE_BRIGHTNESS;
+  brightness = config.min_tube_brightness;
   l_dot_brightness = 0;
   r_dot_brightness = 0;
 
@@ -204,18 +204,18 @@ int scale(int val)
 {
   float log_scale = 2 - 2 / (1 + (val / (float)PWMRANGE));
   val = log_scale * PWMRANGE;
-  return val;
+  return max(val, (int)config.min_tube_brightness);
 }
 
 void TubeDriver::set_brightness(int16_t brightness)
 {
   if (!status)
     return;
-  this->brightness = brightness < MIN_TUBE_BRIGHTNESS ? this->brightness : scale(brightness);
+  this->brightness = brightness <= (int16_t)config.min_tube_brightness ? this->brightness : scale(brightness);
   int dot_brightness = map(this->brightness, 0, PWMRANGE, 0, MAX_DOT_BRIGHNTESS);
   int left = map(l_dot_brightness, 0, PWMRANGE, 0, dot_brightness);
   int right = map(r_dot_brightness, 0, PWMRANGE, 0, dot_brightness);
-  brightness = map(this->brightness, MIN_TUBE_BRIGHTNESS, PWMRANGE, MIN_TUBE_BRIGHTNESS, MAX_TUBE_BRIGHNTESS);
+  brightness = map(this->brightness, config.min_tube_brightness, PWMRANGE, config.min_tube_brightness, config.max_tube_brightness);
   set_tube_brightness(brightness, left, right);
 }
 
@@ -260,7 +260,7 @@ void TubeDriver::turn_on(bool fade)
   if (fade)
   {
     int_status = false;
-    for (int i = 0; i <= scale(max(sensor_driver->get_light_sensor_reading(), (float)MIN_TUBE_BRIGHTNESS)); i++)
+    for (int i = 0; i <= scale(max(sensor_driver->get_light_sensor_reading(), (float)config.min_tube_brightness)); i++)
     {
       set_tube_brightness(i, i, i);
       delay(TURN_ON_OFF_TIME / sensor_driver->get_light_sensor_reading());

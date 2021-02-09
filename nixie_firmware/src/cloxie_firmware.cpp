@@ -152,7 +152,7 @@ void next_cycle()
   if (old_cycle != cycle)
   {
     set_led_patterns(cycle);
-    tube_driver->cathode_poisoning_prevention(TRANSITION_TIME);
+    tube_driver->cathode_poisoning_prevention(config.slot_duration);
   }
 }
 
@@ -351,7 +351,7 @@ void calibration_procedure()
 
   tube_driver->turn_on(false);
   led_driver->turn_on(false);
-  tube_driver->set_brightness(MIN_TUBE_BRIGHTNESS);
+  tube_driver->set_brightness(config.min_tube_brightness);
   led_driver->set_brightness(0);
   activeDelay(10000);
 
