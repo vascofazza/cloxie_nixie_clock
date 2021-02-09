@@ -18,4 +18,6 @@ void get_timezones(AsyncWebServerRequest*);
 
 int get_timezone_id(const char*);
 
+bool less_than_version(const char*, const char*);
+
 #endif

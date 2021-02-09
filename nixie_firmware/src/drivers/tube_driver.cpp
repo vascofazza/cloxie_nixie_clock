@@ -186,6 +186,15 @@ void TubeDriver::display_temperature(float temp)
 
 void TubeDriver::set_tube_brightness(int16_t brightness, int16_t l_dot_brightness, int16_t r_dot_brightness)
 {
+#ifdef DEBUG
+  static elapsedMillis deb_mils;
+  if (deb_mils > 1000)
+  {
+    DEBUG_PRINT(F("Tube brightness: "));
+    DEBUG_PRINTLN(brightness);
+    deb_mils = 0;
+  }
+#endif
   analogWrite(STROBE, PWMRANGE - brightness);
   analogWrite(LEFT_DOT, l_dot_brightness);
   analogWrite(RIGHT_DOT, r_dot_brightness);

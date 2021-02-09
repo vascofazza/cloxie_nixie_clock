@@ -143,7 +143,19 @@ void LedDriver::set_brightness(int16_t brightness)
 {
   if (!status)
     return;
+
   brightness = map(brightness, 0, PWMRANGE, MIN_LED_BRIGHTNESS, MAX_LED_BRIGHNTESS);
+
+#ifdef DEBUG
+  static elapsedMillis deb_mils;
+  if (deb_mils > 1000)
+  {
+    DEBUG_PRINT(F("LED brightness: "));
+    DEBUG_PRINTLN(brightness);
+    deb_mils = 0;
+  }
+#endif
+
   this->brightness = brightness;
   FastLED.setBrightness(brightness);
 }

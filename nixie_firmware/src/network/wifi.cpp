@@ -7,6 +7,7 @@ WiFiManagerParameter *temp_field;
 WiFiManagerParameter *adaptive_field;
 WiFiManagerParameter *brightness_offset;
 WiFiManagerParameter *shutdown_threshold;
+WiFiManagerParameter *led_threshold;
 WiFiManagerParameter *shutdown_delay;
 WiFiManagerParameter *leds;
 WiFiManagerParameter *leds_mode;
@@ -16,14 +17,20 @@ WiFiManagerParameter *termometer;
 WiFiManagerParameter *date;
 WiFiManagerParameter *depoisoning;
 WiFiManagerParameter *clock_cycle;
+WiFiManagerParameter *transition_time;
+WiFiManagerParameter *min_led_brightness;
+WiFiManagerParameter *max_led_brightness;
+WiFiManagerParameter *min_tube_brightness;
+WiFiManagerParameter *max_tube_brightness;
 
 void (*custom_callback)(void) = nullptr;
+void (*cycle_callback)(void) = nullptr;
 
-void (*calibration_callback)(AsyncWebServerRequest*) = nullptr;
+void (*calibration_callback)(AsyncWebServerRequest *) = nullptr;
 
 static ClockDriver *_clock_driver = nullptr;
 
-void setup_wifi(ClockDriver *clock, void (*callback)(void), void (*calib_callback)(AsyncWebServerRequest*))
+void setup_wifi(ClockDriver *clock, void (*callback)(void), void (*next_cycle_callback)(void), void (*calib_callback)(AsyncWebServerRequest *))
 {
   _clock_driver = clock;
   wifiManager.WiFiManagerInit();
@@ -31,6 +38,11 @@ void setup_wifi(ClockDriver *clock, void (*callback)(void), void (*calib_callbac
   if (callback != nullptr)
   {
     custom_callback = callback;
+  }
+
+  if (next_cycle_callback != nullptr)
+  {
+    cycle_callback = next_cycle_callback;
   }
 
   if (calib_callback != nullptr)
@@ -77,7 +89,10 @@ void setup_wifi(ClockDriver *clock, void (*callback)(void), void (*calib_callbac
   brightness_offset = new WiFiManagerParameter(F("brightness_offset"), F("Brightness offset"), String(config.brightness_offset).c_str(), 4);
   wifiManager.addParameter(brightness_offset);
 
-  shutdown_threshold = new WiFiManagerParameter(F("shutdown_threshold"), F("Shutdown threshold"), String(config.shutdown_threshold).c_str(), 4);
+  shutdown_threshold = new WiFiManagerParameter(F("shutdown_threshold"), F("Global Shutdown threshold"), String(config.shutdown_threshold).c_str(), 4);
+  wifiManager.addParameter(shutdown_threshold);
+
+  led_threshold = new WiFiManagerParameter(F("led_threshold"), F("Led Shutdown threshold"), String(config.led_off_threshold).c_str(), 4);
   wifiManager.addParameter(shutdown_threshold);
 
   sleep_hour = new WiFiManagerParameter(F("sleep_hour"), F("Sleep hour"), String(config.sleep_hour).c_str(), 3);
@@ -94,6 +109,21 @@ void setup_wifi(ClockDriver *clock, void (*callback)(void), void (*calib_callbac
 
   clock_cycle = new WiFiManagerParameter(F("clock_cycle"), F("Clock cycle time (m)"), String(config.clock_cycle / 60000).c_str(), 7);
   wifiManager.addParameter(clock_cycle);
+
+  transition_time = new WiFiManagerParameter(F("transition_time"), F("Transition time (s)"), String(config.slot_duration / 1000).c_str(), 7);
+  wifiManager.addParameter(transition_time);
+
+  min_tube_brightness = new WiFiManagerParameter(F("min_tube_brightness"), F("Minimum tube brightness"), String(config.min_tube_brightness).c_str(), 7);
+  wifiManager.addParameter(min_tube_brightness);
+
+  max_tube_brightness = new WiFiManagerParameter(F("max_tube_brightness"), F("Maxmimum tube brightness"), String(config.max_tube_brightness).c_str(), 7);
+  wifiManager.addParameter(max_tube_brightness);
+
+  min_led_brightness = new WiFiManagerParameter(F("min_led_brightness"), F("Minimum led brightness"), String(config.min_led_brightness).c_str(), 7);
+  wifiManager.addParameter(min_led_brightness);
+
+  max_led_brightness = new WiFiManagerParameter(F("max_led_brightness"), F("Maxmimum led brightness"), String(config.max_led_brightness).c_str(), 7);
+  wifiManager.addParameter(max_led_brightness);
 
   wifiManager.setSaveParamsCallback(saveParamsCallback);
   wifiManager.setGetParameterCallback(getParamsCallback);
@@ -144,6 +174,7 @@ void setup_additional_hooks()
 
   wifiManager.server.get()->on(PSTR("/timezones"), &get_timezones);
   wifiManager.server.get()->on(PSTR("/calibrate"), calibration_callback);
+  wifiManager.server.get()->on(PSTR("/cycle"), std::bind(cycle_callback));
 }
 
 bool isConnected()
@@ -227,6 +258,7 @@ void getParamsCallback(AsyncWebServerRequest *request)
   root[F("brightness_offset")] = config.brightness_offset;
   root[F("shutdown_delay")] = config.shutdown_delay;
   root[F("shutdown_threshold")] = config.shutdown_threshold;
+  root[F("led_threshold")] = config.led_off_threshold;
   root[F("leds")] = (int)config.leds;
   root[F("led_configuration")] = config.led_configuration;
   root[F("sleep_hour")] = config.sleep_hour;
@@ -235,6 +267,11 @@ void getParamsCallback(AsyncWebServerRequest *request)
   root[F("date")] = (int)config.date;
   root[F("depoisoning_field")] = config.depoisoning / 60000;
   root[F("clock_cycle")] = config.clock_cycle / 60000;
+  root[F("transition_time")] = config.slot_duration / 1000;
+  root[F("min_led_brightness")] = config.min_led_brightness;
+  root[F("max_led_brightness")] = config.max_led_brightness;
+  root[F("min_tube_brightness")] = config.min_tube_brightness;
+  root[F("max_tube_brightness")] = config.max_tube_brightness;
   root[F("uptime")] = wifiManager.getUpTime();
   root[F("fw_ver")] = String(FIRMWARE_VERSION);
 
@@ -262,6 +299,8 @@ void saveParamsCallback(AsyncWebServerRequest *request)
   DEBUG_PRINTLN(wake_hour->getValue());
   DEBUG_PRINT(F("PARAM shutdown_threshold = "));
   DEBUG_PRINTLN(shutdown_threshold->getValue());
+  DEBUG_PRINT(F("PARAM led_threshold = "));
+  DEBUG_PRINTLN(led_threshold->getValue());
   DEBUG_PRINT(F("PARAM shutdown_delay = "));
   DEBUG_PRINTLN(shutdown_delay->getValue());
   DEBUG_PRINT(F("PARAM leds = "));
@@ -276,6 +315,16 @@ void saveParamsCallback(AsyncWebServerRequest *request)
   DEBUG_PRINTLN(depoisoning->getValue());
   DEBUG_PRINT(F("PARAM clock_cycle = "));
   DEBUG_PRINTLN(clock_cycle->getValue());
+  DEBUG_PRINT(F("PARAM transition_time = "));
+  DEBUG_PRINTLN(transition_time->getValue());
+  DEBUG_PRINT(F("PARAM min_led_brightness = "));
+  DEBUG_PRINTLN(min_led_brightness->getValue());
+  DEBUG_PRINT(F("PARAM max_led_brightness = "));
+  DEBUG_PRINTLN(max_led_brightness->getValue());
+  DEBUG_PRINT(F("PARAM min_tube_brightness = "));
+  DEBUG_PRINTLN(min_tube_brightness->getValue());
+  DEBUG_PRINT(F("PARAM max_tube_brightness = "));
+  DEBUG_PRINTLN(max_tube_brightness->getValue());
 
   int timezone_id = get_timezone_id(getParam(request, F("timezone_field")).c_str());
   if (timezone_id > 0)
@@ -292,14 +341,20 @@ void saveParamsCallback(AsyncWebServerRequest *request)
   config.brightness_offset = String(brightness_offset->getValue()).toInt();
   config.shutdown_delay = (unsigned int)String(shutdown_delay->getValue()).toInt();
   config.shutdown_threshold = String(shutdown_threshold->getValue()).toInt();
+  config.led_off_threshold = String(led_threshold->getValue()).toInt();
   config.leds = (bool)getParam(request, F("leds_field")).toInt();
   config.led_configuration = getParam(request, F("leds_mode_field")).toInt();
   config.sleep_hour = String(sleep_hour->getValue()).toInt();
   config.wake_hour = String(wake_hour->getValue()).toInt();
   config.termometer = (bool)getParam(request, F("termometer_field")).toInt();
   config.date = (bool)getParam(request, F("date_field")).toInt();
-  config.depoisoning = String(depoisoning->getValue()).toInt() * 60 * 1000; //minutes to millis
-  config.clock_cycle = String(clock_cycle->getValue()).toInt() * 60 * 1000; //minutes to millis
+  config.depoisoning = String(depoisoning->getValue()).toInt() * 60 * 1000;  //minutes to millis
+  config.clock_cycle = String(clock_cycle->getValue()).toInt() * 60 * 1000;  //minutes to millis
+  config.slot_duration = String(transition_time->getValue()).toInt() * 1000; //seconds to millis
+  config.min_led_brightness = String(min_led_brightness->getValue()).toInt();
+  config.max_led_brightness = String(max_led_brightness->getValue()).toInt();
+  config.min_tube_brightness = String(min_tube_brightness->getValue()).toInt();
+  config.max_tube_brightness = String(max_tube_brightness->getValue()).toInt();
   save_configuration();
   if (custom_callback != nullptr)
   {

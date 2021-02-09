@@ -7,7 +7,7 @@
 
 #define FIRMWARE_VERSION PSTR("1.4.2")
 
-//#define DEBUG
+#define DEBUG
 
 #ifdef DEBUG
 #define DEBUG_PRINT(x) Serial.print(x)
@@ -47,15 +47,16 @@
 #define FRAMES_PER_SECOND 30
 #define PATTERN_DELAY 600000 //10 mins
 #define HUE_DELAY 250
-#define MIN_LED_BRIGHTNESS 15
+#define MIN_LED_BRIGHTNESS 10
 #define MAX_LED_BRIGHNTESS 100
 #define LED_STATIC_HUE_VALUE 19
+#define LED_SHUTDOWN_THRESHOLD 40
 
 //SENSORS
-#define NUM_OF_READINGS 100
+#define NUM_OF_READINGS 200
 #define ANALOG_READ_INTERVAL 50
 #define TEMP_READ_INTERVAL 1000
-#define MAX_LIGHT_READING_VAL 800
+#define MAX_LIGHT_READING_VAL 900
 
 //MISC
 #define DEFAULT_BRIGHTNESS PWMRANGE / 2
@@ -92,6 +93,13 @@ struct Config
   unsigned int depoisoning;
   unsigned int clock_cycle;
   char timezone_name[30];
+  char version[6];
+  unsigned int slot_duration;
+  unsigned int led_off_threshold;
+  unsigned int min_tube_brightness;
+  unsigned int max_tube_brightness;
+  unsigned int min_led_brightness;
+  unsigned int max_led_brightness;
 };
 
 extern Config config;

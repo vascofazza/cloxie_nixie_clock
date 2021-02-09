@@ -80,7 +80,7 @@ void setup()
   led_driver = new LedDriver(tube_driver, sensor_driver, NUM_LEDS, clock_patterns, &(pattern_status[0]), ARRAY_SIZE(clock_patterns));
   clock_driver = new ClockDriver(tube_driver);
 
-  setup_wifi(clock_driver, update_config_callback, light_sensor_self_calibration);
+  setup_wifi(clock_driver, update_config_callback, next_cycle, light_sensor_self_calibration);
 
   if (isConnected())
   {
@@ -267,6 +267,14 @@ void loop()
   {
     calibration_procedure();
     calibration = false;
+  }
+
+  if (!sleeping)
+  {
+    if (sensor_driver->get_light_sensor_reading() < config.led_off_threshold)
+      led_driver->turn_off(false);
+    else
+      led_driver->turn_on(false);
   }
 
   tube_driver->loop();
