@@ -3,7 +3,6 @@
 SensorDriver::SensorDriver()
 {
   reset_readings();
-  feed_readings();
   pinMode(LIGHT_SENSOR_PIN, INPUT);
   max_brightness = false;
   // Setup a oneWire instance to communicate with any OneWire devices
