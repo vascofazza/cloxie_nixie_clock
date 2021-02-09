@@ -52,7 +52,7 @@ int get_timezone_id(const char *timezone)
 void _parse_version(int result[3], const char* input)
 {
     //1.4.2
-    for(int idx = 0; idx < 3; idx+=2)
+    for(int idx = 0; idx < 3*2; idx+=2)
     {
         result[idx/2] = atoi(input + idx);
     }
