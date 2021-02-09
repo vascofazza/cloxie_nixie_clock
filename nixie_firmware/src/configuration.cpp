@@ -100,28 +100,10 @@ void check_params()
   config.max_led_brightness = min(config.max_led_brightness, 100u);
 
   bool update = false;
-  if (less_than_version(config.version, "1.4.2"))
-  {
-    config.celsius = true;
-    config.h24 = true;
-    config.adaptive_brightness = true;
-    config.date = true;
-    config.termometer = false;
-    config.brightness_offset = 0;
-    config.shutdown_threshold = 0;
-    config.shutdown_delay = 60;
-    config.led_configuration = 0;
-    config.blink_mode = 0;
-    config.sleep_hour = 0;
-    config.wake_hour = 7;
-    config.clock_cycle = CLOCK_CYCLE;
-    config.depoisoning = CATHODE_POISONING_TRIGGER_TIME;
-
-    update = true;
-  }
 
   if (less_than_version(config.version, "1.4.3"))
   {
+    DEBUG_PRINTLN(F("UPDATING params to version 1.4.3"));
     config.slot_duration = TRANSITION_TIME;
     config.min_tube_brightness = MIN_TUBE_BRIGHTNESS;
     config.max_tube_brightness = MAX_TUBE_BRIGHNTESS;
