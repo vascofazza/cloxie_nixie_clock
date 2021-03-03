@@ -5,7 +5,7 @@
 #include <EEPROM.h>
 #include "utils.hpp"
 
-#define FIRMWARE_VERSION PSTR("1.4.3")
+#define FIRMWARE_VERSION PSTR("1.4.4")
 
 //#define DEBUG
 

@@ -113,7 +113,7 @@ bool ClockDriver::is_night_hours()
   int wake_hour = config.wake_hour;
   if (sleep_hour > wake_hour)
   {
-    int offset = sleep_hour % 24;
+    int offset = 24 - sleep_hour;
     sleep_hour = 0;
     wake_hour += offset;
     hour = (hour + offset) % 24;
