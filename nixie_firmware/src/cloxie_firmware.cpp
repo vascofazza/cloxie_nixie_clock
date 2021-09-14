@@ -100,7 +100,7 @@ void setup()
   tube_driver->turn_on(true);
 
   ota_handler.Every(GHOTA_INTERVAL, check_for_updates);
-  //ota_handler.Start();
+  ota_handler.Start();
 }
 
 void next_cycle()
