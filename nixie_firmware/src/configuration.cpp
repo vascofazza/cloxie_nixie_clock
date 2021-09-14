@@ -119,7 +119,7 @@ void check_params()
     config.led_off_threshold = LED_SHUTDOWN_THRESHOLD;
   }
 
-  if (less_than_version(config.version, FIRMWARE_VERSION))
+  if (less_than_version(config.version, String(FIRMWARE_VERSION).c_str()))
   {
     strcpy_P(config.version, FIRMWARE_VERSION);
     save_configuration();
