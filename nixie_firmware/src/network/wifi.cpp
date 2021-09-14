@@ -29,10 +29,12 @@ void (*cycle_callback)(void) = nullptr;
 void (*calibration_callback)(AsyncWebServerRequest *) = nullptr;
 
 static ClockDriver *_clock_driver = nullptr;
+static SensorDriver *_sensor_driver = nullptr;
 
-void setup_wifi(ClockDriver *clock, void (*callback)(void), void (*next_cycle_callback)(void), void (*calib_callback)(AsyncWebServerRequest *))
+void setup_wifi(ClockDriver *clock, SensorDriver *sensor_driver, void (*callback)(void), void (*next_cycle_callback)(void), void (*calib_callback)(AsyncWebServerRequest *))
 {
   _clock_driver = clock;
+  _sensor_driver = sensor_driver;
   wifiManager.WiFiManagerInit();
   wifiManager.setFirmwareVersion(FIRMWARE_VERSION);
   if (callback != nullptr)
@@ -175,6 +177,8 @@ void setup_additional_hooks()
   wifiManager.server.get()->on(PSTR("/timezones"), &get_timezones);
   wifiManager.server.get()->on(PSTR("/calibrate"), calibration_callback);
   wifiManager.server.get()->on(PSTR("/cycle"), std::bind(cycle_callback));
+
+  wifiManager.server.get()->on(PSTR("/sensors"), std::bind(&get_sensors, _sensor_driver, std::placeholders::_1));
 }
 
 bool isConnected()
@@ -348,8 +352,8 @@ void saveParamsCallback(AsyncWebServerRequest *request)
   config.wake_hour = String(wake_hour->getValue()).toInt();
   config.termometer = (bool)getParam(request, F("termometer_field")).toInt();
   config.date = (bool)getParam(request, F("date_field")).toInt();
-  config.depoisoning = String(depoisoning->getValue()).toInt() * 60 * 1000;  //minutes to millis
-  config.clock_cycle = String(clock_cycle->getValue()).toInt() * 60 * 1000;  //minutes to millis
+  config.depoisoning = String(depoisoning->getValue()).toInt() * 60 * 1000;                //minutes to millis
+  config.clock_cycle = String(clock_cycle->getValue()).toInt() * 60 * 1000;                //minutes to millis
   config.slot_duration = (unsigned int)String(transition_time->getValue()).toInt() * 1000; //seconds to millis
   config.min_led_brightness = (unsigned int)String(min_led_brightness->getValue()).toInt();
   config.max_led_brightness = (unsigned int)String(max_led_brightness->getValue()).toInt();
@@ -465,4 +469,17 @@ void stop_stopwatch(ClockDriver *clock, AsyncWebServerRequest *request)
 {
   clock->reset_stopwatch();
   send_response(request);
+}
+
+void get_sensors(SensorDriver *sensors, AsyncWebServerRequest *request)
+{
+  AsyncJsonResponse *response = new AsyncJsonResponse();
+  JsonObject root = response->getRoot();
+  root[F("uptime")] = wifiManager.getUpTime();
+  if (config.termometer)
+    root[F("temp")] = String(sensors->get_temperature_sensor_reading(true));
+  if (config.adaptive_brightness)
+    root[F("lux")] = String(sensors->get_lux_reading());
+  response->setLength();
+  request->send(response);
 }

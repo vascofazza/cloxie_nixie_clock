@@ -32,12 +32,12 @@ void TubeDriver::run_test()
   for (int i = 0; i < 10; i++)
   {
     set_tubes(i, i, i, i, i, i);
-    for (int b = 0; b < 1024; b += 100)
+    for (int b = 0; b <= PWMRANGE; b += 100)
     {
       set_tube_brightness(b, b, b);
       activeDelay(25);
     }
-    for (int b = 1024; b >= 0; b -= 100)
+    for (int b = PWMRANGE; b >= 0; b -= 100)
     {
       set_tube_brightness(b, b, b);
       activeDelay(25);

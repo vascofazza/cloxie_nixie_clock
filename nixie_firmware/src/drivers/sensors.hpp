@@ -36,7 +36,9 @@ public:
 
     float get_light_sensor_reading();
 
-    float get_temperature_sensor_reading();
+    float get_lux_reading();
+
+    float get_temperature_sensor_reading(bool);
 
 };
 

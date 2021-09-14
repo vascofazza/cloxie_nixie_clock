@@ -80,7 +80,7 @@ void setup()
   led_driver = new LedDriver(tube_driver, sensor_driver, NUM_LEDS, clock_patterns, &(pattern_status[0]), ARRAY_SIZE(clock_patterns));
   clock_driver = new ClockDriver(tube_driver);
 
-  setup_wifi(clock_driver, update_config_callback, next_cycle, light_sensor_self_calibration);
+  setup_wifi(clock_driver, sensor_driver, update_config_callback, next_cycle, light_sensor_self_calibration);
 
   if (isConnected())
   {
@@ -100,7 +100,7 @@ void setup()
   tube_driver->turn_on(true);
 
   ota_handler.Every(GHOTA_INTERVAL, check_for_updates);
-  ota_handler.Start();
+  //ota_handler.Start();
 }
 
 void next_cycle()
@@ -152,6 +152,7 @@ void next_cycle()
   if (old_cycle != cycle)
   {
     set_led_patterns(cycle);
+    sensor_driver->get_temperature_sensor_reading(false);
     tube_driver->cathode_poisoning_prevention(config.slot_duration);
   }
 }
@@ -203,7 +204,7 @@ void handle_loop()
     clock_driver->show_time(false);
     clock_driver->show_date(false);
     clock_driver->show_timer(false);
-    auto temp = sensor_driver->get_temperature_sensor_reading();
+    auto temp = sensor_driver->get_temperature_sensor_reading(false);
     tube_driver->display_temperature(temp);
     break;
   }
@@ -222,7 +223,7 @@ void loop()
 
   clock_driver->loop();
 
-  ota_handler.Update();
+  //ota_handler.Update();
   wifi_loop();
 
   bool hour_check = clock_driver->is_night_hours();
@@ -239,6 +240,7 @@ void loop()
         led_driver->turn_off(true);
         sleeping = true;
       }
+      sensor_driver->get_temperature_sensor_reading(false);
       return;
     }
 #ifdef DEBUG

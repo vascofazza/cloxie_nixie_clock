@@ -85,8 +85,20 @@ void check_params()
     DEBUG_PRINTLN(timezone_id);
     config.timezone = timezone_id < 0 ? 0 : timezone_id;
   }
+
+  bool update = false;
+
+  if (less_than_version(config.version, "1.5.0") && PWMRANGE != ANALOGRANGE)
+  {
+    DEBUG_PRINTLN(F("UPDATING params to version 1.5.0"));
+    config.min_tube_brightness = map(config.min_tube_brightness, 0, ANALOGRANGE, 0, PWMRANGE);
+    config.max_tube_brightness = map(config.max_tube_brightness, 0, ANALOGRANGE, 0, PWMRANGE);
+    config.brightness_offset = map(config.brightness_offset, 0, ANALOGRANGE, 0, PWMRANGE);
+    update = true;
+  }
+
   config.brightness_offset = config.brightness_offset > PWMRANGE || config.brightness_offset < -PWMRANGE ? 0 : config.brightness_offset;
-  config.shutdown_threshold = config.shutdown_threshold > PWMRANGE || config.shutdown_threshold < 0 ? 0 : config.shutdown_threshold;
+  config.shutdown_threshold = config.shutdown_threshold > ANALOGRANGE || config.shutdown_threshold < 0 ? 0 : config.shutdown_threshold;
   config.shutdown_delay = config.shutdown_delay > (7 * 3600) ? 60 : config.shutdown_delay;
   config.led_configuration = config.led_configuration > 2 || config.led_configuration < 0 ? 0 : config.led_configuration;
   config.blink_mode = config.blink_mode > 3 || config.blink_mode < 0 ? 0 : config.blink_mode;
@@ -94,12 +106,10 @@ void check_params()
   config.wake_hour = config.wake_hour > 23 || config.wake_hour < 0 ? 7 : config.wake_hour;
   config.clock_cycle = config.clock_cycle < 60000 ? CLOCK_CYCLE : config.clock_cycle;
   config.depoisoning = config.depoisoning <= CATHODE_POISONING_PREVENTION_TIME ? 0 : config.depoisoning;
-  config.min_tube_brightness = min(config.min_tube_brightness, 1024u);
-  config.max_tube_brightness = min(config.max_tube_brightness, 1024u);
+  config.min_tube_brightness = min(config.min_tube_brightness, (unsigned int) PWMRANGE);
+  config.max_tube_brightness = min(config.max_tube_brightness, (unsigned int) PWMRANGE);
   config.min_led_brightness = min(config.min_led_brightness, 100u);
   config.max_led_brightness = min(config.max_led_brightness, 100u);
-
-  bool update = false;
 
   if (less_than_version(config.version, "1.4.3"))
   {

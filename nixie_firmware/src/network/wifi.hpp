@@ -9,6 +9,7 @@
 #include "ArduinoJson.h"
 #include "ota_webserver.hpp"
 #include "../drivers/clock.hpp"
+#include "../drivers/sensors.hpp"
 #include "../configuration.hpp"
 #include "../utils.hpp"
 
@@ -20,7 +21,7 @@ void getParamsCallback(AsyncWebServerRequest *);
 
 void saveParamsCallback(AsyncWebServerRequest *);
 
-void setup_wifi(ClockDriver *, void (*)(), void (*)(), void (*)(AsyncWebServerRequest*));
+void setup_wifi(ClockDriver *, SensorDriver*, void (*)(), void (*)(), void (*)(AsyncWebServerRequest*));
 
 void wifi_loop();
 
@@ -49,5 +50,7 @@ void start_stopwatch(ClockDriver *, AsyncWebServerRequest *);
 void pause_stopwatch(ClockDriver *, AsyncWebServerRequest *);
 
 void stop_stopwatch(ClockDriver *, AsyncWebServerRequest *);
+
+void get_sensors(SensorDriver *, AsyncWebServerRequest *);
 
 #endif

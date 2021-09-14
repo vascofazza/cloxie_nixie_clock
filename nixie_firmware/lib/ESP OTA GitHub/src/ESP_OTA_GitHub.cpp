@@ -400,6 +400,8 @@ bool ESPOTAGitHub::doUpgrade()
     case HTTP_UPDATE_OK:
         _lastError = "HTTP_UPDATE_OK";
         return true;
+    default:
+        return false;
     }
 }
 
