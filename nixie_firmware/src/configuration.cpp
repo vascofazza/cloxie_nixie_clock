@@ -86,15 +86,12 @@ void check_params()
     config.timezone = timezone_id < 0 ? 0 : timezone_id;
   }
 
-  bool update = false;
-
   if (less_than_version(config.version, "1.5.0") && PWMRANGE != ANALOGRANGE)
   {
     DEBUG_PRINTLN(F("UPDATING params to version 1.5.0"));
     config.min_tube_brightness = map(config.min_tube_brightness, 0, ANALOGRANGE, 0, PWMRANGE);
     config.max_tube_brightness = map(config.max_tube_brightness, 0, ANALOGRANGE, 0, PWMRANGE);
     config.brightness_offset = map(config.brightness_offset, 0, ANALOGRANGE, 0, PWMRANGE);
-    update = true;
   }
 
   config.brightness_offset = config.brightness_offset > PWMRANGE || config.brightness_offset < -PWMRANGE ? 0 : config.brightness_offset;
@@ -120,10 +117,9 @@ void check_params()
     config.min_led_brightness = MIN_LED_BRIGHTNESS;
     config.max_led_brightness = MAX_LED_BRIGHNTESS;
     config.led_off_threshold = LED_SHUTDOWN_THRESHOLD;
-    update = true;
   }
 
-  if (update)
+  if (less_than_version(config.version, FIRMWARE_VERSION))
   {
     strcpy_P(config.version, FIRMWARE_VERSION);
     save_configuration();

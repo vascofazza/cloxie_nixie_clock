@@ -32,12 +32,12 @@ void TubeDriver::run_test()
   for (int i = 0; i < 10; i++)
   {
     set_tubes(i, i, i, i, i, i);
-    for (int b = 0; b <= PWMRANGE; b += 100)
+    for (int b = 0; b <= PWMRANGE; b += PWMRANGE / 10)
     {
       set_tube_brightness(b, b, b);
       activeDelay(25);
     }
-    for (int b = PWMRANGE; b >= 0; b -= 100)
+    for (int b = PWMRANGE; b >= 0; b -= PWMRANGE / 10)
     {
       set_tube_brightness(b, b, b);
       activeDelay(25);
@@ -143,7 +143,7 @@ void TubeDriver::adjust_brightness()
 {
   if (!int_status)
     return;
-  set_brightness(sensor_driver->get_light_sensor_reading());
+  set_brightness(map(sensor_driver->get_light_sensor_reading(), 0, ANALOGRANGE, 0, PWMRANGE));
 }
 
 void TubeDriver::loop()

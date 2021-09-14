@@ -277,7 +277,7 @@ void getParamsCallback(AsyncWebServerRequest *request)
   root[F("min_tube_brightness")] = config.min_tube_brightness;
   root[F("max_tube_brightness")] = config.max_tube_brightness;
   root[F("uptime")] = wifiManager.getUpTime();
-  root[F("fw_ver")] = String(FIRMWARE_VERSION);
+  root[F("fw_ver")] = String(config.version);
 
   response->setLength();
   request->send(response);

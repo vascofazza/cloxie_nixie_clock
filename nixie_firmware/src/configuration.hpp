@@ -5,7 +5,7 @@
 #include <EEPROM.h>
 #include "utils.hpp"
 
-#define FIRMWARE_VERSION PSTR("1.4.4")
+#define FIRMWARE_VERSION PSTR("1.5.0")
 
 //#define DEBUG
 
@@ -59,7 +59,7 @@
 #define MAX_LIGHT_READING_VAL 900
 
 #ifndef PWMRANGE
-#define PWMRANGE 1023 //255u
+#define PWMRANGE 255u
 #endif
 
 #define ANALOGRANGE 1023
